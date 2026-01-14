@@ -16,6 +16,11 @@ type Msg = {
   data?: List
 }
 
+// 备注：
+// 有个 API 也可以获取关注总数量，即获取用户在 PC 端页面的额外数据：
+// https://www.pixiv.net/ajax/user/extra?is_smartphone=0&lang=zh
+// 包含已关注数量、粉丝数量、好 P 友数量
+
 class HighlightFollowingUsers {
   constructor() {
     if (!Utils.isPixiv()) {

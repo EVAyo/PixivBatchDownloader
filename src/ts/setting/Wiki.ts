@@ -160,6 +160,7 @@ class Wiki {
       'clearMultiImageWork',
       'clearUgoiraWork',
       'manuallyDeleteWork',
+      'exportDashboardData',
     ],
     'Buttons-Download': [
       'importCrawlResults',

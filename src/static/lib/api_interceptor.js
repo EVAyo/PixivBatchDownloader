@@ -30,7 +30,6 @@ setTimeout(() => {
   }
 }, 2500)
 
-
 // 等待内容脚本就绪
 async function checkReady () {
   if (!ready) {

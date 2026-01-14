@@ -8,8 +8,7 @@ import { log } from '../Log'
 import { pageType } from '../PageType'
 import { settings } from '../setting/Settings'
 import { API } from '../API'
-import { Config } from '../Config'
-import { NovelItem } from '../crawl/CrawlResult.d'
+import { RankingNovelItem } from '../crawl/CrawlResult.d'
 import { nameRuleManager } from '../setting/NameRuleManager'
 import { Utils } from '../utils/Utils'
 
@@ -142,7 +141,7 @@ class InitRankingNovelPageNew extends InitPageBase {
       // 目前一页最多有 50 条小说数据，所以 length 是 50
       const length = 50
       for (let i = 0; i < length; i++) {
-        const novel: NovelItem = (list as any)[i]
+        const novel: RankingNovelItem = (list as any)[i]
 
         // 注意：有些小说可能会被作者删除，所以排行榜的数据里也就没有它。在页面上显示时，也会直接跳过它的排名编号。
         // 2 页本来应该有 100 个作品，但有时可能只有 99 个，所以会有空值

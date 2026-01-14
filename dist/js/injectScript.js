@@ -1324,8 +1324,8 @@ function injectScript() {
         (document.head || document.documentElement).appendChild(script);
     });
 }
-// 在公开版本里不启用此功能
-injectScript();
+// 在公开版本里不注入脚本
+// injectScript()
 
 })();
 

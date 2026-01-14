@@ -25,6 +25,7 @@ import { InitFollowingPage } from './crawlMixedPage/InitFollowingPage'
 import { InitUnsupportedPage } from './crawl/InitUnsupportedPage'
 import { InitUnlistedPage } from './crawlMixedPage/InitUnlistedPage'
 import { InitRequestPage } from './crawl/InitRequestPage'
+import { InitDashboardPage } from './crawlMixedPage/InitDashboardPage'
 
 class InitPage {
   constructor() {
@@ -88,6 +89,8 @@ class InitPage {
         return new InitRequestPage()
       case pageType.list.DiscoverUsers:
         return new InitUnsupportedPage()
+      case pageType.list.Dashboard:
+        return new InitDashboardPage()
       default:
         return new InitUnsupportedPage()
     }

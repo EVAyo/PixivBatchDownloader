@@ -115,11 +115,13 @@ class CrawlNumber {
   private getCfg() {
     const cfg = settings.crawlNumber[pageType.type]
     if (cfg === undefined) {
+      console.log(pageType.type)
+      console.log(settings.crawlNumber)
+
       const msg = 'Error: Failed to get crawlNumber configuration!'
       msgBox.error(msg)
       throw new Error(msg)
     }
-    // console.log(JSON.stringify(cfg))
 
     return cfg
   }

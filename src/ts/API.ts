@@ -25,6 +25,7 @@ import {
   NovelSeriesContentData,
   NovelInsertIllusts,
   RankingNovelData,
+  DashboardData,
 } from './crawl/CrawlResult'
 
 import {
@@ -552,6 +553,15 @@ class API {
   static async getLatestMessage(number: number): Promise<LatestMessageData> {
     return this.fetch(
       `https://www.pixiv.net/rpc/index.php?mode=latest_message_threads2&num=${number}&offset=0`
+    )
+  }
+
+  /**获取数据分析里图像或小说分类下的数据 */
+  static async getDashboardData(
+    workType: 'illust' | 'novel'
+  ): Promise<DashboardData> {
+    return this.fetch(
+      `https://www.pixiv.net/ajax/dashboard/works/${workType}/request_strategy`
     )
   }
 

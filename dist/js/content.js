@@ -1588,6 +1588,10 @@ class API {
     static async getLatestMessage(number) {
         return this.fetch(`https://www.pixiv.net/rpc/index.php?mode=latest_message_threads2&num=${number}&offset=0`);
     }
+    /**获取数据分析里图像或小说分类下的数据 */
+    static async getDashboardData(workType) {
+        return this.fetch(`https://www.pixiv.net/ajax/dashboard/works/${workType}/request_strategy`);
+    }
     /**关注一个用户 */
     // restrict: false 为公开关注，true 为非公开关注
     // recaptcha_enterprise_score_token 对于有些用户是不需要的。允许传递空值
@@ -4119,6 +4123,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// 备注：
+// 有个 API 也可以获取关注总数量，即获取用户在 PC 端页面的额外数据：
+// https://www.pixiv.net/ajax/user/extra?is_smartphone=0&lang=zh
+// 包含已关注数量、粉丝数量、好 P 友数量
 class HighlightFollowingUsers {
     constructor() {
         if (!_utils_Utils__WEBPACK_IMPORTED_MODULE_6__.Utils.isPixiv()) {
@@ -4905,7 +4913,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _crawl_InitUnsupportedPage__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./crawl/InitUnsupportedPage */ "./src/ts/crawl/InitUnsupportedPage.ts");
 /* harmony import */ var _crawlMixedPage_InitUnlistedPage__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./crawlMixedPage/InitUnlistedPage */ "./src/ts/crawlMixedPage/InitUnlistedPage.ts");
 /* harmony import */ var _crawl_InitRequestPage__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./crawl/InitRequestPage */ "./src/ts/crawl/InitRequestPage.ts");
+/* harmony import */ var _crawlMixedPage_InitDashboardPage__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./crawlMixedPage/InitDashboardPage */ "./src/ts/crawlMixedPage/InitDashboardPage.ts");
 // 根据页面类型来初始化抓取流程和一些特定的功能
+
 
 
 
@@ -4991,6 +5001,8 @@ class InitPage {
                 return new _crawl_InitRequestPage__WEBPACK_IMPORTED_MODULE_24__.InitRequestPage();
             case _PageType__WEBPACK_IMPORTED_MODULE_1__.pageType.list.DiscoverUsers:
                 return new _crawl_InitUnsupportedPage__WEBPACK_IMPORTED_MODULE_22__.InitUnsupportedPage();
+            case _PageType__WEBPACK_IMPORTED_MODULE_1__.pageType.list.Dashboard:
+                return new _crawlMixedPage_InitDashboardPage__WEBPACK_IMPORTED_MODULE_25__.InitDashboardPage();
             default:
                 return new _crawl_InitUnsupportedPage__WEBPACK_IMPORTED_MODULE_22__.InitUnsupportedPage();
         }
@@ -6265,6 +6277,8 @@ var PageName;
     PageName[PageName["Unlisted"] = 22] = "Unlisted";
     /** 发现页面 - 推荐用户 */
     PageName[PageName["DiscoverUsers"] = 23] = "DiscoverUsers";
+    /** 数据分析（我的作品） */
+    PageName[PageName["Dashboard"] = 24] = "Dashboard";
 })(PageName || (PageName = {}));
 // 获取页面类型
 class PageType {
@@ -6367,6 +6381,9 @@ class PageType {
         }
         else if (pathname.includes('/unlisted')) {
             return PageName.Unlisted;
+        }
+        else if (pathname.includes('/dashboard')) {
+            return PageName.Dashboard;
         }
         else {
             // 没有匹配到可用的页面类型
@@ -6486,6 +6503,10 @@ class PageType {
             {
                 type: PageName.DiscoverUsers,
                 url: 'https://www.pixiv.net/discovery/users',
+            },
+            {
+                type: PageName.Dashboard,
+                url: 'https://www.pixiv.net/dashboard/works',
             },
         ];
         const wait = () => {
@@ -16358,6 +16379,369 @@ One possible reason: You have been banned from Pixiv.`);
 
 /***/ }),
 
+/***/ "./src/ts/crawlMixedPage/InitDashboardPage.ts":
+/*!****************************************************!*\
+  !*** ./src/ts/crawlMixedPage/InitDashboardPage.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   InitDashboardPage: () => (/* binding */ InitDashboardPage)
+/* harmony export */ });
+/* harmony import */ var _crawl_InitPageBase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../crawl/InitPageBase */ "./src/ts/crawl/InitPageBase.ts");
+/* harmony import */ var _Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Colors */ "./src/ts/Colors.ts");
+/* harmony import */ var _Tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Tools */ "./src/ts/Tools.ts");
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
+/* harmony import */ var _API__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../API */ "./src/ts/API.ts");
+/* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../MsgBox */ "./src/ts/MsgBox.ts");
+/* harmony import */ var _utils_CreateCSV__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/CreateCSV */ "./src/ts/utils/CreateCSV.ts");
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+/* harmony import */ var _utils_DateFormat__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../utils/DateFormat */ "./src/ts/utils/DateFormat.ts");
+/* harmony import */ var _setting_Settings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../setting/Settings */ "./src/ts/setting/Settings.ts");
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+// 初始化数据分析（我的作品）页面
+// https://www.pixiv.net/dashboard/works
+
+
+
+
+
+
+
+
+
+
+
+
+// 需要使用 2 个相关 API：
+// 1. 获取插画、漫画、动图作品，包含部分数据：
+// https://www.pixiv.net/ajax/dashboard/works/illust/request_strategy
+// 2. 获取所有小说作品，包含部分数据：
+// https://www.pixiv.net/ajax/dashboard/works/novel/request_strategy
+// 此外还有个用于仪表盘首页的 API，除了自己的作品外还包含了些其他人的作品。不需要使用它
+// https://www.pixiv.net/ajax/dashboard/home
+class InitDashboardPage extends _crawl_InitPageBase__WEBPACK_IMPORTED_MODULE_0__.InitPageBase {
+    constructor() {
+        super();
+        this.init();
+    }
+    addCrawlBtns() {
+        _Tools__WEBPACK_IMPORTED_MODULE_2__.Tools.addBtn('crawlBtns', _Colors__WEBPACK_IMPORTED_MODULE_1__.Colors.bgGreen, '_导出作品数据CSV', '', 'exportDashboardData').addEventListener('click', () => {
+            this.export();
+        });
+    }
+    getWantPage() { }
+    getIdList() { }
+    busy = false;
+    /** 要导出哪些作品的数据 */
+    // 共有 4 种分类：
+    // 全部 插画 漫画 小说
+    // 动图没有单独的分类，它和插画是放在一起的，类型都是 'illust'
+    exportType = 'all';
+    exportScope = 'all';
+    // 向 API 发送请求时，获取哪些类型
+    APIWorkTypes = [];
+    exportList = [];
+    schema = [
+        { title: 'id', text: (data) => data.workId },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_类型'),
+            text: (data) => {
+                if (data.workType === 'novel') {
+                    return _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_小说');
+                }
+                else {
+                    switch (data.illustType) {
+                        case 0:
+                            return _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_插画');
+                        case 1:
+                            return _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_漫画');
+                        case 2:
+                            return _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_动图');
+                        default:
+                            return _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_插画');
+                    }
+                }
+            },
+        },
+        { title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_标题'), text: (data) => data.title },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_标签'),
+            text: (data) => data.tags.join(_setting_Settings__WEBPACK_IMPORTED_MODULE_10__.settings.tagsSeparator),
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_赞'),
+            text: (data) => _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.ratingCount),
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_收藏'),
+            text: (data) => _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.bookmarkCount),
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_浏览量'),
+            text: (data) => _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.viewCount),
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_评论'),
+            text: (data) => _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.commentCount),
+        },
+        // 日期原本是包含了时间的，例如 "2022-06-26 20:39:11"，只输出前面的日期部分
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_日期'),
+            text: (data) => data.createDate.split(' ')[0],
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_评级'),
+            text: (data) => {
+                switch (data.contentRating) {
+                    case 0:
+                        return '待评级';
+                    case 1:
+                        // 全年龄输出为 '-'
+                        return '-';
+                    default:
+                        return '限制级';
+                }
+            },
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_张数'),
+            text: (data) => {
+                if (data.pageCount !== undefined) {
+                    return data.pageCount.toString();
+                }
+                else {
+                    return '-';
+                }
+            },
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_文字数'),
+            text: (data) => {
+                if (data.textCount !== undefined) {
+                    return _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.textCount);
+                }
+                else {
+                    return '-';
+                }
+            },
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_单词数'),
+            text: (data) => {
+                if (data.wordCount !== undefined) {
+                    return _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.formatNumber(data.wordCount);
+                }
+                else {
+                    return '-';
+                }
+            },
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_排名'),
+            text: (data) => {
+                if (data.dailyRankingBestRank === 0) {
+                    return '-';
+                }
+                else {
+                    return data.dailyRankingBestRank.toString();
+                }
+            },
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_响应关联作品'),
+            text: (data) => data.imageResponseCount.toString(),
+        },
+        {
+            title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_添加插图'),
+            text: (data) => data.quotedIllustCount.toString(),
+        },
+        {
+            title: 'url',
+            text: (data) => {
+                return `https://www.pixiv.net/${data.workType === 'illust' ? 'i' : 'n'}/${data.workId}`;
+            },
+        },
+    ];
+    async export() {
+        if (this.busy) {
+            _Toast__WEBPACK_IMPORTED_MODULE_4__.toast.error(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_当前任务尚未完成'));
+            return;
+        }
+        this.busy = true;
+        _EVT__WEBPACK_IMPORTED_MODULE_11__.EVT.fire('closeCenterPanel');
+        this.reset();
+        try {
+            await this.extractData();
+        }
+        catch (error) {
+            this.busy = false;
+            const msg = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_出现错误请稍后重试');
+            _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.error(msg);
+            console.log(error);
+            return;
+        }
+        this.output();
+        this.busy = false;
+    }
+    reset() {
+        this.exportList = [];
+        this.APIWorkTypes = [];
+        // 根据当前页面的 URL，判断要获取插画、漫画、小说，还是全部
+        let needGetIllust = false;
+        let needGetNovel = false;
+        const path = window.location.pathname;
+        if (path.includes('/works/illustrations')) {
+            this.exportType = 'illust';
+            this.exportScope = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_插画');
+            needGetIllust = true;
+            needGetNovel = false;
+        }
+        else if (path.includes('/works/manga')) {
+            this.exportType = 'manga';
+            this.exportScope = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_漫画');
+            needGetIllust = true;
+            needGetNovel = false;
+        }
+        else if (path.includes('/works/novels')) {
+            this.exportType = 'novel';
+            this.exportScope = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_小说');
+            needGetIllust = false;
+            needGetNovel = true;
+        }
+        else {
+            this.exportType = 'all';
+            this.exportScope = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_全部');
+            needGetIllust = true;
+            needGetNovel = true;
+        }
+        // 判断 API 应该获取哪些分类的数据
+        if (needGetIllust && needGetNovel) {
+            this.APIWorkTypes = ['illust', 'novel'];
+        }
+        else {
+            if (needGetIllust) {
+                this.APIWorkTypes = ['illust'];
+            }
+            if (needGetNovel) {
+                this.APIWorkTypes = ['novel'];
+            }
+        }
+    }
+    async extractData() {
+        for (const getWorkType of this.APIWorkTypes) {
+            const dashboardData = await _API__WEBPACK_IMPORTED_MODULE_5__.API.getDashboardData(getWorkType);
+            // 提取数据
+            // 每个作品的完整的“数据分析”数据，需要从 work 和 thumbnail 里结合起来
+            // 先遍历 work，然后从 thumbnail 里查找对应 id 的数据
+            const thumbnails = dashboardData.body.thumbnails[getWorkType];
+            dashboardData.body.data.works.forEach((work) => {
+                const thumb = thumbnails.find((t) => t.id === work.workId);
+                if (thumb) {
+                    const data = {
+                        workId: work.workId,
+                        workType: work.workType,
+                        illustType: 'illustType' in thumb ? thumb.illustType : undefined,
+                        aiType: thumb.aiType,
+                        title: thumb.title,
+                        tags: thumb.tags,
+                        ratingCount: work.ratingCount,
+                        bookmarkCount: work.bookmarkCount,
+                        viewCount: work.viewCount,
+                        commentCount: work.commentCount,
+                        createDate: work.createDate,
+                        contentRating: work.contentRating,
+                        pageCount: 'pageCount' in thumb ? thumb.pageCount : undefined,
+                        textCount: 'textCount' in thumb ? thumb.textCount : undefined,
+                        wordCount: 'wordCount' in thumb ? thumb.wordCount : undefined,
+                        dailyRankingBestRank: work.dailyRankingBestRank,
+                        imageResponseCount: work.imageResponseCount,
+                        quotedIllustCount: work.imageResponseCount,
+                    };
+                    this.exportList.push(data);
+                }
+            });
+        }
+    }
+    /** 输出为 CSV 文件 */
+    output() {
+        if (this.exportList.length === 0) {
+            const msg = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_没有数据可供使用');
+            _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.warning(msg);
+            return;
+        }
+        // 判断结果里是否含有小说，来确定是否输出小说特有的属性
+        // 如果有小说则输出所有数据（文字数、单词数）
+        // 如果没有小说就不输出小说特有的数据，因为图像作品不需要显示这些数据
+        const hasNovel = this.exportList.some((data) => data.workType === 'novel');
+        const novelTitles = [_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_文字数'), _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_单词数')];
+        /** 构造 CSV 数据 */
+        const csvContent = [];
+        // 添加标题列
+        const titleArray = [];
+        this.schema.forEach((cfg) => {
+            // 添加小说特有的数据
+            if (novelTitles.includes(cfg.title)) {
+                if (hasNovel) {
+                    titleArray.push(cfg.title);
+                }
+            }
+            else {
+                // 添加通用数据
+                titleArray.push(cfg.title);
+            }
+        });
+        csvContent.push(titleArray);
+        // 根据当前页面类型，导出对应的数据。可能是以下四种情况之一：
+        // 全部 插画 漫画 小说
+        let useData = this.exportList.filter((data) => {
+            switch (this.exportType) {
+                case 'all':
+                    return true;
+                case 'illust':
+                    return data.illustType === 0 || data.illustType === 2;
+                case 'manga':
+                    return data.illustType === 1;
+                case 'novel':
+                    return data.workType === 'novel';
+            }
+        });
+        // 添加作品数据
+        useData.forEach((data) => {
+            const contentArray = [];
+            this.schema.forEach((cfg) => {
+                // 添加小说特有的数据
+                if (novelTitles.includes(cfg.title)) {
+                    if (hasNovel) {
+                        contentArray.push(cfg.text(data));
+                    }
+                }
+                else {
+                    // 添加通用数据
+                    contentArray.push(cfg.text(data));
+                }
+            });
+            csvContent.push(contentArray);
+        });
+        // 生成文件并保存
+        const blob = _utils_CreateCSV__WEBPACK_IMPORTED_MODULE_7__.createCSV.create(csvContent);
+        const url = URL.createObjectURL(blob);
+        const date = _utils_DateFormat__WEBPACK_IMPORTED_MODULE_9__.DateFormat.format(new Date());
+        const fileName = `${_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_数据分析')} - ${this.exportScope} - ${date}.csv`;
+        _utils_Utils__WEBPACK_IMPORTED_MODULE_8__.Utils.downloadFile(url, fileName);
+        URL.revokeObjectURL(url);
+        const msg = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_导出成功') + `:<br>${fileName}`;
+        _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.success(msg);
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./src/ts/crawlMixedPage/InitFollowingPage.ts":
 /*!****************************************************!*\
   !*** ./src/ts/crawlMixedPage/InitFollowingPage.ts ***!
@@ -25958,7 +26342,7 @@ And so on.
         '일러스트',
         'Иллюстрации',
     ],
-    _漫画: ['漫画', '漫畫', 'Manga', '漫画', '만화', 'Манга'],
+    _漫画: ['漫画', '漫畫', 'Manga', 'マンガ', '만화', 'Манга'],
     _动图: [
         '动图',
         '動圖',
@@ -25967,7 +26351,7 @@ And so on.
         '움직이는 일러스트',
         'Ugoira(гиф)',
     ],
-    _小说: ['小说', '小說', 'Novel', '小説', '소설', 'Новеллы'],
+    _小说: ['小说', '小說', 'Novels', '小説', '소설', 'Новеллы'],
     _动图保存格式: [
         '<span class="key">动图</span>保存格式',
         '<span class="key">動圖</span>儲存格式',
@@ -28559,7 +28943,7 @@ This setting is also used when you use the Downloader to bookmark works in batch
         `Работы этих пользователей не будут загружаться. Необходимо ввести идентификатор пользователя.<br>
     Если имеется несколько идентификаторов пользователя, используйте разделение запятыми (,).`,
     ],
-    _全部: ['全部', '全部', 'All', '全部', '전부', 'Все'],
+    _全部: ['全部', '全部', 'All', 'すべて', '전부', 'Все'],
     _任一: ['任一', '任一', 'One', '何れか', '하나만', 'Один'],
     _颜色主题: [
         '颜色<span class="key">主题</span>',
@@ -32793,6 +33177,57 @@ To prevent duplicate filenames, it is recommended to always add {series_id}.`,
     <br>
     - При активации этой функции используйте фильтр "Цвет изображения" с осторожностью. Если выбран только один цвет (т.е. требуется определить цвет изображения), загрузчику нужно загрузить миниатюры всех работ для определения цвета, что сгенерирует большое количество запросов и займет больше времени (фильтрация может занять более 2 секунд).`,
     ],
+    _导出作品数据CSV: [
+        `导出作品数据（CSV）`,
+        `匯出作品資料（CSV）`,
+        `Export work data (CSV)`,
+        `作品データをエクスポート（CSV）`,
+        `작품 데이터 내보내기 (CSV)`,
+        `Экспорт данных работы (CSV)`,
+    ],
+    _类型: [`类型`, `類型`, `Type`, `タイプ`, `유형`, `Тип`],
+    _标题: ['标题', '標題', 'Title', 'タイトル', '타이틀', `Заголовок`],
+    _赞: ['赞！', '讚！', 'Likes', 'いいね！', '좋아요!', `Лайк!`],
+    _浏览量: ['浏览量', '瀏覽量', 'Views', '閲覧数', '열람 횟수', `Просмотры`],
+    _评论: ['评论', '留言', 'Comments', 'コメント', '댓글', `Комментарий`],
+    _日期: ['日期', '日期', 'Date', '日付', '날짜', `Дата`],
+    _评级: ['评级', '分級', 'Rating', 'レーティング', '연령 등급', 'Рейтинг'],
+    _张数: ['张数', '張數', 'Pages', '枚数', '매수', `Количество страниц`],
+    _排名: ['排名', '排名', 'Ranking', 'ランキング順位', '랭킹 순위', `Рейтинг`],
+    _响应关联作品: [
+        '响应关联作品',
+        '響應關聯作品',
+        'Image Response',
+        'イメージレスポンス',
+        '이미지 리스폰스',
+        `Ответ на связанные работы`,
+    ],
+    _添加插图: [
+        '添加插图',
+        '使用插圖',
+        'Illustration usage counter',
+        '挿絵使用',
+        '삽화 사용',
+        `Добавленные иллюстрации`,
+    ],
+    _文字数: [
+        '文字数',
+        '文字數',
+        'Characters',
+        '文字数',
+        '글자수',
+        `Количество символов`,
+    ],
+    _单词数: ['单词数', '詞彙數', 'Words', '単語数', '단어수', `Количество слов`],
+    _数据分析: [
+        '数据分析',
+        '創作儀表板',
+        'Dashboard',
+        'ダッシュボード',
+        '대쉬보드',
+        `Дашборд`,
+    ],
+    _标签: ['标签', '標籤', 'Tags', 'タグ', '태그', 'Теги'],
 };
 
 // prompt
@@ -35347,11 +35782,12 @@ class CrawlNumber {
     getCfg() {
         const cfg = _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.crawlNumber[_PageType__WEBPACK_IMPORTED_MODULE_0__.pageType.type];
         if (cfg === undefined) {
+            console.log(_PageType__WEBPACK_IMPORTED_MODULE_0__.pageType.type);
+            console.log(_Settings__WEBPACK_IMPORTED_MODULE_3__.settings.crawlNumber);
             const msg = 'Error: Failed to get crawlNumber configuration!';
             _MsgBox__WEBPACK_IMPORTED_MODULE_2__.msgBox.error(msg);
             throw new Error(msg);
         }
-        // console.log(JSON.stringify(cfg))
         return cfg;
     }
     /**显示或隐藏设置，并设置内部一些元素的值 */
@@ -38693,7 +39129,15 @@ class Settings {
                 min: 0,
                 max: 0,
                 value: 0,
-                tip: '23',
+                tip: '',
+            },
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Dashboard]: {
+                work: false,
+                page: false,
+                min: 0,
+                max: 0,
+                value: 0,
+                tip: '',
             },
         },
         firstFewImagesSwitch: false,
@@ -38833,6 +39277,7 @@ class Settings {
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Request]: 'pixiv/{user}-{user_id}/{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Unlisted]: 'pixiv/{user}-{user_id}/{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.DiscoverUsers]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Dashboard]: 'pixiv/{user}-{user_id}/{id}-{title}',
         },
         showAdvancedSettings: false,
         showNotificationAfterDownloadComplete: false,
@@ -39001,6 +39446,15 @@ class Settings {
                 const savedSettings = localStorage.getItem(_Config__WEBPACK_IMPORTED_MODULE_5__.Config.settingStoreName);
                 if (savedSettings) {
                     restoreData = JSON.parse(savedSettings);
+                }
+            }
+            // 当一些 key 为 PageName 的配置里增加了新配置时，由于已保存的设置里没有对应（新的页面类型）的配置，所以需要把新的配置添加到已保存的设置里
+            const keys = ['crawlNumber', 'nameRuleForEachPageType'];
+            for (const key of keys) {
+                for (const [pageTypeNo, cfg] of Object.entries(this.defaultSettings[key])) {
+                    if (restoreData[key][pageTypeNo] === undefined) {
+                        restoreData[key][pageTypeNo] = cfg;
+                    }
                 }
             }
             this.assignSettings(restoreData);
@@ -39632,6 +40086,7 @@ class Wiki {
             'clearMultiImageWork',
             'clearUgoiraWork',
             'manuallyDeleteWork',
+            'exportDashboardData',
         ],
         'Buttons-Download': [
             'importCrawlResults',
@@ -57958,6 +58413,23 @@ class Utils {
     /** 检测字符串是否全部为 ASCII 字符 */
     static isAscii(str) {
         return /^[\x00-\x7F]*$/.test(str);
+    }
+    /** 为数字字符串添加千位分隔符 */
+    static formatNumber(number) {
+        if (typeof number !== 'string') {
+            number = number.toString();
+        }
+        const length = number.length;
+        let array = [];
+        // 倒序处理字符串，从末尾到开头逐字添加到数组里，并每隔 3 位添加一个逗号
+        // 如果第一个数字正好是一个千位，则不添加逗号，否则会导致最前面多出一个不该出现的逗号
+        for (let i = 1; i <= length; i++) {
+            array.push(number[length - i]);
+            if (i % 3 === 0 && i !== length) {
+                array.push(',');
+            }
+        }
+        return array.reverse().join('');
     }
 }
 

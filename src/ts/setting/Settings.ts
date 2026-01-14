@@ -87,6 +87,8 @@ type CrawlNumberConfig = {
   tip: string
 }
 
+type PageEntry = [PageName, any]
+
 // 注意：设置里不能使用 Map，因为把设置保存在 chrome.storage 里时会序列化
 // 如果使用 Map，会被转换为 `Object {}`，导致错误
 interface XzSetting {
@@ -523,7 +525,15 @@ class Settings {
         min: 0,
         max: 0,
         value: 0,
-        tip: '23',
+        tip: '',
+      },
+      [PageName.Dashboard]: {
+        work: false,
+        page: false,
+        min: 0,
+        max: 0,
+        value: 0,
+        tip: '',
       },
     },
     firstFewImagesSwitch: false,
@@ -667,6 +677,7 @@ class Settings {
       [PageName.Request]: 'pixiv/{user}-{user_id}/{id}-{title}',
       [PageName.Unlisted]: 'pixiv/{user}-{user_id}/{id}-{title}',
       [PageName.DiscoverUsers]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.Dashboard]: 'pixiv/{user}-{user_id}/{id}-{title}',
     },
     showAdvancedSettings: false,
     showNotificationAfterDownloadComplete: false,
@@ -852,6 +863,19 @@ class Settings {
           restoreData = JSON.parse(savedSettings)
         }
       }
+
+      // 当一些 key 为 PageName 的配置里增加了新配置时，由于已保存的设置里没有对应（新的页面类型）的配置，所以需要把新的配置添加到已保存的设置里
+      const keys = ['crawlNumber', 'nameRuleForEachPageType'] as const
+      for (const key of keys) {
+        for (const [pageTypeNo, cfg] of Object.entries(
+          this.defaultSettings[key]
+        ) as unknown as PageEntry[]) {
+          if (restoreData[key][pageTypeNo] === undefined) {
+            restoreData[key][pageTypeNo] = cfg
+          }
+        }
+      }
+
       this.assignSettings(restoreData)
       EVT.fire('settingInitialized')
     })

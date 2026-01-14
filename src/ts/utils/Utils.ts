@@ -546,6 +546,25 @@ class Utils {
   static isAscii(str: string) {
     return /^[\x00-\x7F]*$/.test(str)
   }
+
+  /** 为数字字符串添加千位分隔符 */
+  static formatNumber(number: number | string): string {
+    if (typeof number !== 'string') {
+      number = number.toString()
+    }
+
+    const length = number.length
+    let array = []
+    // 倒序处理字符串，从末尾到开头逐字添加到数组里，并每隔 3 位添加一个逗号
+    // 如果第一个数字正好是一个千位，则不添加逗号，否则会导致最前面多出一个不该出现的逗号
+    for (let i = 1; i <= length; i++) {
+      array.push(number[length - i])
+      if (i % 3 === 0 && i !== length) {
+        array.push(',')
+      }
+    }
+    return array.reverse().join('')
+  }
 }
 
 export { Utils }

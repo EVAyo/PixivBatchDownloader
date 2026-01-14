@@ -740,7 +740,7 @@ interface DisplayA {
   /**储存排行榜里每篇小说的摘要数据。注意：不包含正文内容。
    * 目前在有些排行榜里返回的是数组，有些排行榜（新人）里返回的是类数组对象（但没有 length 属性）
    */
-  rank_a: NovelItem[] | { number: NovelItem }
+  rank_a: RankingNovelItem[] | { number: RankingNovelItem }
   /**这个排行榜的标记，例如 "daily"、"weekly" */
   mode: string
   /**也许是被屏蔽的作品的数量，通常为 0 */
@@ -777,7 +777,7 @@ interface DisplayA {
   ranking_header: RankingHeader
 }
 
-export interface NovelItem {
+export interface RankingNovelItem {
   /**这个小说在排行榜里的排名，如 '1'、'2'。根据排行榜不同，返回的数据类型也不同 */
   rank: string | number
   id: string
@@ -1738,4 +1738,170 @@ export interface LatestMessageData {
     /**获取后续消息的 URL，如果没有后续消息，则为 null */
     next_url: string | null
   }
+}
+
+export interface DashboardData {
+  error: boolean
+  message: string
+  body: {
+    data: {
+      /** 保存着每个作品用于数据分析的部分数据，不是全部 */
+      works: DashboardWork[]
+      series: {
+        seriesId: string
+        seriesType: 'illust' | 'novel'
+      }[]
+      drafts: unknown[]
+      reservedWorks: unknown[]
+      fetchRanges: unknown[]
+    }
+    /** 当获取的是 illust 分类的数据时，这个数组里才可能有对象。如果获取的是 novel 的数据，则必定为空数组 */
+    illustSeries: {
+      id: string
+      userId: string
+      title: string
+      description: string
+      caption: string
+      total: number
+      content_order: null
+      url: string
+      coverImageSl: number
+      firstIllustId: string
+      latestIllustId: string
+      createDate: string
+      updateDate: string
+      watchCount: null
+      isWatched: boolean
+      isNotifying: boolean
+    }[]
+    /** 当获取的是 novel 分类的数据时，这个数组里才可能有对象。如果获取的是 illust 的数据，则必定为空数组 */
+    // 因为该对象包含的属性很多，所以我偷懒将其省略成了 {}
+    novelSeries: {}[]
+    requests: []
+    /** 当获取的是 illust 分类的数据时，值是对象。如果获取的是 novel 的数据，值是数组 */
+    tagTranslation:
+      | {
+          [key: string]: {
+            en?: string
+            ko?: string
+            zh?: string
+            zh_tw?: string
+            romaji?: string
+          }
+        }
+      | []
+    /** 保存着每个作品的部分详细数据。数据分析里展示的一些数据需要从这里获取 */
+    thumbnails: {
+      /** 当获取的是 illust 分类的数据时，这个数组里才可能有对象。如果获取的是 novel 的数据，则必定为空数组 */
+      illust: DashboardIllustThumbnail[]
+      /** 当获取的是 novel 分类的数据时，这个数组里才可能有对象。如果获取的是 illust 的数据，则必定为空数组 */
+      novel: DashboardNovelThumbnail[]
+      novelDraft: unknown[]
+      collection: unknown[]
+    }
+    users: []
+  }
+}
+
+interface DashboardWork {
+  workId: string
+  /** 作品类型，插画、漫画、动图都是 'illust'。小说是 'novel' */
+  workType: 'illust' | 'novel'
+  /** 浏览量 */
+  viewCount: number
+  /** 赞! */
+  ratingCount: number
+  /** 收藏 */
+  bookmarkCount: number
+  /** 评论 */
+  commentCount: number
+  /** 日期 */
+  createDate: string
+  /** 排名，如果没有排名则是 0 */
+  dailyRankingBestRank: number
+  /** 响应关联作品 */
+  imageResponseCount: number
+  /** 添加插图 */
+  quotedIllustCount: number
+  request: null
+  /** 评级：0 是 '待评级'，1 是全年龄，2 是限制级 */
+  contentRating: 0 | 1 | 2
+  // 文字数。仅当 workType 为 'novel' 时有这个属性
+  textLength?: number
+}
+
+interface DashboardIllustThumbnail {
+  aiType: 0 | 1 | 2
+  id: string
+  title: string
+  illustType: 0 | 1 | 2
+  restrict: 0 | 1 | 2
+  xRestrict: 0 | 1 | 2
+  sl: 0 | 2 | 4 | 6
+  url: string
+  description: string
+  tags: string[]
+  userId: string
+  userName: string
+  width: number
+  height: number
+  pageCount: number
+  isBookmarkable: boolean
+  bookmarkData: null
+  alt: string
+  titleCaptionTranslation: {
+    workTitle: null
+    workCaption: null
+  }
+  createDate: string
+  updateDate: string
+  isUnlisted: boolean
+  isMasked: boolean
+  visibilityScope: number
+  urls: {
+    '250x250': string
+    '360x360': string
+    '540x540': string
+    '1200x1200': string
+    '240mw': string
+  }
+  seriesId: string
+  seriesTitle: string
+  profileImageUrl: string
+}
+
+interface DashboardNovelThumbnail {
+  aiType: 0 | 1 | 2
+  id: string
+  title: string
+  /**小说的类别，'0' 为原创。似乎大部分都是 '0' */
+  genre: string
+  restrict: 0 | 1 | 2
+  xRestrict: 0 | 1 | 2
+  sl: 0 | 2 | 4 | 6
+  url: string
+  tags: string[]
+  userId: string
+  userName: string
+  profileImageUrl: string
+  textCount: number
+  wordCount: number
+  useWordCount: boolean
+  readingTime: number
+  description: string
+  isBookmarkable: boolean
+  bookmarkData: null
+  bookmarkCount: number
+  isOriginal: boolean
+  marker: null
+  titleCaptionTranslation: {
+    workTitle: null
+    workCaption: null
+  }
+  createDate: string
+  updateDate: string
+  isMasked: boolean
+  isUnlisted: boolean
+  visibilityScope: number
+  language: string
 }

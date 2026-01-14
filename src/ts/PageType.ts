@@ -60,6 +60,8 @@ enum PageName {
   Unlisted,
   /** 发现页面 - 推荐用户 */
   DiscoverUsers,
+  /** 数据分析（我的作品） */
+  Dashboard,
 }
 
 // 获取页面类型
@@ -166,6 +168,8 @@ class PageType {
       return PageName.Request
     } else if (pathname.includes('/unlisted')) {
       return PageName.Unlisted
+    } else if (pathname.includes('/dashboard')) {
+      return PageName.Dashboard
     } else {
       // 没有匹配到可用的页面类型
       return PageName.Unsupported
@@ -286,6 +290,10 @@ class PageType {
       {
         type: PageName.DiscoverUsers,
         url: 'https://www.pixiv.net/discovery/users',
+      },
+      {
+        type: PageName.Dashboard,
+        url: 'https://www.pixiv.net/dashboard/works',
       },
     ]
 
