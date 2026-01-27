@@ -2695,6 +2695,8 @@ class Config {
     static sendDataURL = !this.isFirefox && (webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default().extension).inIncognitoContext;
     /**ImageViewer 生成的 li 元素的 className */
     static ImageViewerLI = 'xz-thumb-li';
+    /** 默认的命名规则 */
+    static defaultNameRule = 'pixiv/{user}-{user_id}/{id}-{title}';
 }
 
 
@@ -36855,7 +36857,7 @@ const formHtml = `
   <div class="tabsContnet">
     <p class="option" data-no="13">
       <a href="${_Wiki__WEBPACK_IMPORTED_MODULE_1__.wiki.link(13)}" target="_blank" class="settingNameStyle" data-xztext="_命名规则"></a>
-      <input type="text" name="userSetName" class="setinput_style1 blue fileNameRule" value="pixiv/{user}-{user_id}/{id}-{title}">
+      <input type="text" name="userSetName" class="setinput_style1 blue fileNameRule" value="${_Config__WEBPACK_IMPORTED_MODULE_0__.Config.defaultNameRule}">
       &nbsp;
       <select name="fileNameSelect" class="beautify_scrollbar">
         <option value="default">…</option>
@@ -39171,8 +39173,8 @@ class Settings {
         notNeedTag: [],
         autoStartDownload: true,
         downloadThread: 3,
-        userSetName: 'pixiv/{user}-{user_id}/{id}-{title}',
-        namingRuleList: [],
+        userSetName: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+        namingRuleList: [_Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule],
         workDir: false,
         workDirFileNumber: 1,
         workDirNameRule: '{id_num}',
@@ -39260,32 +39262,32 @@ class Settings {
         saveMetaType3: false,
         setNameRuleForEachPageType: false,
         nameRuleForEachPageType: {
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Unsupported]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Home]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Artwork]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.UserHome]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Unsupported]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Home]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Artwork]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.UserHome]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.BookmarkLegacy]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Bookmark]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.ArtworkSearch]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.AreaRanking]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.AreaRanking]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.ArtworkRanking]: 'pixiv/{page_title}/{rank}-{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Pixivision]: 'pixivision/{page_title}/{id}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.BookmarkDetail]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewArtworkBookmark]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Discover]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewArtwork]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Novel]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.BookmarkDetail]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewArtworkBookmark]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Discover]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewArtwork]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Novel]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NovelSeries]: 'pixiv/{user}-{user_id}/{series_title}/{series_order}-{title}-{id}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NovelSearch]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NovelRanking]: 'pixiv/{page_title}/{rank}-{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewNovelBookmark]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewNovel]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewNovelBookmark]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.NewNovel]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
             [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.ArtworkSeries]: 'pixiv/{user}-{user_id}/{series_title}/{series_order}-{title}-{id}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Following]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Request]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Unlisted]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.DiscoverUsers]: 'pixiv/{user}-{user_id}/{id}-{title}',
-            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Dashboard]: 'pixiv/{user}-{user_id}/{id}-{title}',
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Following]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Request]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Unlisted]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.DiscoverUsers]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
+            [_PageType__WEBPACK_IMPORTED_MODULE_9__.PageName.Dashboard]: _Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule,
         },
         showAdvancedSettings: false,
         showNotificationAfterDownloadComplete: false,
@@ -39636,10 +39638,14 @@ class Settings {
         if (key === 'workDirNameRule') {
             value = value.replace('{id}', '{id_num}');
         }
+        // namingRuleList 之前默认是空数组，后来默认包含了默认的命名规则，所以这里做个兼容处理
+        if (key === 'namingRuleList' && value.length === 0) {
+            value = [_Config__WEBPACK_IMPORTED_MODULE_5__.Config.defaultNameRule];
+        }
         // 更改设置
         ;
         this.settings[key] = value;
-        // 当修改某些设置时，顺便修改以来它的设置
+        // 当修改某些设置时，顺便修改依赖它的设置
         if (key === 'widthTag') {
             this.settings.widthTagBoolean = value === 'yes';
         }

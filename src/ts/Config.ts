@@ -35,6 +35,8 @@ class Config {
     !this.isFirefox && browser.extension.inIncognitoContext
   /**ImageViewer 生成的 li 元素的 className */
   static readonly ImageViewerLI = 'xz-thumb-li'
+  /** 默认的命名规则 */
+  static readonly defaultNameRule = 'pixiv/{user}-{user_id}/{id}-{title}'
 }
 
 export { Config }

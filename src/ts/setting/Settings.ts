@@ -559,8 +559,8 @@ class Settings {
     notNeedTag: [],
     autoStartDownload: true,
     downloadThread: 3,
-    userSetName: 'pixiv/{user}-{user_id}/{id}-{title}',
-    namingRuleList: [],
+    userSetName: Config.defaultNameRule,
+    namingRuleList: [Config.defaultNameRule],
     workDir: false,
     workDirFileNumber: 1,
     workDirNameRule: '{id_num}',
@@ -648,36 +648,36 @@ class Settings {
     saveMetaType3: false,
     setNameRuleForEachPageType: false,
     nameRuleForEachPageType: {
-      [PageName.Unsupported]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Home]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Artwork]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.UserHome]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.Unsupported]: Config.defaultNameRule,
+      [PageName.Home]: Config.defaultNameRule,
+      [PageName.Artwork]: Config.defaultNameRule,
+      [PageName.UserHome]: Config.defaultNameRule,
       [PageName.BookmarkLegacy]:
         'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
       [PageName.Bookmark]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
       [PageName.ArtworkSearch]:
         'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
-      [PageName.AreaRanking]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.AreaRanking]: Config.defaultNameRule,
       [PageName.ArtworkRanking]: 'pixiv/{page_title}/{rank}-{id}-{title}',
       [PageName.Pixivision]: 'pixivision/{page_title}/{id}',
-      [PageName.BookmarkDetail]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.NewArtworkBookmark]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Discover]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.NewArtwork]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Novel]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.BookmarkDetail]: Config.defaultNameRule,
+      [PageName.NewArtworkBookmark]: Config.defaultNameRule,
+      [PageName.Discover]: Config.defaultNameRule,
+      [PageName.NewArtwork]: Config.defaultNameRule,
+      [PageName.Novel]: Config.defaultNameRule,
       [PageName.NovelSeries]:
         'pixiv/{user}-{user_id}/{series_title}/{series_order}-{title}-{id}',
       [PageName.NovelSearch]: 'pixiv/{page_tag}/{user}-{user_id}/{id}-{title}',
       [PageName.NovelRanking]: 'pixiv/{page_title}/{rank}-{id}-{title}',
-      [PageName.NewNovelBookmark]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.NewNovel]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.NewNovelBookmark]: Config.defaultNameRule,
+      [PageName.NewNovel]: Config.defaultNameRule,
       [PageName.ArtworkSeries]:
         'pixiv/{user}-{user_id}/{series_title}/{series_order}-{title}-{id}',
-      [PageName.Following]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Request]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Unlisted]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.DiscoverUsers]: 'pixiv/{user}-{user_id}/{id}-{title}',
-      [PageName.Dashboard]: 'pixiv/{user}-{user_id}/{id}-{title}',
+      [PageName.Following]: Config.defaultNameRule,
+      [PageName.Request]: Config.defaultNameRule,
+      [PageName.Unlisted]: Config.defaultNameRule,
+      [PageName.DiscoverUsers]: Config.defaultNameRule,
+      [PageName.Dashboard]: Config.defaultNameRule,
     },
     showAdvancedSettings: false,
     showNotificationAfterDownloadComplete: false,
@@ -1072,10 +1072,15 @@ class Settings {
       value = (value as string).replace('{id}', '{id_num}')
     }
 
+    // namingRuleList 之前默认是空数组，后来默认包含了默认的命名规则，所以这里做个兼容处理
+    if (key === 'namingRuleList' && (value as string[]).length === 0) {
+      value = [Config.defaultNameRule]
+    }
+
     // 更改设置
     ;(this.settings[key] as any) = value
 
-    // 当修改某些设置时，顺便修改以来它的设置
+    // 当修改某些设置时，顺便修改依赖它的设置
     if (key === 'widthTag') {
       this.settings.widthTagBoolean = value === 'yes'
     }
