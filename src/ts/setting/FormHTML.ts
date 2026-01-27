@@ -433,7 +433,7 @@ export const formHtml = `
       <span class="blue name">{task_date}</span>
       <span data-xztext="_命名标记taskDate"></span>
       <br>
-      <span class="blue name">{px}</span>
+      * <span class="blue name">{px}</span>
       <span data-xztext="_命名标记px"></span>
       <br>
       * <span class="blue name">{series_title}</span>

@@ -218,7 +218,7 @@ class FileName {
 
     let rule = userSetName
 
-    // 有些标记可能是空字符串，移除它们
+    // 有些标记可能是空字符串，移除它们前面的分割符号
     const mayEmptyList: (keyof typeof cfg)[] = [
       '{p_num}',
       '{page_tag}',
@@ -228,6 +228,7 @@ class FileName {
       '{tags_translate}',
       '{tags_transl_only}',
       '{rank}',
+      '{px}',
       '{series_title}',
       '{series_order}',
       '{series_id}',
