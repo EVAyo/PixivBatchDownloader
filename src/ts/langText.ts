@@ -9396,13 +9396,19 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
     `파일 이름에 적용되는 {tags} 계열 토큰`,
     `Токены серии {tags}, применяемые в имени файла`,
   ],
-  _版本更新说明18_9_2: [
-    `<strong>🐞修复问题：在抓取过程中出现 404 错误时，抓取进度可能会卡住</strong><br>`,
-    `<strong>🐞修復問題：在抓取過程中出現 404 錯誤時，抓取進度可能會卡住</strong><br>`,
-    `<strong>🐞Fix: When a 404 error occurs during crawling, the crawl progress may get stuck</strong><br>`,
-    `<strong>🐞修正：crawl 中に 404 エラーが発生すると、進捗が止まることがある問題を修正</strong><br>`,
-    `<strong>🐞문제 수정: crawl 중에 404 오류가 발생하면 진행 상태가 멈출 수 있던 문제를 수정했습니다</strong><br>`,
-    `<strong>🐞Исправление: если во время crawl возникает ошибка 404, прогресс crawl может зависнуть</strong><br>`,
+  _版本更新说明18_9_3: [
+    `<strong>✨适配搜索页面的“显示可能妨碍搜索的作品”选项</strong><br><br>
+  <strong>🐞修复问题：标签别名功能在特定情况下可能表现异常</strong><br>`,
+    `<strong>✨適配搜尋頁面的 "顯示可能妨礙搜尋的作品" 選項</strong><br><br>
+  <strong>🐞修復問題：標籤別名功能在特定情況下可能表現異常</strong><br>`,
+    `<strong>✨Adapted to the "Show works that may interfere with search results" option on the search page</strong><br><br>
+  <strong>🐞Fix: The tag alias feature could behave unexpectedly in certain cases</strong><br>`,
+    `<strong>✨検索ページの "検索を妨げる可能性のある作品を表示する" オプションに対応</strong><br><br>
+  <strong>🐞修正：特定の状況でタグ別名機能の動作が不安定になることがある問題を修正</strong><br>`,
+    `<strong>✨검색 페이지의 "검색을 방해할 수 있는 작품 표시" 옵션에 대응했습니다</strong><br><br>
+  <strong>🐞문제 수정: 태그 별칭 기능이 특정 상황에서 비정상적으로 동작할 수 있던 문제를 수정했습니다</strong><br>`,
+    `<strong>✨Добавлена поддержка опции "Показывать работы, которые могут мешать поиску" на странице поиска</strong><br><br>
+  <strong>🐞Исправление: в некоторых случаях функция псевдонимов тегов могла работать некорректно</strong><br>`,
   ],
   _从插画漫画里下载1张图片时: [
     `从插画、漫画里下载 1 张图片时`,
