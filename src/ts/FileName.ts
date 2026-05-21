@@ -44,11 +44,11 @@ class FileName {
         safe: false,
       },
       '{p_tag}': {
-        value: this.handleTagsRule([store.tag]),
+        value: store.tag ? this.handleTagsRule([store.tag]) : '',
         safe: false,
       },
       '{page_tag}': {
-        value: this.handleTagsRule([store.tag]),
+        value: store.tag ? this.handleTagsRule([store.tag]) : '',
         safe: false,
       },
       '{id}': {

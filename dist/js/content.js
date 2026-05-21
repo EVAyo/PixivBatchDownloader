@@ -4089,11 +4089,11 @@ class FileName {
                 safe: false,
             },
             '{p_tag}': {
-                value: this.handleTagsRule([_store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag]),
+                value: _store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag ? this.handleTagsRule([_store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag]) : '',
                 safe: false,
             },
             '{page_tag}': {
-                value: this.handleTagsRule([_store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag]),
+                value: _store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag ? this.handleTagsRule([_store_Store__WEBPACK_IMPORTED_MODULE_4__.store.tag]) : '',
                 safe: false,
             },
             '{id}': {
@@ -23621,7 +23621,7 @@ class DownloadRecordManager {
     }
     // 清空下载记录
     async clearRecords() {
-        if (window.confirm(_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('确定要清除下载记录吗')) === false) {
+        if (window.confirm(_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_确定要清除下载记录吗')) === false) {
             return;
         }
         _Log__WEBPACK_IMPORTED_MODULE_1__.log.log(_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_清除下载记录'));
@@ -32107,13 +32107,19 @@ Note: Even if you disable this setting, some quick download methods will always 
         '다운로드 기록 지우기',
         'Очистить запись загрузки',
     ],
-    确定要清除下载记录吗: [
-        '确定要清除下载记录吗？',
-        '確定要清除下載記錄嗎？',
-        'Are you sure you want to clear download record?',
-        'ダウンロード記録を消去してもよろしいですか?',
-        '다운로드 기록을 지우시겠습니까?',
-        'Вы уверены, что хотите очистить запись загрузки?',
+    _确定要清除下载记录吗: [
+        `确定要清除下载器的下载记录吗？\n
+注意：该功能清除的是下载器的下载记录，而非浏览器的下载记录。`,
+        `確定要清除下載器的下載記錄嗎？\n
+注意：此功能清除的是下載器的下載記錄，而非瀏覽器的下載記錄。`,
+        `Are you sure you want to clear the downloader's download record?\n
+Note: This clears the downloader's download record, not the browser's download history.`,
+        `ダウンローダーのダウンロード記録を削除してもよろしいですか？\n
+注意：この機能で削除されるのはダウンローダーのダウンロード記録であり、ブラウザのダウンロード履歴ではありません。`,
+        `다운로더의 다운로드 기록을 삭제하시겠습니까?\n
+주의: 이 기능은 다운로더의 다운로드 기록을 삭제하는 것이며, 브라우저의 다운로드 기록을 삭제하는 것은 아닙니다.`,
+        `Вы уверены, что хотите очистить download record загрузчика?\n
+Внимание: эта функция очищает download record загрузчика, а не download history браузера.`,
     ],
     _下载记录已清除: [
         '下载记录已清除',
@@ -44793,6 +44799,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Theme__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Theme */ "./src/ts/Theme.ts");
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
 /* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../MsgBox */ "./src/ts/MsgBox.ts");
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+
 
 
 
@@ -44970,6 +44978,11 @@ class SetTagAlias {
             _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.error(msg);
             return false;
         }
+        // 如果标签列表以逗号 , 结尾，会导致把它分割为数组时，在末尾产生一个空字符串项 ''
+        // 所以需要去掉末尾的逗号
+        if (tagsInput.endsWith(',')) {
+            tagsInput = tagsInput.slice(0, -1);
+        }
         return {
             aliasInput,
             tagsInput,
@@ -44981,7 +44994,7 @@ class SetTagAlias {
         if (!check) {
             return;
         }
-        _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList[alias] = tags;
+        _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList[alias] = check.tagsInput;
         (0,_Settings__WEBPACK_IMPORTED_MODULE_3__.setSetting)('setTagAliasList', _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList);
         this.addWrapShow = false;
         _Toast__WEBPACK_IMPORTED_MODULE_5__.toast.success(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_添加成功'));
@@ -44995,7 +45008,7 @@ class SetTagAlias {
         }
         delete _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList[oldAlias];
         alias = alias.trim();
-        _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList[alias] = tags;
+        _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList[alias] = check.tagsInput;
         (0,_Settings__WEBPACK_IMPORTED_MODULE_3__.setSetting)('setTagAliasList', _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.setTagAliasList);
         this.addWrapShow = false;
         if (tip) {
@@ -45027,6 +45040,9 @@ class SetTagAlias {
     }
     /** 传入一个标签，查找用户是否为它设置了别名 */
     findAlias(tag) {
+        if (tag === '') {
+            return null;
+        }
         for (const [alias, tags] of Object.entries(this.cache)) {
             // 把传入的标签转换成小写，并移除收藏数量标记
             // 标签后面可能有数字+users入り的收藏数量标记，例如：原神10000users入り
@@ -45034,7 +45050,13 @@ class SetTagAlias {
                 .toLowerCase()
                 .replace(/\d+users入り$/, '')
                 .trim();
-            if (tags.includes(cleanTag)) {
+            // 为传入的 tag 生成一个全角版本的副本。这是因为目前存在一个隐蔽的 bug：
+            // 用户在标签别名里设置的标签列表（即 tags）可能意外变成全角版本，例如用户设置的 勝利の女神:NIKKE 可能变成 勝利の女神：NIKKE（冒号变成了全角冒号）。
+            // 在代码层面没有找到这个 bug 的原因。可能是其他原因导致 input 元素里的值变成了全角版本，之后被下载器保存了。由于下载器无法判断这个全角版本是预期之外的，还是预期之内的（即某些标签里可能确实含有全角符号），所以下载器只能照常保存这个全角的版本。
+            // 这个 bug 是有害的：如果传入的标签是半角版本（即正常的标签）时，就无法匹配到这个别名了。也就是说如果作品里含有 勝利の女神:NIKKE 的标签，但 tags 里是全角的 勝利の女神：NIKKE，就无法匹配到对应的别名。
+            // 为了处理这种情况，我为传入的标签生成了一个全角版本的副本，这样不管是否出现了这个 bug，都可以正确匹配到这个别名。
+            const cleanTagFullWidth = _utils_Utils__WEBPACK_IMPORTED_MODULE_7__.Utils.replaceUnsafeStr(cleanTag);
+            if (tags.includes(cleanTag) || tags.includes(cleanTagFullWidth)) {
                 return alias;
             }
         }
@@ -45047,6 +45069,9 @@ class SetTagAlias {
         }
         const set = new Set();
         for (const tag of tags) {
+            if (tag === '') {
+                continue;
+            }
             const alias = this.findAlias(tag);
             if (alias) {
                 set.add(alias);
@@ -65743,28 +65768,31 @@ __webpack_require__.r(__webpack_exports__);
 class Utils {
     // 不安全的字符，这里多数是控制字符，需要替换掉
     static unsafeStr = new RegExp(/[\u0000\u0001-\u001f\u007f-\u009f\u00ad\u0600-\u0605\u061c\u06dd\u070f\u08e2\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u206f\ufdd0-\ufdef\ufeff\ufff9-\ufffb\ufffe\uffff]/g);
-    // 一些需要替换成全角字符的符号，左边是正则表达式的字符
-    static fullWidthDict = [
-        ['\\\\', '＼'],
+    // 一些半角字符与全角字符的对照表
+    static fullWidthDict = new Map([
+        ['\\', '＼'],
         ['/', '／'],
         [':', '：'],
-        ['\\?', '？'],
+        ['?', '？'],
         ['"', '＂'],
         ['<', '＜'],
         ['>', '＞'],
-        ['\\*', '＊'],
-        ['\\|', '｜'],
+        ['*', '＊'],
+        ['|', '｜'],
         ['~', '～'],
-    ];
-    // reg 预先创建，而不是运行时创建，因为运行时重复创建太多次了
-    // 用正则去掉不安全的字符
+    ]);
+    /** 替换一些控制字符，并把一些半角字符替换成全角版本 */
     static replaceUnsafeStr(str) {
         str = str.replace(this.unsafeStr, '');
-        // 把一些特殊字符替换成全角字符
-        for (let index = 0; index < this.fullWidthDict.length; index++) {
-            const rule = this.fullWidthDict[index];
-            const reg = new RegExp(rule[0], 'g');
-            str = str.replace(reg, rule[1]);
+        for (const [halfWidth, fullWidth] of this.fullWidthDict) {
+            str = str.replaceAll(halfWidth, fullWidth);
+        }
+        return str;
+    }
+    /** 把全角字符替换成半角版本 */
+    static replaceFullWidthStr(str) {
+        for (const [halfWidth, fullWidth] of this.fullWidthDict) {
+            str = str.replaceAll(fullWidth, halfWidth);
         }
         return str;
     }

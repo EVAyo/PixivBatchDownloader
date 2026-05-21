@@ -3107,13 +3107,19 @@ Note: Even if you disable this setting, some quick download methods will always 
     '다운로드 기록 지우기',
     'Очистить запись загрузки',
   ],
-  确定要清除下载记录吗: [
-    '确定要清除下载记录吗？',
-    '確定要清除下載記錄嗎？',
-    'Are you sure you want to clear download record?',
-    'ダウンロード記録を消去してもよろしいですか?',
-    '다운로드 기록을 지우시겠습니까?',
-    'Вы уверены, что хотите очистить запись загрузки?',
+  _确定要清除下载记录吗: [
+    `确定要清除下载器的下载记录吗？\n
+注意：该功能清除的是下载器的下载记录，而非浏览器的下载记录。`,
+    `確定要清除下載器的下載記錄嗎？\n
+注意：此功能清除的是下載器的下載記錄，而非瀏覽器的下載記錄。`,
+    `Are you sure you want to clear the downloader's download record?\n
+Note: This clears the downloader's download record, not the browser's download history.`,
+    `ダウンローダーのダウンロード記録を削除してもよろしいですか？\n
+注意：この機能で削除されるのはダウンローダーのダウンロード記録であり、ブラウザのダウンロード履歴ではありません。`,
+    `다운로더의 다운로드 기록을 삭제하시겠습니까?\n
+주의: 이 기능은 다운로더의 다운로드 기록을 삭제하는 것이며, 브라우저의 다운로드 기록을 삭제하는 것은 아닙니다.`,
+    `Вы уверены, что хотите очистить download record загрузчика?\n
+Внимание: эта функция очищает download record загрузчика, а не download history браузера.`,
   ],
   _下载记录已清除: [
     '下载记录已清除',
