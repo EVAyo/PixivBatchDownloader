@@ -38538,6 +38538,15 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
         `이미지를 <span class="key">회색조</span>로 표시`,
         `Показывать изображения в <span class="key">оттенках серого</span>`,
     ],
+    _占位符: [
+        `占位符`,
+        `占位符`,
+        `Placeholder`,
+        `プレースホルダー`,
+        `자리 표시자`,
+        `Заполнитель`,
+    ],
+    _通用: [`通用`, `通用`, `General`, `一般的な`, `일반적인`, `Общий`],
 };
 
 
@@ -41018,7 +41027,7 @@ class CrawlNumber {
     /** 抓取多少作品的设置  */
     work = {
         name: 'work',
-        selector: 'div.option[data-no="0"]',
+        selector: '.option[data-no="0"]',
         self: null,
         input: null,
         minBtn: null,
@@ -41028,7 +41037,7 @@ class CrawlNumber {
     /** 抓取多少页面的设置  */
     page = {
         name: 'page',
-        selector: 'div.option[data-no="1"]',
+        selector: '.option[data-no="1"]',
         self: null,
         input: null,
         minBtn: null,
@@ -43633,7 +43642,7 @@ class FormHelpManager {
                 // 所以这里还需要查找这个提示区域对应的选项，然后把提示区域移动到选项之后，让它们挨在一起
                 const no = btn.dataset.forNo;
                 if (no) {
-                    const option = this.form.querySelector(`div.option[data-no="${no}"]`);
+                    const option = this.form.querySelector(`.option[data-no="${no}"]`);
                     if (option) {
                         option.insertAdjacentElement('afterend', tipEl);
                     }
@@ -44448,9 +44457,9 @@ class Options {
     hideOnPixivision = [
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 19, 21, 22, 23,
         24, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 46, 47, 48,
-        49, 50, 54, 55, 56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
-        70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
-        90, 91, 92, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107,
+        49, 50, 54, 55, 56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72,
+        73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
+        92, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107,
     ];
     bindEvents() {
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.settingInitialized, () => {
@@ -46959,22 +46968,18 @@ class Wiki {
     // 特殊处理：
     // - 隐藏设置虽然有自己的分类，但是在 Wiki 里统一归纳到了“隐藏设置”页面里，所以它们的 ID 也放到了 More-Hidden 分类里
     groupConfig = {
-        Crawl: [
-            0, 1, 2, 44, 81, 6, 23, 21, 5, 7, 8, 9, 10, 11, 12, 94, 95, 96, 99,
-        ],
+        Crawl: [0, 1, 2, 44, 81, 6, 23, 21, 5, 7, 8, 9, 10, 11, 12, 94, 95, 96, 99],
         Download: [13, 50, 64, 16, 17, 33, 106],
-        'More-Crawl': [59, 75, 3, 47, 69, 35, 39, 74, 54, 85, 103, 104],
-        'More-Naming': [
-            65, 19, 42, 43, 38, 22, 46, 29, 83, 67, 66, 97, 98, 91, 107,
-        ],
+        'More-Crawl': [75, 3, 47, 69, 35, 39, 74, 54, 85, 103, 104],
+        'More-Naming': [19, 42, 43, 38, 22, 46, 29, 83, 67, 66, 97, 98, 91, 107],
         'More-Download': [
-            58, 52, 90, 76, 77, 4, 24, 26, 27, 70, 72, 73, 49, 89, 30, 25, 82, 20, 28,
+            52, 90, 76, 77, 4, 24, 26, 27, 70, 72, 73, 49, 89, 30, 25, 82, 20, 28,
             100, 101, 105,
         ],
         'More-Enhance': [
-            60, 84, 87, 68, 63, 55, 62, 40, 56, 86, 48, 88, 18, 34, 14, 102,
+            84, 87, 68, 63, 55, 62, 40, 56, 86, 48, 88, 18, 34, 14, 102,
         ],
-        'More-Others': [61, 31, 78, 36, 41, 45, 53, 32, 37, 93],
+        'More-Others': [31, 78, 36, 41, 45, 53, 32, 37, 93],
         'More-Hidden': [79, 80, 14, 15],
         'Buttons-Crawl': [
             'startCrawling',
@@ -47044,7 +47049,7 @@ class Wiki {
         const allLinks = document.querySelectorAll('.centerWrap_con a.settingNameStyle');
         allLinks.forEach(async (el) => {
             // 查找其所属的选项元素，如 <div class='option' data-no='0'>
-            const option = el.closest('div.option');
+            const option = el.closest('.option');
             if (option && option.dataset.no) {
                 const id = Number(option.dataset.no);
                 const link = await this.link(id);

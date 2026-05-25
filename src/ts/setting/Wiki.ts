@@ -211,7 +211,7 @@ class Wiki {
     )
     allLinks.forEach(async (el) => {
       // 查找其所属的选项元素，如 <div class='option' data-no='0'>
-      const option = el.closest('div.option') as HTMLDivElement
+      const option = el.closest('.option') as HTMLDivElement
       if (option && option.dataset.no) {
         const id = Number(option.dataset.no)
         const link = await this.link(id)

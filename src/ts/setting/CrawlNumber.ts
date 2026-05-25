@@ -37,7 +37,7 @@ class CrawlNumber {
   /** 抓取多少作品的设置  */
   private work: OptionElement = {
     name: 'work',
-    selector: 'div.option[data-no="0"]',
+    selector: '.option[data-no="0"]',
     self: null!,
     input: null!,
     minBtn: null!,
@@ -48,7 +48,7 @@ class CrawlNumber {
   /** 抓取多少页面的设置  */
   private page: OptionElement = {
     name: 'page',
-    selector: 'div.option[data-no="1"]',
+    selector: '.option[data-no="1"]',
     self: null!,
     input: null!,
     minBtn: null!,
