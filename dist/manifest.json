@@ -46,7 +46,7 @@
         "lib/jepub.js",
         "lib/pako.min.js",
         "lib/ppd-webp.js",
-        "lib/iconfont.js",
+        "lib/icon-sprite.js",
         "js/content.js"
       ],
       "matches": ["*://www.pixiv.net/*"],
@@ -59,7 +59,7 @@
     },
     {
       "css": ["style/style.css"],
-      "js": ["js/content.js", "lib/iconfont.js"],
+      "js": ["lib/icon-sprite.js", "js/content.js"],
       "matches": ["*://www.pixivision.net/*"],
       "run_at": "document_end"
     }

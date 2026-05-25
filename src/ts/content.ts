@@ -10,6 +10,7 @@
  */
 
 import './Language'
+import './IconHelper'
 import './Theme'
 import './store/States'
 import './setting/Settings'

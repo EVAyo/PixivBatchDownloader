@@ -2748,6 +2748,11 @@ iframe[name='expandedFooter'] {
   fill: currentColor;
   overflow: hidden;
 }
+.icon use {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(var(--icon-scale, 1));
+}
 .mr0 {
   margin-right: 0 !important;
 }

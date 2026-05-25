@@ -49,6 +49,12 @@
   vertical-align: initial;
   fill: currentColor;
   overflow: hidden;
+
+  use {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(var(--icon-scale, 1));
+  }
 }
 
 .mr0 {
