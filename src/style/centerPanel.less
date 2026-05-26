@@ -1,10 +1,5 @@
 @import './var.less';
 
-@contentWidth: 700px;
-@sidePadding: 25px;
-// 表单内容区域的最大宽度，小于表单容器宽度，这样可以使内容与右侧滚动条之间留出一定间距
-@formContentWidth: 650px;
-
 .centerWrap {
   ::selection {
     background: @themeBlue;
@@ -18,8 +13,8 @@
   z-index: 5000;
   font-size: 14px;
   display: none;
-  width: @contentWidth;
-  left: -350px;
+  width: 735px;
+  left: -367.5px;
   margin-left: 50%;
   top: 4vh;
   color: #444;
@@ -50,6 +45,7 @@
     min-height: @height;
     height: auto;
     margin: 0;
+    max-width: 100%;
   }
 
   .tip {
@@ -99,8 +95,6 @@
   }
 
   .centerWrap_head {
-    padding: 0 @sidePadding;
-
     img {
       width: 16px;
       vertical-align: inherit;
@@ -200,8 +194,7 @@
   .centerWrap_con {
     overflow: auto;
     max-height: 76vh;
-    padding-left: @sidePadding;
-    // 主要内容区域只设置左 padding，不设置右 padding，因为右边要显示滚动条，所以要多留出可用区域
+    min-height: 600px;
 
     slot[data-name='namingBtns'] button,
     slot[data-name='exportResult'] button {
@@ -232,7 +225,7 @@
 
     .settingForm {
       position: relative;
-      max-width: @formContentWidth;
+      width:100%;
 
       .optionAnchor {
         display: none;
@@ -760,7 +753,7 @@
         flex-wrap: wrap;
 
         & button {
-          background-color: @themeBlue;
+          background-color: @blueButtonsBg;
           box-sizing: border-box;
           border: none;
           width: 150px;
@@ -918,7 +911,7 @@
       .settingNameStyle {
         cursor: pointer;
         margin-right: 4px;
-        max-width: @formContentWidth;
+        max-width: 100%;
       }
 
       .verticalSplit {

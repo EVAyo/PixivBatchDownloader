@@ -335,7 +335,7 @@ class DownloadControl {
       // 导入抓取结果
       this.resultBtns.importJSON = Tools.addBtn(
         'exportResult',
-        Colors.bgGreen,
+        Colors.bgBlue,
         '_导入抓取结果',
         '',
         'importCrawlResults'

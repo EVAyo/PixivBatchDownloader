@@ -48,7 +48,7 @@
   left: -100vw;
   top: 10px;
   height: 1px;
-  background-image: linear-gradient(to right, #0ea8ef 0%, #0ea8ef 50%, transparent 50%);
+  background-image: linear-gradient(to right, #199df5 0%, #199df5 50%, transparent 50%);
   background-size: 8px 1px;
   background-repeat: repeat-x;
   animation: moveRight 2s linear infinite;
@@ -61,7 +61,7 @@
   top: -100vh;
   left: 10px;
   width: 1px;
-  background-image: linear-gradient(to bottom, #0ea8ef 0%, #0ea8ef 50%, transparent 50%);
+  background-image: linear-gradient(to bottom, #199df5 0%, #199df5 50%, transparent 50%);
   background-size: 1px 8px;
   background-repeat: repeat-y;
   animation: moveBottom 1s linear infinite;
@@ -389,7 +389,7 @@
   margin-right: 10px;
 }
 #crawlTagListInputWrap #crawlTagListBtnsWrap #crawlTagListBtn {
-  background: #0ea8ef;
+  background: #199df5;
 }
 #crawlTagListInputWrap #crawlTagListBtnsWrap #clearTagListBtn {
   background: #ff4060;
@@ -474,8 +474,8 @@ body.mobile #quickCrawlBtn {
   z-index: 5000;
   font-size: 14px;
   display: none;
-  width: 700px;
-  left: -350px;
+  width: 735px;
+  left: -367.5px;
   margin-left: 50%;
   top: 4vh;
   color: #444;
@@ -485,7 +485,7 @@ body.mobile #quickCrawlBtn {
   font-family: 'Noto Sans SC', 'Noto Sans', 'Segeo UI', 'Segeo UI Mono', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 .centerWrap ::selection {
-  background: #0ea8ef;
+  background: #199df5;
   color: #fff;
 }
 .centerWrap hr {
@@ -508,17 +508,18 @@ body.mobile #quickCrawlBtn {
   min-height: 26px;
   height: auto;
   margin: 0;
+  max-width: 100%;
 }
 .centerWrap .tip {
   display: none;
   color: #888;
 }
 .centerWrap .blue {
-  color: #0ea8ef !important;
+  color: #199df5 !important;
 }
 .centerWrap .has_tip:hover,
 .centerWrap label:hover {
-  color: #0ea8ef !important;
+  color: #199df5 !important;
 }
 .centerWrap .fwb {
   font-weight: 700;
@@ -545,9 +546,6 @@ body.mobile #quickCrawlBtn {
 .centerWrap .grayButton:hover {
   background: #29b3f3;
   color: #fff !important;
-}
-.centerWrap .centerWrap_head {
-  padding: 0 25px;
 }
 .centerWrap .centerWrap_head img {
   width: 16px;
@@ -605,10 +603,10 @@ body.mobile #quickCrawlBtn {
   position: relative;
 }
 .centerWrap .centerWrap_tabs .title.active {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .centerWrap .centerWrap_tabs .title:hover {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .centerWrap .centerWrap_tabs .title_active {
   position: absolute;
@@ -632,7 +630,7 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con {
   overflow: auto;
   max-height: 76vh;
-  padding-left: 25px;
+  min-height: 600px;
 }
 .centerWrap .centerWrap_con slot[data-name='namingBtns'] button,
 .centerWrap .centerWrap_con slot[data-name='exportResult'] button {
@@ -649,8 +647,8 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con .textButton:focus,
 .centerWrap .centerWrap_con .help_bar > *:hover,
 .centerWrap .centerWrap_con .updateActiveClass {
-  color: #0ea8ef !important;
-  fill: #0ea8ef !important;
+  color: #199df5 !important;
+  fill: #199df5 !important;
 }
 .centerWrap .centerWrap_con .grayButton:hover,
 .centerWrap .centerWrap_con .grayButton:focus {
@@ -659,7 +657,7 @@ body.mobile #quickCrawlBtn {
 }
 .centerWrap .centerWrap_con .settingForm {
   position: relative;
-  max-width: 650px;
+  width: 100%;
   /*--------美化作为开关的复选框------------*/
   /*--------美化普通的复选框------------*/
   /*--------美化单选框------------*/
@@ -1082,7 +1080,7 @@ body.mobile #quickCrawlBtn {
   flex-wrap: wrap;
 }
 .centerWrap .centerWrap_con .settingForm .centerWrap_btns button {
-  background-color: #0ea8ef;
+  background-color: #09a0f4;
   box-sizing: border-box;
   border: none;
   width: 150px;
@@ -1206,13 +1204,13 @@ body.mobile #quickCrawlBtn {
   padding-right: 5px;
 }
 .centerWrap .centerWrap_con .settingForm .download_area .download_status_text_wrap .down_status {
-  color: #0ea8ef;
+  color: #199df5;
   display: inline-block;
 }
 .centerWrap .centerWrap_con .settingForm .settingNameStyle {
   cursor: pointer;
   margin-right: 4px;
-  max-width: 650px;
+  max-width: 100%;
 }
 .centerWrap .centerWrap_con .settingForm .verticalSplit {
   display: inline-block;
@@ -1490,7 +1488,7 @@ body.mobile #quickCrawlBtn {
 }
 .showBlobKeywords .option > a .key,
 .showBlobKeywords .optionName .key {
-  color: #0ea8ef;
+  color: #199df5;
   font-weight: bold;
 }
 .theme-dark.showBlobKeywords .option > a,
@@ -1551,6 +1549,718 @@ body.mobile #quickCrawlBtn {
     padding: 12px 6px;
   }
 }
+.centerWrap.settingsV2 {
+  width: 925px;
+  max-width: calc(100vw - 24px);
+  max-height: 870px;
+  left: 50%;
+  top: 4vh;
+  margin-left: 0;
+  transform: translateX(-50%);
+  padding: 0;
+  border-radius: 16px;
+  border: 1px solid #9dd4f9;
+  box-shadow: 0 0 25px #b4e0f5;
+  background: #fff;
+}
+.centerWrap.settingsV2 p,
+.centerWrap.settingsV2 div,
+.centerWrap.settingsV2 span,
+.centerWrap.settingsV2 button,
+.centerWrap.settingsV2 .centerWrap_head,
+.centerWrap.settingsV2 .centerWrap_con,
+.centerWrap.settingsV2 .settingForm,
+.centerWrap.settingsV2 .settingsPanel_page,
+.centerWrap.settingsV2 .settingsPanel_pageInner,
+.centerWrap.settingsV2 .settingsPanel_sidebar,
+.centerWrap.settingsV2 .settingsPanel_main,
+.centerWrap.settingsV2 .settingsPanel_navItem,
+.centerWrap.settingsV2 .settingsPanel_tipCard,
+.centerWrap.settingsV2 .settingsPanel_helpAction,
+.centerWrap.settingsV2 .settingsPanel_sectionHeader,
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryBtn {
+  box-sizing: border-box;
+}
+.centerWrap.settingsV2 .centerWrap_head {
+  padding: 10px 10px 10px 20px;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #edf3f8;
+}
+.centerWrap.settingsV2 .settingsPanel_headerMain,
+.centerWrap.settingsV2 .settingsPanel_headerActions,
+.centerWrap.settingsV2 .settingsPanel_headerSearch,
+.centerWrap.settingsV2 .settingsPanel_brand {
+  display: flex;
+  align-items: center;
+}
+.centerWrap.settingsV2 .settingsPanel_headerActions {
+  gap: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_headerSearch {
+  gap: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_brand {
+  gap: 10px;
+  min-width: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_logo {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_brandName {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.centerWrap.settingsV2 .centerWrap_top_btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.2s, background-color 0.2s;
+}
+.centerWrap.settingsV2 .centerWrap_top_btn:hover {
+  color: #199df5;
+  background: #eef7ff;
+}
+.centerWrap.settingsV2 .centerWrap_top_btn .icon {
+  font-size: 24px;
+}
+.centerWrap.settingsV2 .settingsPanel_sponsorBtn:hover {
+  color: #e448a3;
+  background: #fff0f7;
+}
+.centerWrap.settingsV2 .centerWrap_close_mobile {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_searchBar {
+  box-sizing: border-box;
+  width: 210px;
+  max-width: 80vw;
+  height: 32px;
+  border: 1px solid #999;
+  border-radius: 20px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.centerWrap.settingsV2 .settingsPanel_searchBar:focus-within {
+  border-color: #199df5;
+}
+.centerWrap.settingsV2 .settingsPanel_searchBar input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 14px;
+  outline: none;
+}
+.centerWrap.settingsV2 .settingsPanel_searchBar input::placeholder {
+  color: #999;
+}
+.centerWrap.settingsV2 .settingsPanel_searchIcon {
+  color: #999;
+  font-size: 16px;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_clearSearch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  color: #999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.centerWrap.settingsV2 .settingsPanel_clearSearch.visible {
+  display: inline-flex;
+}
+.centerWrap.settingsV2 .settingsPanel_clearSearch:hover {
+  color: #199df5;
+  background: #eef7ff;
+}
+.centerWrap.settingsV2 .settingsPanel_expandAll {
+  position: relative;
+}
+.centerWrap.settingsV2 .settingsPanel_expandAll .settingsPanel_expandIconUp {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_expandAll.expanded .settingsPanel_expandIconDown {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_expandAll.expanded .settingsPanel_expandIconUp {
+  display: inline-block;
+}
+.centerWrap.settingsV2 .centerWrap_con {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background: #eee;
+}
+.centerWrap.settingsV2 .settingsPanel_sidebar {
+  width: 190px;
+  flex: none;
+  padding: 15px 10px;
+  background: #f5f5f5;
+  overflow-y: auto;
+  position: relative;
+}
+.centerWrap.settingsV2 .settingsPanel_nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem {
+  min-height: 50px;
+  padding: 0 15px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem[hidden] {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem:hover {
+  background: #eee;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem.active {
+  background: #199df5;
+  color: #fff;
+  font-weight: 700;
+}
+.centerWrap.settingsV2 .settingsPanel_navIconWrap {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  position: relative;
+}
+.centerWrap.settingsV2 .settingsPanel_navIcon {
+  font-size: 26px;
+  position: absolute;
+  inset: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_navIconFill {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem.active .settingsPanel_navIconLine {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_navItem.active .settingsPanel_navIconFill {
+  display: inline-block;
+}
+.centerWrap.settingsV2 .settingsPanel_navText {
+  flex: 1;
+  min-width: 0;
+  font-size: 18px;
+  line-height: 1.3;
+  text-align: center;
+}
+.centerWrap.settingsV2.lang_zh-cn .settingsPanel_navText,
+.centerWrap.settingsV2.lang_zh-tw .settingsPanel_navText {
+  letter-spacing: 6px;
+  text-indent: 6px;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummary {
+  display: none;
+  margin-top: 20px;
+  padding: 20px 0 20px 10px;
+  border-top: 1px solid #ccc;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryStatus,
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryStatus {
+  gap: 10px;
+  color: #666;
+  margin-bottom: 16px;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryStatus .settingsPanel_downloadSummaryStateIcon {
+  font-size: 18px;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryActions {
+  gap: 20px;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryBtn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  color: #666;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background-color 0.2s;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadSummaryBtn:hover {
+  color: #199df5;
+  background: #e9f5ff;
+}
+.centerWrap.settingsV2 .settingsPanel_main {
+  flex: 1;
+  min-width: 0;
+  width: 735px;
+  overflow-y: auto;
+  padding: 0px 15px 15px 15px;
+}
+.centerWrap.settingsV2 .settingsPanel_form {
+  display: block;
+}
+.centerWrap.settingsV2 .settingsPanel_pages {
+  display: block;
+}
+.centerWrap.settingsV2 .settingsPanel_page {
+  width: 100%;
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_page.active {
+  display: block;
+}
+.centerWrap.settingsV2 .settingsPanel_pageInner {
+  padding-bottom: 5px;
+}
+.centerWrap.settingsV2 .settingsPanel_stickyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 15px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #444;
+  box-shadow: 0 0 15px #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+.centerWrap.settingsV2 .settingsPanel_stickyHeader[hidden] {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_titleSection,
+.centerWrap.settingsV2 .settingsPanel_panelSection {
+  margin-top: 15px;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionHeader {
+  width: 100%;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 15px #ddd;
+  text-align: left;
+}
+.centerWrap.settingsV2 .settingsPanel_panelSection {
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 15px #ddd;
+  overflow: hidden;
+}
+.centerWrap.settingsV2 .settingsPanel_panelSection .settingsPanel_sectionHeader {
+  margin-top: 0;
+  box-shadow: none;
+  border-bottom: 1px solid #ececec;
+  border-radius: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionHeadMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionIconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #eef7fd;
+  color: #199df5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionIconWrap.hidden {
+  display: none;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionIconWrap .icon {
+  font-size: 20px;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionTitle {
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.centerWrap.settingsV2 .settingsPanel_sectionArrow {
+  font-size: 16px;
+  color: #666;
+  transition: transform 0.2s;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_panelSection.expanded .settingsPanel_sectionArrow,
+.centerWrap.settingsV2 .settingsPanel_titleSection.expanded .settingsPanel_sectionArrow {
+  transform: rotate(180deg);
+}
+.centerWrap.settingsV2 .settingsPanel_titleContent,
+.centerWrap.settingsV2 .settingsPanel_panelContent {
+  display: block;
+}
+.centerWrap.settingsV2 .settingsPanel_panelContent {
+  padding: 15px;
+}
+.centerWrap.settingsV2 .settingsPanel_titleContent {
+  padding-top: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_optionCard.option {
+  width: calc(100% - 20px);
+  margin: 10px auto 0;
+  padding: 12px 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ddd;
+  line-height: 26px;
+}
+.centerWrap.settingsV2 .settingsPanel_page[data-page='home'] .settingsPanel_optionCard.option {
+  margin-top: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_page[data-page='home'] .settingsPanel_panelContent .centerWrap_btns {
+  padding-top: 0;
+}
+.centerWrap.settingsV2 .settingsPanel_optionCard.option.pinned {
+  border: 2px solid #bde2ff;
+}
+.centerWrap.settingsV2 .settingsPanel_optionCard.option.new {
+  position: relative;
+}
+.centerWrap.settingsV2 .settingsPanel_optionCard.option.new::after {
+  content: '';
+  width: 36px;
+  height: 18px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: url('../icons/new.svg') no-repeat center / contain;
+  pointer-events: none;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadContentWrap .download_area {
+  display: block;
+}
+.centerWrap.settingsV2 .settingsPanel_downloadContentWrap .progressBarWrap {
+  margin-top: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_helpTips,
+.centerWrap.settingsV2 .settingsPanel_helpActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.centerWrap.settingsV2 .settingsPanel_helpTips {
+  flex-direction: column;
+}
+.centerWrap.settingsV2 .settingsPanel_tipCard {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 15px #ddd;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_tipIcon {
+  font-size: 20px;
+  color: #666;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_tipText {
+  flex: 1;
+  min-width: 0;
+  line-height: 26px;
+}
+.centerWrap.settingsV2 .settingsPanel_tipConfirm {
+  width: 30px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #199df5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_tipConfirm:hover {
+  background: #e5f2ff;
+}
+.centerWrap.settingsV2 .settingsPanel_helpActions {
+  margin-top: 15px;
+}
+.centerWrap.settingsV2 .settingsPanel_helpAction {
+  width: calc(25% - 12px);
+  min-height: 46px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 15px #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  position: relative;
+}
+.centerWrap.settingsV2 .settingsPanel_helpAction:hover {
+  background: #09a0f4;
+  color: #fff;
+}
+.centerWrap.settingsV2 .settingsPanel_helpAction.hasUpdate::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff4060;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.centerWrap.settingsV2 .settingsPanel_helpActionIcon {
+  font-size: 24px;
+  flex: none;
+}
+.centerWrap.settingsV2 .settingsPanel_searchSummary {
+  margin: 15px 0 0 5px;
+  color: #444;
+  line-height: 26px;
+}
+.centerWrap.settingsV2 .settingsPanel_searchMark {
+  background: #ffff00;
+  color: inherit;
+  padding: 0 2px;
+}
+.centerWrap.settingsV2 .download_area {
+  margin-top: 10px;
+}
+.centerWrap.settingsV2 .progressBarWrap {
+  margin-top: 10px;
+}
+.centerWrap.settingsV2.theme-dark {
+  background: #1f2530;
+  border-color: rgba(94, 172, 230, 0.45);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+  color: #dfe7ef;
+}
+.centerWrap.settingsV2.theme-dark .centerWrap_head {
+  background: rgba(25, 32, 42, 0.96);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.centerWrap.settingsV2.theme-dark .centerWrap_con {
+  background: rgba(18, 24, 33, 0.98);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_sidebar {
+  background: rgba(255, 255, 255, 0.05);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_main {
+  color: #dfe7ef;
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_searchBar {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_searchBar input {
+  color: #f1f5f8;
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_searchBar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_navItem {
+  color: #f1f5f8;
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_navItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_downloadSummary,
+.centerWrap.settingsV2.theme-dark .settingsPanel_stickyHeader,
+.centerWrap.settingsV2.theme-dark .settingsPanel_sectionHeader,
+.centerWrap.settingsV2.theme-dark .settingsPanel_panelSection,
+.centerWrap.settingsV2.theme-dark .settingsPanel_tipCard,
+.centerWrap.settingsV2.theme-dark .settingsPanel_helpAction,
+.centerWrap.settingsV2.theme-dark .settingsPanel_optionCard.option {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  color: #f1f5f8;
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_panelSection .settingsPanel_sectionHeader {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_sectionIconWrap {
+  background: rgba(66, 195, 255, 0.16);
+  color: #42c3ff;
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_helpAction:hover,
+.centerWrap.settingsV2.theme-dark .settingsPanel_downloadSummaryBtn:hover,
+.centerWrap.settingsV2.theme-dark .centerWrap_top_btn:hover,
+.centerWrap.settingsV2.theme-dark .settingsPanel_clearSearch:hover {
+  background: rgba(25, 157, 245, 0.24);
+}
+.centerWrap.settingsV2.theme-dark .settingsPanel_searchSummary,
+.centerWrap.settingsV2.theme-dark .settingsPanel_downloadSummaryStatus {
+  color: #dfe7ef;
+}
+.centerWrap.settingsV2.xzBG {
+  background: rgba(10, 18, 28, 0.42);
+}
+.centerWrap.settingsV2.xzBG .centerWrap_head {
+  background: rgba(10, 18, 28, 0.78);
+}
+.centerWrap.settingsV2.xzBG .centerWrap_con {
+  background: rgba(10, 18, 28, 0.6);
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_sidebar,
+.centerWrap.settingsV2.xzBG .settingsPanel_stickyHeader,
+.centerWrap.settingsV2.xzBG .settingsPanel_sectionHeader,
+.centerWrap.settingsV2.xzBG .settingsPanel_panelSection,
+.centerWrap.settingsV2.xzBG .settingsPanel_tipCard,
+.centerWrap.settingsV2.xzBG .settingsPanel_helpAction,
+.centerWrap.settingsV2.xzBG .settingsPanel_optionCard.option {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_panelSection .settingsPanel_sectionHeader {
+  background: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_searchBar {
+  background: rgba(255, 255, 255, 0.1);
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_searchBar input {
+  color: #fff;
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_searchBar input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_navItem {
+  color: #fff;
+}
+.centerWrap.settingsV2.xzBG .settingsPanel_navItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.centerWrap.settingsV2.mobile {
+  width: calc(100vw - 16px);
+  top: 8px;
+  max-height: calc(100vh - 16px);
+}
+.centerWrap.settingsV2.mobile .centerWrap_head {
+  padding: 12px;
+  flex-direction: column;
+  align-items: stretch;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_headerMain,
+.centerWrap.settingsV2.mobile .settingsPanel_headerActions {
+  min-height: 32px;
+  justify-content: space-between;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_headerActions {
+  gap: 10px;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_headerSearch {
+  flex: 1;
+  min-width: 0;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_searchBar {
+  width: 100%;
+  max-width: none;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_headerMinor,
+.centerWrap.settingsV2.mobile .centerWrap_close_pc {
+  display: none;
+}
+.centerWrap.settingsV2.mobile .centerWrap_close_mobile {
+  display: inline-flex;
+}
+.centerWrap.settingsV2.mobile .centerWrap_con {
+  flex-direction: column;
+  max-height: calc(100vh - 120px);
+}
+.centerWrap.settingsV2.mobile .settingsPanel_sidebar {
+  width: 100%;
+  padding: 12px;
+  overflow: visible;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_nav {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_navItem {
+  min-width: 25%;
+  flex: 1 1 25%;
+  min-height: 42px;
+  padding: 8px 12px;
+  justify-content: center;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_navText {
+  font-size: 16px;
+}
+.centerWrap.settingsV2.mobile.lang_zh-cn .settingsPanel_navText,
+.centerWrap.settingsV2.mobile.lang_zh-tw .settingsPanel_navText {
+  letter-spacing: 2px;
+  text-indent: 2px;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_downloadSummary {
+  margin-top: 12px;
+  padding: 12px 15px;
+  border-top: none;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #ddd;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_downloadSummaryStatus,
+.centerWrap.settingsV2.mobile .settingsPanel_downloadSummaryActions {
+  gap: 16px;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_downloadSummaryStatus {
+  margin-bottom: 10px;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_main {
+  padding: 12px;
+}
+.centerWrap.settingsV2.mobile .settingsPanel_helpAction {
+  width: calc(50% - 8px);
+}
 .outputWrap {
   font-family: 'Noto Sans SC', 'Noto Sans', 'Segeo UI', 'Segeo UI Mono', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   padding: 20px 30px;
@@ -1570,7 +2280,7 @@ body.mobile #quickCrawlBtn {
   line-height: 20px;
   text-align: center;
   font-size: 18px;
-  color: #0ea8ef;
+  color: #199df5;
 }
 .outputWrap .outputContent {
   border: 1px solid #ccc;
@@ -1585,7 +2295,7 @@ body.mobile #quickCrawlBtn {
   word-break: break-all;
 }
 .outputWrap .outputContent::selection {
-  background: #0ea8ef;
+  background: #199df5;
   color: #fff;
 }
 .outputWrap .outputContent p.result {
@@ -1595,7 +2305,7 @@ body.mobile #quickCrawlBtn {
   color: #999;
 }
 .outputWrap .outputContent .colorFolder {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .outputWrap .outputContent .color666 {
   color: #666;
@@ -1614,7 +2324,7 @@ body.mobile #quickCrawlBtn {
   color: #666;
 }
 .outputWrap .outputClose:hover {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .outputWrap .outputFooter {
   display: flex;
@@ -1629,7 +2339,7 @@ body.mobile #quickCrawlBtn {
   min-width: 100px;
   padding: 2px 25px;
   margin-top: 15px;
-  background: #0ea8ef;
+  background: #199df5;
   color: #fff;
   font-size: 14px;
   border: none;
@@ -1705,7 +2415,7 @@ body.mobile #quickCrawlBtn {
   padding: 10px 30px;
 }
 .logContent .blue {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .logContent span {
   line-height: 1.4;
@@ -1715,7 +2425,7 @@ body.mobile #quickCrawlBtn {
   display: inline;
 }
 .logContent a {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .logBtn {
   font-family: 'Noto Sans SC', 'Noto Sans', 'Segeo UI', 'Segeo UI Mono', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
@@ -1786,10 +2496,10 @@ body.mobile #quickCrawlBtn {
 .xz_msg_box .title {
   font-size: 17px;
   font-weight: bold;
-  color: #0ea8ef;
+  color: #199df5;
 }
 .xz_msg_box .blue {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .xz_msg_box .content {
   padding: 0;
@@ -1803,7 +2513,7 @@ body.mobile #quickCrawlBtn {
 }
 .xz_msg_box .btn {
   cursor: pointer;
-  background: #0ea8ef;
+  background: #199df5;
   color: #fff;
   border: none;
   text-align: center;
@@ -1811,7 +2521,7 @@ body.mobile #quickCrawlBtn {
   border-radius: 6px;
 }
 .xz_msg_box a {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .theme-dark.xz_msg_box {
   background: #222;
@@ -2695,7 +3405,7 @@ iframe[name='expandedFooter'] {
   height: 1.4em;
 }
 .xz_PreviewWorkDetailPanel a {
-  color: #0ea8ef;
+  color: #199df5;
 }
 .theme-dark.xz_PreviewWorkDetailPanel {
   background: #222;
@@ -2795,7 +3505,7 @@ main section nav[style]::-webkit-scrollbar-thumb {
 }
 #copyBtnOnWorkPage:hover,
 #copyBtnOnWorkPage:active {
-  color: #0ea8ef;
+  color: #199df5;
 }
 #copyBtnOnWorkPage svg {
   width: 1.6em;
@@ -2810,7 +3520,7 @@ body.mobile #copyBtnOnWorkPage {
 }
 body.mobile #copyBtnOnWorkPage:hover,
 body.mobile #copyBtnOnWorkPage:active {
-  color: #0ea8ef;
+  color: #199df5;
 }
 body.mobile #copyBtnOnWorkPage svg {
   width: 2.1em;
@@ -2851,7 +3561,7 @@ html[data-xzpagetheme='dark'] #quickBookmarkEl {
   display: none;
   position: relative;
   z-index: 99;
-  border: 1px solid #0ea8ef;
+  border: 1px solid #199df5;
 }
 #logWrap,
 .centerWrap,

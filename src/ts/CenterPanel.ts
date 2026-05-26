@@ -7,17 +7,9 @@ import { Config } from './Config'
 import { msgBox } from './MsgBox'
 import { bg } from './BG'
 import './OpenCenterPanel'
-import { settings } from './setting/Settings'
 import { BoldKeywords } from './BoldKeywords'
 import { showOneTimeMsg } from './ShowOneTimeMsg'
 import { store } from './store/Store'
-
-// 选项卡的名称和索引
-enum Tabbar {
-  Crawl,
-  Download,
-  Other,
-}
 
 // 中间面板
 class CenterPanel {
@@ -25,10 +17,8 @@ class CenterPanel {
     this.addCenterPanel()
     theme.register(this.centerPanel)
     lang.register(this.centerPanel)
-    this.activeTab(Tabbar.Crawl)
 
     bg.useBG(this.centerPanel)
-
     new BoldKeywords(this.centerPanel)
 
     this.allLangFlag = lang.langTypes.map((type) => 'lang_' + type)
@@ -38,118 +28,146 @@ class CenterPanel {
   }
 
   private centerPanel!: HTMLDivElement
-  private updateLink!: HTMLAnchorElement
-  private updateActiveClass = 'updateActiveClass'
+  private allLangFlag: string[] = []
 
-  private allTabTitle!: NodeListOf<HTMLDivElement> // 选项卡的标题区域
-  private readonly TitleActiveClass = 'active'
-  private titleAnimationEl!: HTMLElement
-  private readonly titleAnimationElClassList = ['tab1', 'tab2', 'tab3']
-
-  // 添加中间面板
   private addCenterPanel() {
+    const logoURL = browser.runtime.getURL('icons/logo128.png')
     const centerPanelHTML = `
-      <div class="centerWrap ${'lang_' + lang.type}">
+      <div class="centerWrap settingsV2 ${'lang_' + lang.type}">
+        <div class="centerWrap_head">
+          <div class="settingsPanel_headerMain">
+            <div class="settingsPanel_brand">
+              <img class="settingsPanel_logo" src="${logoURL}" alt="">
+              <span class="settingsPanel_brandName blue">${Config.appName}</span>
+            </div>
 
-      <div class="centerWrap_head">
-      <div class="centerWrap_title blue">
-      ${Config.appName}
-      <div class="btns">
-      <a class="has_tip centerWrap_top_btn update" data-xztip="_newver" data-xztitle="_newver" href="https://github.com/xuejianxianzun/PixivBatchDownloader/releases/latest" target="_blank">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#refresh"></use>
-        </svg>
-      </a>
-      <a class="has_tip centerWrap_top_btn github_icon" data-xztip="_github" data-xztitle="_github" href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#github"></use>
-      </svg>
-      </a>
-      <a class="has_tip centerWrap_top_btn wiki_url" data-xztip="_wiki" data-xztitle="_wiki" href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#help"></use>
-        </svg>
-      </a>
-        <button class="textButton ${
-          !Config.mobile && 'has_tip'
-        } centerWrap_top_btn centerWrap_close" ${
-          !Config.mobile &&
-          'data-xztip="_隐藏控制面板" data-xztitle="_隐藏控制面板"'
-        }>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#close"></use>
-        </svg>
-        </button>
+            <button class="textButton centerWrap_top_btn centerWrap_close centerWrap_close_mobile" type="button" data-xztitle="_关闭">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#close"></use>
+              </svg>
+            </button>
+          </div>
+
+          <div class="settingsPanel_headerActions">
+            <div class="settingsPanel_headerSearch">
+              <label class="settingsPanel_searchBar">
+                <svg class="icon settingsPanel_searchIcon" aria-hidden="true">
+                  <use xlink:href="#search-in-searchbar"></use>
+                </svg>
+                <input id="settingsPanelSearchInput" type="text" data-xzplaceholder="_搜索设置">
+                <button class="textButton settingsPanel_clearSearch" id="settingsPanelClearSearch" type="button" data-xztitle="_清除">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#close"></use>
+                  </svg>
+                </button>
+              </label>
+
+              <button class="textButton centerWrap_top_btn settingsPanel_expandAll" id="settingsPanelToggleExpand" type="button" data-xztitle="_展开/折叠所有区域">
+                <svg class="icon settingsPanel_expandIcon settingsPanel_expandIconDown" aria-hidden="true">
+                  <use xlink:href="#arrow-down"></use>
+                </svg>
+                <svg class="icon settingsPanel_expandIcon settingsPanel_expandIconUp" aria-hidden="true">
+                  <use xlink:href="#arrow-up"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="settingsPanel_headerMinor">
+              <button class="textButton centerWrap_top_btn settingsPanel_sponsorBtn" id="settingsPanelSponsor" type="button" data-xztitle="_赞助我">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#heart-line"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="settingsPanel_headerClose">
+              <button class="textButton centerWrap_top_btn centerWrap_close centerWrap_close_pc" type="button" data-xztitle="_关闭">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#close"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="centerWrap_con">
+          <aside class="settingsPanel_sidebar beautify_scrollbar">
+            <nav class="settingsPanel_nav">
+              ${this.createNavItem('home', '_首页', 'home-line', 'home-fill')}
+              ${this.createNavItem('crawl', '_抓取', 'filter-line', 'filter-filling')}
+              ${this.createNavItem('naming', '_命名', 'rename-line', 'rename-fill')}
+              ${this.createNavItem('download', '_下载', 'download-line', 'download-fill')}
+              ${this.createNavItem('enhance', '_增强', 'magic-line', 'magic-fill')}
+              ${this.createNavItem('general', '_通用', 'setting-line', 'setting-fill')}
+              ${this.createNavItem('help', '_帮助', 'book-line', 'book-fill')}
+              ${this.createNavItem('search', '_搜索', 'search-line', 'search-fill', true)}
+            </nav>
+
+            <div class="settingsPanel_downloadSummary" id="settingsPanelDownloadSummary">
+              <div class="settingsPanel_downloadSummaryStatus">
+                <svg class="icon settingsPanel_downloadSummaryStateIcon" aria-hidden="true">
+                  <use xlink:href="#play"></use>
+                </svg>
+                <span class="settingsPanel_downloadSummaryStateText" data-xztext="_未开始下载"></span>
+                <span class="settingsPanel_downloadSummaryProgress">0 / 0</span>
+              </div>
+
+              <div class="settingsPanel_downloadSummaryActions">
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryStart" type="button" data-xztitle="_开始下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#play"></use></svg>
+                </button>
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryPause" type="button" data-xztitle="_暂停下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#pause"></use></svg>
+                </button>
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryStop" type="button" data-xztitle="_停止下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#stop"></use></svg>
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="settingsPanel_main beautify_scrollbar">
+            <slot data-name="form"></slot>
+          </div>
+        </div>
       </div>
-      </div>
-      </div>
+    `
 
-      <div class="centerWrap_tabs tabsTitle">
-        <div class="title" data-xztext="_抓取" tabindex="0"></div>
-        <div class="title" data-xztext="_下载" tabindex="0"></div>
-        <div class="title" data-xztext="_更多" tabindex="0"></div>
-        <div class="title_active"></div>
-      </div>
-
-      <div class="centerWrap_con beautify_scrollbar">
-
-      <p id="tipPinOption" style="line-height: 1.6;">
-        💡<span data-xztext="_提示可以置顶选项"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <p id="tipCloseAskFileSaveLocation" style="line-height: 1.6;">
-        💡<span data-xztext="_提示"></span>
-        <span>: </span>
-        <span data-xztext="_建议您关闭询问文件保存位置"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <p id="tipOpenWikiLinkWrap" style="line-height: 1.6;">
-        💡<span data-xztext="_提示"></span>
-        <span>: </span>
-        <span data-xztext="_提示查看wiki页面"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <slot data-name="form"></slot>
-
-      <div class="help_bar gray1"> 
-      <a class="gray1" href="https://xuejianxianzun.github.io/PBDWiki" target="_blank" data-xztext="_wiki"></a>
-      <button class="textButton gray1" id="showFAQ" type="button" data-xztext="_常见问题"></button>
-      <button class="textButton gray1" id="showGetHelp" type="button" data-xztext="_获取帮助"></button>
-      <button class="textButton gray1" id="showRecentUpdates" type="button" data-xztext="_最近更新"></button>
-      <button class="textButton gray1" id="xzFanboxDownloader" type="button" data-xztext="_fanboxDownloader"></button>
-      <button class="textButton gray1" id="showSponsorship" type="button" data-xztext="_赞助我"></button>
-      <br>
-      </div>
-
-      </div>
-
-      </div>
-      `
     document.body.insertAdjacentHTML('afterbegin', centerPanelHTML)
+    this.centerPanel = document.querySelector(
+      '.centerWrap.settingsV2'
+    ) as HTMLDivElement
 
-    this.centerPanel = document.querySelector('.centerWrap') as HTMLDivElement
-
-    this.updateLink = this.centerPanel.querySelector(
-      '.update'
-    )! as HTMLAnchorElement
-
-    this.allTabTitle = this.centerPanel.querySelectorAll('.tabsTitle .title')
-
-    this.titleAnimationEl = this.centerPanel.querySelector(
-      '.title_active'
-    )! as HTMLElement
-
-    // 设置移动端样式
     if (Config.mobile) {
       document.body.classList.add('mobile')
       this.centerPanel.classList.add('mobile')
     }
   }
 
-  private allLangFlag: string[] = []
+  private createNavItem(
+    page: string,
+    textKey: string,
+    lineIcon: string,
+    fillIcon: string,
+    hidden = false
+  ) {
+    return `
+    <button class="settingsPanel_navItem hasRippleAnimation" data-page="${page}" type="button" ${
+      hidden ? 'hidden' : ''
+    }>
+      <span class="settingsPanel_navIconWrap" aria-hidden="true">
+        <svg class="icon settingsPanel_navIcon settingsPanel_navIconLine">
+          <use xlink:href="#${lineIcon}"></use>
+        </svg>
+        <svg class="icon settingsPanel_navIcon settingsPanel_navIconFill">
+          <use xlink:href="#${fillIcon}"></use>
+        </svg>
+      </span>
+      <span class="settingsPanel_navText" data-xztext="${textKey}"></span>
+    </button>
+    `
+  }
+
   private setLangFlag() {
     this.allLangFlag.forEach((flag) => {
       this.centerPanel.classList.remove(flag)
@@ -158,7 +176,6 @@ class CenterPanel {
   }
 
   private bindEvents() {
-    // 监听点击扩展图标的消息，开关中间面板
     browser.runtime.onMessage.addListener((msg: any) => {
       if (msg.msg === 'click_icon') {
         this.toggle()
@@ -172,7 +189,6 @@ class CenterPanel {
       )
     })
 
-    // 使用快捷键 Alt + x 切换中间面板显示隐藏
     window.addEventListener(
       'keydown',
       (ev) => {
@@ -183,10 +199,8 @@ class CenterPanel {
       false
     )
 
-    // 关闭按钮
-    document
-      .querySelector('.centerWrap_close')!
-      .addEventListener('click', () => {
+    this.centerPanel.querySelectorAll('.centerWrap_close').forEach((button) =>
+      button.addEventListener('click', () => {
         EVT.fire('closeCenterPanel')
         if (!Config.mobile) {
           showOneTimeMsg.show(
@@ -195,13 +209,20 @@ class CenterPanel {
           )
         }
       })
+    )
 
-    // 开始抓取作品时，隐藏
+    this.centerPanel
+      .querySelector('#settingsPanelSponsor')
+      ?.addEventListener('click', () =>
+        msgBox.show(lang.transl('_赞助方式提示'), {
+          title: lang.transl('_赞助我'),
+        })
+      )
+
     window.addEventListener(EVT.list.crawlStart, () => {
       EVT.fire('closeCenterPanel')
     })
 
-    // 抓取完作品详细数据时，显示
     for (const ev of [EVT.list.crawlComplete, EVT.list.resume]) {
       window.addEventListener(ev, () => {
         if (!states.quickCrawl && store.result.length > 0) {
@@ -218,145 +239,26 @@ class CenterPanel {
       this.close()
     })
 
-    // 显示更新按钮
-    window.addEventListener(EVT.list.hasNewVer, () => {
-      this.updateLink.classList.add(this.updateActiveClass)
-      this.updateLink.style.display = 'inline-block'
+    window.addEventListener(EVT.list.langChange, () => {
+      this.setLangFlag()
     })
-
-    // 显示常见问题
-    this.centerPanel
-      .querySelector('#showFAQ')!
-      .addEventListener('click', () => {
-        let msg =
-          lang.transl('_常见问题说明') + lang.transl('_账户可能被封禁的警告')
-        if (Config.mobile) {
-          msg += lang.transl('_移动端浏览器可能不会建立文件夹的说明')
-        }
-        msgBox.show(msg, {
-          title: lang.transl('_常见问题'),
-        })
-      })
-
-    this.centerPanel
-      .querySelector('#showGetHelp')!
-      .addEventListener('click', () =>
-        msgBox.show(lang.transl('_获取帮助的提示'), {
-          title: lang.transl('_获取帮助'),
-        })
-      )
-
-    this.centerPanel
-      .querySelector('#showSponsorship')!
-      .addEventListener('click', () =>
-        msgBox.show(lang.transl('_赞助方式提示'), {
-          title: lang.transl('_赞助我'),
-        })
-      )
-
-    this.centerPanel
-      .querySelector('#xzFanboxDownloader')!
-      .addEventListener('click', () =>
-        msgBox.show(lang.transl('_fanboxDownloader的说明'), {
-          title: 'Pixiv Fanbox Downloader',
-        })
-      )
-
-    this.centerPanel
-      .querySelector('#showRecentUpdates')!
-      .addEventListener('click', () => EVT.fire('showRecentUpdates'))
 
     this.centerPanel.addEventListener('click', (e) => {
       e.stopPropagation()
     })
 
     document.addEventListener('click', () => {
-      if (getComputedStyle(this.centerPanel)['display'] !== 'none') {
+      if (getComputedStyle(this.centerPanel).display !== 'none') {
         EVT.fire('closeCenterPanel')
       }
     })
-
-    // 在选项卡的标题上触发事件时，激活对应的选项卡
-    let eventList = ['click', 'mouseenter']
-    if (Config.mobile) {
-      eventList = ['touchend']
-    }
-    for (let index = 0; index < this.allTabTitle.length; index++) {
-      const title = this.allTabTitle[index]
-      eventList.forEach((eventName) => {
-        title.addEventListener(eventName, () => {
-          // 触发 mouseenter 时，如果用户设置的是通过点击来切换选项卡，则直接返回
-          // 触发 click 时无需检测，始终可以切换
-          if (eventName === 'mouseenter' && settings.switchTabBar === 'click') {
-            return
-          }
-          this.activeTab(index)
-        })
-      })
-
-      // 当标题获得焦点，并且用户按下了回车或空格键时，激活对应的选项卡
-      title.addEventListener('keydown', (event) => {
-        if (
-          (event.code === 'Enter' || event.code === 'Space') &&
-          event.target === title
-        ) {
-          event.stopPropagation()
-          event.preventDefault()
-          this.activeTab(index)
-        }
-      })
-    }
-
-    // 当可以开始下载时，切换到“下载”选项卡
-    for (const ev of [EVT.list.crawlComplete, EVT.list.resume]) {
-      window.addEventListener(ev, () => {
-        this.activeTab(Tabbar.Download)
-      })
-    }
-
-    window.addEventListener(EVT.list.crawlEmpty, () => {
-      this.activeTab(Tabbar.Crawl)
-    })
-
-    window.addEventListener(EVT.list.langChange, () => {
-      this.setLangFlag()
-    })
   }
 
-  // 设置激活的选项卡
-  private activeTab(no = 0) {
-    // 显示选项卡的内容
-    const allTabCon = this.centerPanel.querySelectorAll(
-      '.tabsContent'
-    ) as NodeListOf<HTMLElement>
-    for (let index = 0; index < allTabCon.length; index++) {
-      allTabCon[index].style.display = index === no ? 'block' : 'none'
-    }
-
-    // 高亮选项卡的标题
-    for (const title of this.allTabTitle) {
-      title.classList.remove(this.TitleActiveClass)
-    }
-    this.allTabTitle[no].classList.add(this.TitleActiveClass)
-
-    // 设置动画效果
-    const useClass = this.titleAnimationElClassList[no]
-    if (this.titleAnimationEl.classList.contains(useClass)) {
-      return
-    }
-    this.titleAnimationElClassList.forEach((str) => {
-      this.titleAnimationEl.classList.remove(str)
-    })
-    this.titleAnimationEl.classList.add(useClass)
-  }
-
-  // 显示中间区域
   private show() {
     this.centerPanel.style.display = 'block'
     EVT.fire('centerPanelOpened')
   }
 
-  // 隐藏中间区域
   private close() {
     this.centerPanel.style.display = 'none'
     EVT.fire('centerPanelClosed')

@@ -13,6 +13,7 @@ import { DateFormat } from '../utils/DateFormat'
 import { toast } from '../Toast'
 import { FormHelpManager } from './FormHelpManager'
 import { FormBeautify } from './FormBeautify'
+import { SettingsPanel } from './SettingsPanel'
 
 // 设置表单
 class Form {
@@ -28,6 +29,7 @@ class Form {
     new FormSettings(this.form)
     new FormHelpManager(this.form)
     new FormBeautify(this.form)
+    new SettingsPanel(this.form)
 
     this.bindFormEvents()
     this.bindFunctionBtn()

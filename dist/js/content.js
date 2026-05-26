@@ -2297,10 +2297,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./MsgBox */ "./src/ts/MsgBox.ts");
 /* harmony import */ var _BG__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./BG */ "./src/ts/BG.ts");
 /* harmony import */ var _OpenCenterPanel__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./OpenCenterPanel */ "./src/ts/OpenCenterPanel.ts");
-/* harmony import */ var _setting_Settings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./setting/Settings */ "./src/ts/setting/Settings.ts");
-/* harmony import */ var _BoldKeywords__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./BoldKeywords */ "./src/ts/BoldKeywords.ts");
-/* harmony import */ var _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ShowOneTimeMsg */ "./src/ts/ShowOneTimeMsg.ts");
-/* harmony import */ var _store_Store__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./store/Store */ "./src/ts/store/Store.ts");
+/* harmony import */ var _BoldKeywords__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./BoldKeywords */ "./src/ts/BoldKeywords.ts");
+/* harmony import */ var _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ShowOneTimeMsg */ "./src/ts/ShowOneTimeMsg.ts");
+/* harmony import */ var _store_Store__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./store/Store */ "./src/ts/store/Store.ts");
 
 
 
@@ -2313,124 +2312,144 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-// 选项卡的名称和索引
-var Tabbar;
-(function (Tabbar) {
-    Tabbar[Tabbar["Crawl"] = 0] = "Crawl";
-    Tabbar[Tabbar["Download"] = 1] = "Download";
-    Tabbar[Tabbar["Other"] = 2] = "Other";
-})(Tabbar || (Tabbar = {}));
 // 中间面板
 class CenterPanel {
     constructor() {
         this.addCenterPanel();
         _Theme__WEBPACK_IMPORTED_MODULE_4__.theme.register(this.centerPanel);
         _Language__WEBPACK_IMPORTED_MODULE_1__.lang.register(this.centerPanel);
-        this.activeTab(Tabbar.Crawl);
         _BG__WEBPACK_IMPORTED_MODULE_7__.bg.useBG(this.centerPanel);
-        new _BoldKeywords__WEBPACK_IMPORTED_MODULE_10__.BoldKeywords(this.centerPanel);
+        new _BoldKeywords__WEBPACK_IMPORTED_MODULE_9__.BoldKeywords(this.centerPanel);
         this.allLangFlag = _Language__WEBPACK_IMPORTED_MODULE_1__.lang.langTypes.map((type) => 'lang_' + type);
         this.setLangFlag();
         this.bindEvents();
     }
     centerPanel;
-    updateLink;
-    updateActiveClass = 'updateActiveClass';
-    allTabTitle; // 选项卡的标题区域
-    TitleActiveClass = 'active';
-    titleAnimationEl;
-    titleAnimationElClassList = ['tab1', 'tab2', 'tab3'];
-    // 添加中间面板
+    allLangFlag = [];
     addCenterPanel() {
+        const logoURL = webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default().runtime.getURL('icons/logo128.png');
         const centerPanelHTML = `
-      <div class="centerWrap ${'lang_' + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.type}">
+      <div class="centerWrap settingsV2 ${'lang_' + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.type}">
+        <div class="centerWrap_head">
+          <div class="settingsPanel_headerMain">
+            <div class="settingsPanel_brand">
+              <img class="settingsPanel_logo" src="${logoURL}" alt="">
+              <span class="settingsPanel_brandName blue">${_Config__WEBPACK_IMPORTED_MODULE_5__.Config.appName}</span>
+            </div>
 
-      <div class="centerWrap_head">
-      <div class="centerWrap_title blue">
-      ${_Config__WEBPACK_IMPORTED_MODULE_5__.Config.appName}
-      <div class="btns">
-      <a class="has_tip centerWrap_top_btn update" data-xztip="_newver" data-xztitle="_newver" href="https://github.com/xuejianxianzun/PixivBatchDownloader/releases/latest" target="_blank">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#refresh"></use>
-        </svg>
-      </a>
-      <a class="has_tip centerWrap_top_btn github_icon" data-xztip="_github" data-xztitle="_github" href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#github"></use>
-      </svg>
-      </a>
-      <a class="has_tip centerWrap_top_btn wiki_url" data-xztip="_wiki" data-xztitle="_wiki" href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#help"></use>
-        </svg>
-      </a>
-        <button class="textButton ${!_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile && 'has_tip'} centerWrap_top_btn centerWrap_close" ${!_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile &&
-            'data-xztip="_隐藏控制面板" data-xztitle="_隐藏控制面板"'}>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#close"></use>
-        </svg>
-        </button>
+            <button class="textButton centerWrap_top_btn centerWrap_close centerWrap_close_mobile" type="button" data-xztitle="_关闭">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#close"></use>
+              </svg>
+            </button>
+          </div>
+
+          <div class="settingsPanel_headerActions">
+            <div class="settingsPanel_headerSearch">
+              <label class="settingsPanel_searchBar">
+                <svg class="icon settingsPanel_searchIcon" aria-hidden="true">
+                  <use xlink:href="#search-in-searchbar"></use>
+                </svg>
+                <input id="settingsPanelSearchInput" type="text" data-xzplaceholder="_搜索设置">
+                <button class="textButton settingsPanel_clearSearch" id="settingsPanelClearSearch" type="button" data-xztitle="_清除">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#close"></use>
+                  </svg>
+                </button>
+              </label>
+
+              <button class="textButton centerWrap_top_btn settingsPanel_expandAll" id="settingsPanelToggleExpand" type="button" data-xztitle="_展开/折叠所有区域">
+                <svg class="icon settingsPanel_expandIcon settingsPanel_expandIconDown" aria-hidden="true">
+                  <use xlink:href="#arrow-down"></use>
+                </svg>
+                <svg class="icon settingsPanel_expandIcon settingsPanel_expandIconUp" aria-hidden="true">
+                  <use xlink:href="#arrow-up"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="settingsPanel_headerMinor">
+              <button class="textButton centerWrap_top_btn settingsPanel_sponsorBtn" id="settingsPanelSponsor" type="button" data-xztitle="_赞助我">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#heart-line"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="settingsPanel_headerClose">
+              <button class="textButton centerWrap_top_btn centerWrap_close centerWrap_close_pc" type="button" data-xztitle="_关闭">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#close"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="centerWrap_con">
+          <aside class="settingsPanel_sidebar beautify_scrollbar">
+            <nav class="settingsPanel_nav">
+              ${this.createNavItem('home', '_首页', 'home-line', 'home-fill')}
+              ${this.createNavItem('crawl', '_抓取', 'filter-line', 'filter-filling')}
+              ${this.createNavItem('naming', '_命名', 'rename-line', 'rename-fill')}
+              ${this.createNavItem('download', '_下载', 'download-line', 'download-fill')}
+              ${this.createNavItem('enhance', '_增强', 'magic-line', 'magic-fill')}
+              ${this.createNavItem('general', '_通用', 'setting-line', 'setting-fill')}
+              ${this.createNavItem('help', '_帮助', 'book-line', 'book-fill')}
+              ${this.createNavItem('search', '_搜索', 'search-line', 'search-fill', true)}
+            </nav>
+
+            <div class="settingsPanel_downloadSummary" id="settingsPanelDownloadSummary">
+              <div class="settingsPanel_downloadSummaryStatus">
+                <svg class="icon settingsPanel_downloadSummaryStateIcon" aria-hidden="true">
+                  <use xlink:href="#play"></use>
+                </svg>
+                <span class="settingsPanel_downloadSummaryStateText" data-xztext="_未开始下载"></span>
+                <span class="settingsPanel_downloadSummaryProgress">0 / 0</span>
+              </div>
+
+              <div class="settingsPanel_downloadSummaryActions">
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryStart" type="button" data-xztitle="_开始下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#play"></use></svg>
+                </button>
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryPause" type="button" data-xztitle="_暂停下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#pause"></use></svg>
+                </button>
+                <button class="textButton settingsPanel_downloadSummaryBtn" id="settingsPanelSummaryStop" type="button" data-xztitle="_停止下载">
+                  <svg class="icon" aria-hidden="true"><use xlink:href="#stop"></use></svg>
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <div class="settingsPanel_main beautify_scrollbar">
+            <slot data-name="form"></slot>
+          </div>
+        </div>
       </div>
-      </div>
-      </div>
-
-      <div class="centerWrap_tabs tabsTitle">
-        <div class="title" data-xztext="_抓取" tabindex="0"></div>
-        <div class="title" data-xztext="_下载" tabindex="0"></div>
-        <div class="title" data-xztext="_更多" tabindex="0"></div>
-        <div class="title_active"></div>
-      </div>
-
-      <div class="centerWrap_con beautify_scrollbar">
-
-      <p id="tipPinOption" style="line-height: 1.6;">
-        💡<span data-xztext="_提示可以置顶选项"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <p id="tipCloseAskFileSaveLocation" style="line-height: 1.6;">
-        💡<span data-xztext="_提示"></span>
-        <span>: </span>
-        <span data-xztext="_建议您关闭询问文件保存位置"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <p id="tipOpenWikiLinkWrap" style="line-height: 1.6;">
-        💡<span data-xztext="_提示"></span>
-        <span>: </span>
-        <span data-xztext="_提示查看wiki页面"></span>
-        <button class="gray1 textButton" type="button" data-xztext="_我知道了"></button>
-      </p>
-
-      <slot data-name="form"></slot>
-
-      <div class="help_bar gray1"> 
-      <a class="gray1" href="https://xuejianxianzun.github.io/PBDWiki" target="_blank" data-xztext="_wiki"></a>
-      <button class="textButton gray1" id="showFAQ" type="button" data-xztext="_常见问题"></button>
-      <button class="textButton gray1" id="showGetHelp" type="button" data-xztext="_获取帮助"></button>
-      <button class="textButton gray1" id="showRecentUpdates" type="button" data-xztext="_最近更新"></button>
-      <button class="textButton gray1" id="xzFanboxDownloader" type="button" data-xztext="_fanboxDownloader"></button>
-      <button class="textButton gray1" id="showSponsorship" type="button" data-xztext="_赞助我"></button>
-      <br>
-      </div>
-
-      </div>
-
-      </div>
-      `;
+    `;
         document.body.insertAdjacentHTML('afterbegin', centerPanelHTML);
-        this.centerPanel = document.querySelector('.centerWrap');
-        this.updateLink = this.centerPanel.querySelector('.update');
-        this.allTabTitle = this.centerPanel.querySelectorAll('.tabsTitle .title');
-        this.titleAnimationEl = this.centerPanel.querySelector('.title_active');
-        // 设置移动端样式
+        this.centerPanel = document.querySelector('.centerWrap.settingsV2');
         if (_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile) {
             document.body.classList.add('mobile');
             this.centerPanel.classList.add('mobile');
         }
     }
-    allLangFlag = [];
+    createNavItem(page, textKey, lineIcon, fillIcon, hidden = false) {
+        return `
+    <button class="settingsPanel_navItem hasRippleAnimation" data-page="${page}" type="button" ${hidden ? 'hidden' : ''}>
+      <span class="settingsPanel_navIconWrap" aria-hidden="true">
+        <svg class="icon settingsPanel_navIcon settingsPanel_navIconLine">
+          <use xlink:href="#${lineIcon}"></use>
+        </svg>
+        <svg class="icon settingsPanel_navIcon settingsPanel_navIconFill">
+          <use xlink:href="#${fillIcon}"></use>
+        </svg>
+      </span>
+      <span class="settingsPanel_navText" data-xztext="${textKey}"></span>
+    </button>
+    `;
+    }
     setLangFlag() {
         this.allLangFlag.forEach((flag) => {
             this.centerPanel.classList.remove(flag);
@@ -2438,38 +2457,36 @@ class CenterPanel {
         this.centerPanel.classList.add('lang_' + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.type);
     }
     bindEvents() {
-        // 监听点击扩展图标的消息，开关中间面板
         webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default().runtime.onMessage.addListener((msg) => {
             if (msg.msg === 'click_icon') {
                 this.toggle();
             }
         });
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.settingInitialized, () => {
-            _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_11__.showOneTimeMsg.show('tipHowToUse', _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_HowToUse') + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_账户可能被封禁的警告'));
+            _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_10__.showOneTimeMsg.show('tipHowToUse', _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_HowToUse') + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_账户可能被封禁的警告'));
         });
-        // 使用快捷键 Alt + x 切换中间面板显示隐藏
         window.addEventListener('keydown', (ev) => {
             if (ev.altKey && ev.code === 'KeyX') {
                 this.toggle();
             }
         }, false);
-        // 关闭按钮
-        document
-            .querySelector('.centerWrap_close')
-            .addEventListener('click', () => {
+        this.centerPanel.querySelectorAll('.centerWrap_close').forEach((button) => button.addEventListener('click', () => {
             _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('closeCenterPanel');
             if (!_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile) {
-                _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_11__.showOneTimeMsg.show('tipAltXToShowControlPanel', _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_快捷键ALTX显示隐藏控制面板'));
+                _ShowOneTimeMsg__WEBPACK_IMPORTED_MODULE_10__.showOneTimeMsg.show('tipAltXToShowControlPanel', _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_快捷键ALTX显示隐藏控制面板'));
             }
-        });
-        // 开始抓取作品时，隐藏
+        }));
+        this.centerPanel
+            .querySelector('#settingsPanelSponsor')
+            ?.addEventListener('click', () => _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_赞助方式提示'), {
+            title: _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_赞助我'),
+        }));
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.crawlStart, () => {
             _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('closeCenterPanel');
         });
-        // 抓取完作品详细数据时，显示
         for (const ev of [_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.crawlComplete, _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.resume]) {
             window.addEventListener(ev, () => {
-                if (!_store_States__WEBPACK_IMPORTED_MODULE_3__.states.quickCrawl && _store_Store__WEBPACK_IMPORTED_MODULE_12__.store.result.length > 0) {
+                if (!_store_States__WEBPACK_IMPORTED_MODULE_3__.states.quickCrawl && _store_Store__WEBPACK_IMPORTED_MODULE_11__.store.result.length > 0) {
                     this.show();
                 }
             });
@@ -2480,117 +2497,22 @@ class CenterPanel {
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.closeCenterPanel, () => {
             this.close();
         });
-        // 显示更新按钮
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.hasNewVer, () => {
-            this.updateLink.classList.add(this.updateActiveClass);
-            this.updateLink.style.display = 'inline-block';
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.langChange, () => {
+            this.setLangFlag();
         });
-        // 显示常见问题
-        this.centerPanel
-            .querySelector('#showFAQ')
-            .addEventListener('click', () => {
-            let msg = _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_常见问题说明') + _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_账户可能被封禁的警告');
-            if (_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile) {
-                msg += _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_移动端浏览器可能不会建立文件夹的说明');
-            }
-            _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.show(msg, {
-                title: _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_常见问题'),
-            });
-        });
-        this.centerPanel
-            .querySelector('#showGetHelp')
-            .addEventListener('click', () => _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_获取帮助的提示'), {
-            title: _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_获取帮助'),
-        }));
-        this.centerPanel
-            .querySelector('#showSponsorship')
-            .addEventListener('click', () => _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_赞助方式提示'), {
-            title: _Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_赞助我'),
-        }));
-        this.centerPanel
-            .querySelector('#xzFanboxDownloader')
-            .addEventListener('click', () => _MsgBox__WEBPACK_IMPORTED_MODULE_6__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_fanboxDownloader的说明'), {
-            title: 'Pixiv Fanbox Downloader',
-        }));
-        this.centerPanel
-            .querySelector('#showRecentUpdates')
-            .addEventListener('click', () => _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('showRecentUpdates'));
         this.centerPanel.addEventListener('click', (e) => {
             e.stopPropagation();
         });
         document.addEventListener('click', () => {
-            if (getComputedStyle(this.centerPanel)['display'] !== 'none') {
+            if (getComputedStyle(this.centerPanel).display !== 'none') {
                 _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('closeCenterPanel');
             }
         });
-        // 在选项卡的标题上触发事件时，激活对应的选项卡
-        let eventList = ['click', 'mouseenter'];
-        if (_Config__WEBPACK_IMPORTED_MODULE_5__.Config.mobile) {
-            eventList = ['touchend'];
-        }
-        for (let index = 0; index < this.allTabTitle.length; index++) {
-            const title = this.allTabTitle[index];
-            eventList.forEach((eventName) => {
-                title.addEventListener(eventName, () => {
-                    // 触发 mouseenter 时，如果用户设置的是通过点击来切换选项卡，则直接返回
-                    // 触发 click 时无需检测，始终可以切换
-                    if (eventName === 'mouseenter' && _setting_Settings__WEBPACK_IMPORTED_MODULE_9__.settings.switchTabBar === 'click') {
-                        return;
-                    }
-                    this.activeTab(index);
-                });
-            });
-            // 当标题获得焦点，并且用户按下了回车或空格键时，激活对应的选项卡
-            title.addEventListener('keydown', (event) => {
-                if ((event.code === 'Enter' || event.code === 'Space') &&
-                    event.target === title) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    this.activeTab(index);
-                }
-            });
-        }
-        // 当可以开始下载时，切换到“下载”选项卡
-        for (const ev of [_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.crawlComplete, _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.resume]) {
-            window.addEventListener(ev, () => {
-                this.activeTab(Tabbar.Download);
-            });
-        }
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.crawlEmpty, () => {
-            this.activeTab(Tabbar.Crawl);
-        });
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.langChange, () => {
-            this.setLangFlag();
-        });
     }
-    // 设置激活的选项卡
-    activeTab(no = 0) {
-        // 显示选项卡的内容
-        const allTabCon = this.centerPanel.querySelectorAll('.tabsContent');
-        for (let index = 0; index < allTabCon.length; index++) {
-            allTabCon[index].style.display = index === no ? 'block' : 'none';
-        }
-        // 高亮选项卡的标题
-        for (const title of this.allTabTitle) {
-            title.classList.remove(this.TitleActiveClass);
-        }
-        this.allTabTitle[no].classList.add(this.TitleActiveClass);
-        // 设置动画效果
-        const useClass = this.titleAnimationElClassList[no];
-        if (this.titleAnimationEl.classList.contains(useClass)) {
-            return;
-        }
-        this.titleAnimationElClassList.forEach((str) => {
-            this.titleAnimationEl.classList.remove(str);
-        });
-        this.titleAnimationEl.classList.add(useClass);
-    }
-    // 显示中间区域
     show() {
         this.centerPanel.style.display = 'block';
         _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('centerPanelOpened');
     }
-    // 隐藏中间区域
     close() {
         this.centerPanel.style.display = 'none';
         _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('centerPanelClosed');
@@ -2708,14 +2630,16 @@ var Colors;
     Colors["white"] = "#fff";
     Colors["black"] = "#000";
     Colors["red"] = "#f00";
-    Colors["theme"] = "#0ea8ef";
+    // theme = '#0ea8ef',
+    Colors["theme"] = "#199df5";
     // 带有语义的字体颜色
     Colors["textSuccess"] = "#00BD17";
     Colors["textWarning"] = "#d27e00";
     Colors["textError"] = "#f00";
     // 背景颜色
     // 稍暗，适合在颜色区域的面积较大时使用
-    Colors["bgBlue"] = "#0ea8ef";
+    // bgBlue = '#0ea8ef',
+    Colors["bgBlue"] = "#09a0f4";
     Colors["bgGreen"] = "#14ad27";
     Colors["bgYellow"] = "#e49d00";
     Colors["bgRed"] = "#f33939";
@@ -9787,7 +9711,7 @@ class SelectWork {
         }
     }
     addBtn() {
-        this.controlBtn = _Tools__WEBPACK_IMPORTED_MODULE_0__.Tools.addBtn('selectWorkBtns', _Colors__WEBPACK_IMPORTED_MODULE_1__.Colors.bgGreen, '_手动选择作品', 'Alt + S', 'manuallySelectWork');
+        this.controlBtn = _Tools__WEBPACK_IMPORTED_MODULE_0__.Tools.addBtn('selectWorkBtns', _Colors__WEBPACK_IMPORTED_MODULE_1__.Colors.bgBlue, '_手动选择作品', 'Alt + S', 'manuallySelectWork');
         this.controlTextSpan = this.controlBtn.querySelector('span');
         this.updateControlBtn();
         this.clearBtn = _Tools__WEBPACK_IMPORTED_MODULE_0__.Tools.addBtn('selectWorkBtns', _Colors__WEBPACK_IMPORTED_MODULE_1__.Colors.bgRed, '_清空选择的作品', '', 'clearSelectedWork');
@@ -22586,7 +22510,7 @@ class DownloadControl {
         // 只在 pixiv 上添加这些按钮
         if (_utils_Utils__WEBPACK_IMPORTED_MODULE_19__.Utils.isPixiv()) {
             // 导入抓取结果
-            this.resultBtns.importJSON = _Tools__WEBPACK_IMPORTED_MODULE_2__.Tools.addBtn('exportResult', _Colors__WEBPACK_IMPORTED_MODULE_6__.Colors.bgGreen, '_导入抓取结果', '', 'importCrawlResults');
+            this.resultBtns.importJSON = _Tools__WEBPACK_IMPORTED_MODULE_2__.Tools.addBtn('exportResult', _Colors__WEBPACK_IMPORTED_MODULE_6__.Colors.bgBlue, '_导入抓取结果', '', 'importCrawlResults');
             // 导入抓取结果的按钮始终显示，因为它需要始终可用。
             // 导出抓取结果的按钮只有在可以准备下载时才显示
             this.resultBtns.importJSON.addEventListener('click', () => {
@@ -30476,12 +30400,12 @@ This part only applies to Windows. With a few settings, you can view thumbnails 
         'Свернуть/развернуть настройки',
     ],
     _github: [
-        'Github 页面，欢迎 star',
-        'Github 頁面，歡迎 star',
-        'Github page, if you like, please star it',
-        'Github のページ、star をクリックしてください',
-        'Github, 유용하셨다면 Star를 주세요.',
-        'Страница на Github, если вам нравится, пожалуйста, поставьте звезду',
+        'Github',
+        'Github',
+        'Github',
+        'Github',
+        'Github',
+        'Github',
     ],
     _wiki: ['使用手册', 'Wiki', 'Wiki', 'マニュアル', '위키', 'Вики'],
     _快捷键ALTX显示隐藏控制面板: [
@@ -30884,7 +30808,7 @@ This part only applies to Windows. With a few settings, you can view thumbnails 
         '파일명 미리보기',
         'Имя файла предварительного просмотра',
     ],
-    _下载线程: [
+    _同时下载数量: [
         '同时下载<span class="key">数量</span>',
         '同時下載<span class="key">數量</span>',
         'Download <span class="key">thread</span>',
@@ -38974,6 +38898,128 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
         `Русский`,
         `Русский`,
     ],
+    _首页: [`首页`, `首頁`, `Home`, `ホーム`, `홈`, `Главная`],
+    _搜索: [`搜索`, `搜尋`, `Search`, `検索`, `검색`, `Поиск`],
+    _搜索设置: [
+        `搜索设置`,
+        `搜尋設定`,
+        `Search settings`,
+        `設定を検索`,
+        `설정 검색`,
+        `Поиск настроек`,
+    ],
+    '_展开/折叠所有区域': [
+        `展开/折叠所有区域`,
+        `展開/摺疊所有區域`,
+        `Expand/collapse all sections`,
+        `すべてのエリアを展開/折りたたむ`,
+        `모든 영역 펼치기/접기`,
+        `Развернуть/свернуть все разделы`,
+    ],
+    _置顶的设置: [
+        `置顶的设置`,
+        `置頂的設定`,
+        `Pinned settings`,
+        `固定した設定`,
+        `고정한 설정`,
+        `Закрепленные настройки`,
+    ],
+    _附加功能: [
+        `附加功能`,
+        `附加功能`,
+        `Extra features`,
+        `追加機能`,
+        `부가 기능`,
+        `Дополнительные функции`,
+    ],
+    _下载区域: [
+        `下载区域`,
+        `下載區域`,
+        `Download area`,
+        `ダウンロードエリア`,
+        `다운로드 영역`,
+        `Область загрузки`,
+    ],
+    _已确认: [
+        `已确认`,
+        `已確認`,
+        `Confirmed`,
+        `確認済み`,
+        `확인함`,
+        `Подтверждено`,
+    ],
+    _使用手册: [
+        `使用手册`,
+        `使用手冊`,
+        `Manual`,
+        `マニュアル`,
+        `사용 설명서`,
+        `Руководство`,
+    ],
+    _使用手册说明: [
+        `你可以在 Wiki 查看完整的使用说明：<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+        `你可以在 Wiki 查看完整的使用說明：<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+        `You can read the full manual on the Wiki:<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+        `Wiki で完全な使い方を確認できます：<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+        `위키에서 전체 사용 설명서를 볼 수 있습니다.<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+        `Полное руководство доступно в Wiki:<br><a href="https://xuejianxianzun.github.io/PBDWiki" target="_blank">https://xuejianxianzun.github.io/PBDWiki</a>`,
+    ],
+    _GitHub说明: [
+        `项目主页：<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+        `專案首頁：<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+        `Project homepage:<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+        `プロジェクトページ：<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+        `프로젝트 홈페이지:<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+        `Страница проекта:<br><a href="https://github.com/xuejianxianzun/PixivBatchDownloader" target="_blank">https://github.com/xuejianxianzun/PixivBatchDownloader</a>`,
+    ],
+    _第三方库: [
+        `第三方库`,
+        `第三方庫`,
+        `Third-party libraries`,
+        `サードパーティーライブラリ`,
+        `서드파티 라이브러리`,
+        `Сторонние библиотеки`,
+    ],
+    _第三方库说明: [
+        `本项目使用或包含了这些开源 JS 库：<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>另外，当前设置面板的界面布局受 <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a> 启发。`,
+        `本專案使用或包含了這些開源 JS 函式庫：<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>另外，目前設定面板的介面布局受 <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a> 啟發。`,
+        `This project uses or bundles these open-source JavaScript libraries:<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>The current settings-panel layout is also inspired by <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a>.`,
+        `このプロジェクトでは次のオープンソース JS ライブラリを使用または同梱しています：<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>また、現在の設定パネルのレイアウトは <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a> に着想を得ています。`,
+        `이 프로젝트는 다음 오픈소스 JS 라이브러리를 사용하거나 포함합니다.<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>현재 설정 패널 레이아웃은 <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a> 에서 영감을 받았습니다.`,
+        `В проекте используются или входят эти библиотеки JavaScript с открытым исходным кодом:<br>- Viewer.js<br>- webextension-polyfill<br>- gif.js<br>- JSZip / jszip-utils<br>- jEpub<br>- pako<br>- MediaBunny<br><br>Текущая компоновка панели настроек также вдохновлена <a href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank">Clash Verge</a>.`,
+    ],
+    _机场推荐: [
+        `机场推荐`,
+        `機場推薦`,
+        `Proxy recommendation`,
+        `プロキシのおすすめ`,
+        `프록시 추천`,
+        `Рекомендация прокси`,
+    ],
+    _机场推荐说明: [
+        `如果你需要一个机场（梯子）的话，可以试试我现在用的机场：魔法喵 <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a>。如果上面的地址打不开，可以访问发布页：<a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a><br><br>下载 Pixiv、Fanbox 的文件建议使用“日本 2”节点。我的邀请码：GYjQWDob`,
+        `如果你需要一個機場（梯子）的話，可以試試我現在用的機場：魔法喵 <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a>。如果上面的地址打不開，可以訪問發布頁：<a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a><br><br>下載 Pixiv、Fanbox 的檔案建議使用「日本 2」節點。我的邀請碼：GYjQWDob`,
+        `If you need a proxy service, you can try Mofa Miao: <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a>. If that address is unavailable, you can open the release page: <a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a><br><br>For Pixiv and Fanbox downloads, the "Japan 2" node is recommended. Invitation code: GYjQWDob`,
+        `プロキシサービスが必要なら、魔法喵 <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a> を試せます。上の URL が開けない場合は公開ページ <a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a> を利用してください。<br><br>Pixiv と Fanbox のダウンロードには「日本 2」ノードがおすすめです。招待コード：GYjQWDob`,
+        `프록시 서비스가 필요하다면 마법喵 <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a> 를 사용할 수 있습니다. 위 주소가 열리지 않으면 안내 페이지 <a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a> 를 이용하세요.<br><br>Pixiv, Fanbox 다운로드에는 "Japan 2" 노드를 권장합니다. 초대 코드: GYjQWDob`,
+        `Если вам нужен прокси-сервис, можно попробовать Mofa Miao: <a href="https://mofacgb.cc/register?code=GYjQWDob" target="_blank">https://mofacgb.cc</a>. Если этот адрес недоступен, откройте страницу публикации: <a href="https://mofmiao.com" target="_blank">https://mofmiao.com</a><br><br>Для загрузки Pixiv и Fanbox рекомендуется узел "Japan 2". Код приглашения: GYjQWDob`,
+    ],
+    _找到x条与搜索词有关的设置: [
+        `找到 {} 条与“{}”有关的设置`,
+        `找到 {} 條與「{}」有關的設定`,
+        `Found {} settings related to "{}"`,
+        `「{}」に関連する設定が {} 件見つかりました`,
+        `"{}" 와 관련된 설정 {}개를 찾았습니다`,
+        `Найдено {} настроек, связанных с "{}"`,
+    ],
+    _没有找到符合条件的设置你可以尝试搜索更简短的关键词: [
+        `没有找到符合条件的设置。你可以尝试搜索更简短的关键词。`,
+        `沒有找到符合條件的設定。你可以嘗試搜尋更簡短的關鍵詞。`,
+        `No matching settings were found. Try a shorter keyword.`,
+        `条件に合う設定が見つかりませんでした。もっと短いキーワードで試してください。`,
+        `일치하는 설정을 찾지 못했습니다. 더 짧은 키워드로 다시 시도해 보세요.`,
+        `Подходящие настройки не найдены. Попробуйте ввести более короткое ключевое слово.`,
+    ],
 };
 
 
@@ -41942,6 +41988,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
 /* harmony import */ var _FormHelpManager__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./FormHelpManager */ "./src/ts/setting/FormHelpManager.ts");
 /* harmony import */ var _FormBeautify__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FormBeautify */ "./src/ts/setting/FormBeautify.ts");
+/* harmony import */ var _SettingsPanel__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./SettingsPanel */ "./src/ts/setting/SettingsPanel.ts");
+
 
 
 
@@ -41969,6 +42017,7 @@ class Form {
         new _FormSettings__WEBPACK_IMPORTED_MODULE_6__.FormSettings(this.form);
         new _FormHelpManager__WEBPACK_IMPORTED_MODULE_12__.FormHelpManager(this.form);
         new _FormBeautify__WEBPACK_IMPORTED_MODULE_13__.FormBeautify(this.form);
+        new _SettingsPanel__WEBPACK_IMPORTED_MODULE_14__.SettingsPanel(this.form);
         this.bindFormEvents();
         this.bindFunctionBtn();
         this.bindCopyEvent();
@@ -43109,7 +43158,7 @@ const formHtml = `
 
   <div class="option" data-no="16">
     <a href="" target="_blank" class="settingNameStyle">
-      <span data-xztext="_下载线程"></span>
+      <span data-xztext="_同时下载数量"></span>
     </a>
     <input type="text" name="downloadThread" class="has_tip setinput_style1 blue" data-xztip="_下载线程的说明" value="24">
   </div>
@@ -44706,6 +44755,1277 @@ const namingRuleConfig = new NamingRuleConfig();
 
 /***/ }),
 
+/***/ "./src/ts/setting/OptionConfigs.ts":
+/*!*****************************************!*\
+  !*** ./src/ts/setting/OptionConfigs.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   optionConfigs: () => (/* binding */ optionConfigs)
+/* harmony export */ });
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+
+
+
+/** 保存所有设置项以及分类的元数据 */
+class OptionConfigs {
+    constructor() {
+        this.bindEvents();
+    }
+    bindEvents() {
+        // 当置顶的设置发生变化时，更新每个设置项的 pinned 属性
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingChange, (ev) => {
+            const data = ev.detail.data;
+            if (data.name === 'pinnedOptions') {
+                this.setPinnedOptions();
+            }
+        });
+        // 当设置初始化完成时，设置每个属性里的 i18n 文本
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingInitialized, (ev) => {
+            this.setOptionText();
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.langChange, () => {
+            this.setOptionText();
+        });
+    }
+    setPinnedOptions() {
+        for (const option of this.options) {
+            option.pinned = _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptions.includes(option.no);
+        }
+    }
+    setOptionText() {
+        for (const option of this.options) {
+            // 设置名称里含有 span 标签，需要去掉，只保留纯文字
+            option.name = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl(option.nameKey).replace(/<\/?.+?>/g, '');
+            // 设置搜索词数组
+            if (option.searchWordKeys.length > 0) {
+                option.searchWords = [];
+                option.searchWords = option.searchWordKeys.map((key) => _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl(key).replace(/<\/?.+?>/g, ''));
+            }
+        }
+    }
+    /** 所有一级分类和二级分类的 schema 信息 */
+    categorySchema = {
+        crawl: {
+            id: 'crawl',
+            order: 0,
+            nameKey: '_抓取',
+            level2: {
+                scope: {
+                    id: 'scope',
+                    order: 0,
+                    nameKey: '_分组_抓取范围',
+                },
+                workType: {
+                    id: 'workType',
+                    order: 1,
+                    nameKey: '_分组_作品类型',
+                },
+                workData: {
+                    id: 'workData',
+                    order: 2,
+                    nameKey: '_分组_作品数据',
+                },
+                tagAndTitle: {
+                    id: 'tagAndTitle',
+                    order: 3,
+                    nameKey: '_分组_标签与标题',
+                },
+                multiImage: {
+                    id: 'multiImage',
+                    order: 4,
+                    nameKey: '_分组_多图作品',
+                },
+                blockUsers: {
+                    id: 'blockUsers',
+                    order: 5,
+                    nameKey: '_分组_屏蔽用户',
+                },
+                strategy: {
+                    id: 'strategy',
+                    order: 6,
+                    nameKey: '_分组_执行策略',
+                },
+            },
+        },
+        naming: {
+            id: 'naming',
+            order: 1,
+            nameKey: '_命名',
+            level2: {
+                names: {
+                    id: 'names',
+                    order: 0,
+                    nameKey: '_分组_文件夹和文件的名字',
+                },
+                adjustFolders: {
+                    id: 'adjustFolders',
+                    order: 1,
+                    nameKey: '_分组_调整文件夹',
+                },
+                serial: {
+                    id: 'serial',
+                    order: 2,
+                    nameKey: '_分组_序号',
+                },
+                alias: {
+                    id: 'alias',
+                    order: 3,
+                    nameKey: '_分组_别名',
+                },
+                removeSpecialChars: {
+                    id: 'removeSpecialChars',
+                    order: 4,
+                    nameKey: '_分组_移除特殊字符',
+                },
+            },
+        },
+        download: {
+            id: 'download',
+            order: 2,
+            nameKey: '_下载',
+            level2: {
+                behavior: {
+                    id: 'behavior',
+                    order: 0,
+                    nameKey: '_分组_下载行为',
+                },
+                record: {
+                    id: 'record',
+                    order: 1,
+                    nameKey: '_分组_下载记录',
+                },
+                imageSize: {
+                    id: 'imageSize',
+                    order: 2,
+                    nameKey: '_分组_图片尺寸',
+                },
+                ugoira: {
+                    id: 'ugoira',
+                    order: 3,
+                    nameKey: '_分组_动图',
+                },
+                novel: {
+                    id: 'novel',
+                    order: 4,
+                    nameKey: '_分组_小说',
+                },
+                metadata: {
+                    id: 'metadata',
+                    order: 5,
+                    nameKey: '_分组_元数据',
+                },
+            },
+        },
+        enhance: {
+            id: 'enhance',
+            order: 3,
+            nameKey: '_增强',
+            level2: {
+                preview: {
+                    id: 'preview',
+                    order: 0,
+                    nameKey: '_分组_预览',
+                },
+                thumbnail: {
+                    id: 'thumbnail',
+                    order: 1,
+                    nameKey: '_分组_缩略图',
+                },
+                thumbnailButtons: {
+                    id: 'thumbnailButtons',
+                    order: 2,
+                    nameKey: '_分组_缩略图上的按钮',
+                },
+                other: {
+                    id: 'other',
+                    order: 3,
+                    nameKey: '_分组_其他',
+                },
+                searchPage: {
+                    id: 'searchPage',
+                    order: 4,
+                    nameKey: '_分组_搜索页面',
+                },
+            },
+        },
+        general: {
+            id: 'general',
+            order: 4,
+            nameKey: '_通用',
+            level2: {
+                appearance: {
+                    id: 'appearance',
+                    order: 0,
+                    nameKey: '_分组_外观',
+                },
+                language: {
+                    id: 'language',
+                    order: 1,
+                    nameKey: '_分组_语言',
+                },
+                log: {
+                    id: 'log',
+                    order: 2,
+                    nameKey: '_分组_日志',
+                },
+                manageSettings: {
+                    id: 'manageSettings',
+                    order: 3,
+                    nameKey: '_分组_管理设置',
+                },
+            },
+        },
+    };
+    /** 所有设置的元数据 */
+    options = [
+        // 抓取
+        {
+            no: 0,
+            nameKey: '_抓取多少作品',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'scope',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 1,
+            nameKey: '_抓取多少页面',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'scope',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 15,
+            nameKey: '_抓取每个用户最新的几个作品',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'scope',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 2,
+            nameKey: '_作品类型',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 44,
+            nameKey: '_年龄限制',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 81,
+            nameKey: '_AI作品',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 96,
+            nameKey: '_原创作品',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 23,
+            nameKey: '_图片色彩',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 21,
+            nameKey: '_图片数量',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workType',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 6,
+            nameKey: '_收藏状态',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: ['_书签'],
+            searchWords: [],
+        },
+        {
+            no: 5,
+            nameKey: '_收藏数量',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 7,
+            nameKey: '_图片的宽高',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: ['_分辨率'],
+            searchWords: [],
+        },
+        {
+            no: 8,
+            nameKey: '_图片的宽高比例',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: ['_纵横比'],
+            searchWords: [],
+        },
+        {
+            no: 9,
+            nameKey: '_id范围',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 10,
+            nameKey: '_投稿时间',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'workData',
+            pinned: false,
+            searchWordKeys: ['_发布时间'],
+            searchWords: [],
+        },
+        {
+            no: 11,
+            nameKey: '_必须含有tag',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'tagAndTitle',
+            pinned: false,
+            searchWordKeys: ['_标签'],
+            searchWords: [],
+        },
+        {
+            no: 12,
+            nameKey: '_不能含有tag',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'tagAndTitle',
+            pinned: false,
+            searchWordKeys: ['_标签'],
+            searchWords: [],
+        },
+        {
+            no: 94,
+            nameKey: '_标题必须含有',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'tagAndTitle',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 95,
+            nameKey: '_标题不能含有',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'tagAndTitle',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 47,
+            nameKey: '_多图作品的图片数量上限',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 3,
+            nameKey: '_多图作品只抓取前几张图片',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 104,
+            nameKey: '_多图作品只抓取后几张图片',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 103,
+            nameKey: '_多图作品不抓取前几张图片',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 69,
+            nameKey: '_多图作品不抓取后几张图片',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 79,
+            nameKey: '_特定用户的多图作品不下载最后几张图片',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'multiImage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 35,
+            nameKey: '_用户阻止名单',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'blockUsers',
+            pinned: false,
+            searchWordKeys: ['_黑名单'],
+            searchWords: [],
+        },
+        {
+            no: 39,
+            nameKey: '_针对特定用户屏蔽标签',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'blockUsers',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 99,
+            nameKey: '_不抓取下载过的作品',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'strategy',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 75,
+            nameKey: '_减慢抓取速度',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'strategy',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 74,
+            nameKey: '_定时抓取的间隔时间',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'strategy',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 54,
+            nameKey: '_自动导出抓取结果',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'strategy',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 85,
+            nameKey: '_导出ID列表',
+            name: '',
+            categoryLevel1: 'crawl',
+            categoryLevel2: 'strategy',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        // 命名
+        {
+            no: 13,
+            nameKey: '_图像作品的命名规则',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: ['_文件名'],
+            searchWords: [],
+        },
+        {
+            no: 106,
+            nameKey: '_小说的命名规则',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: ['_文件名'],
+            searchWords: [],
+        },
+        {
+            no: 50,
+            nameKey: '_在不同的页面类型中使用不同的命名规则',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 80,
+            nameKey: '_如果作品含有某些标签则对这个作品使用另一种命名规则',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 91,
+            nameKey: '_合并系列小说时的命名规则',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 83,
+            nameKey: '_标签分隔符号',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 31,
+            nameKey: '_日期格式',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 29,
+            nameKey: '_文件名长度限制',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'names',
+            pinned: false,
+            searchWordKeys: ['_路径长度'],
+            searchWords: [],
+        },
+        {
+            no: 64,
+            nameKey: '_不创建文件夹',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'adjustFolders',
+            pinned: false,
+            searchWordKeys: ['_文件夹'],
+            searchWords: [],
+        },
+        {
+            no: 19,
+            nameKey: '_为多图作品添加一层文件夹',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'adjustFolders',
+            pinned: false,
+            searchWordKeys: ['_文件夹'],
+            searchWords: [],
+        },
+        {
+            no: 38,
+            nameKey: '_为r18作品添加一层文件夹',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'adjustFolders',
+            pinned: false,
+            searchWordKeys: ['_文件夹'],
+            searchWords: [],
+        },
+        {
+            no: 43,
+            nameKey: '_使用第一个匹配的标签建立文件夹',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'adjustFolders',
+            pinned: false,
+            searchWordKeys: ['_文件夹'],
+            searchWords: [],
+        },
+        {
+            no: 98,
+            nameKey: '_序号起始值',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'serial',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 22,
+            nameKey: '_第一张图不带序号',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'serial',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 46,
+            nameKey: '_在序号前面填充0',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'serial',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 107,
+            nameKey: '_标签别名',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'alias',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 66,
+            nameKey: '_自定义用户名',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'alias',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 97,
+            nameKey: '_移除文件名里的emoji',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'removeSpecialChars',
+            pinned: false,
+            searchWordKeys: ['_表情符号'],
+            searchWords: [],
+        },
+        {
+            no: 67,
+            nameKey: '_移除用户名中的at和后续字符',
+            name: '',
+            categoryLevel1: 'naming',
+            categoryLevel2: 'removeSpecialChars',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        // 下载
+        {
+            no: 16,
+            nameKey: '_同时下载数量',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_并发'],
+            searchWords: [],
+        },
+        {
+            no: 17,
+            nameKey: '_自动开始下载',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 33,
+            nameKey: '_下载之后收藏作品',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_书签'],
+            searchWords: [],
+        },
+        {
+            no: 90,
+            nameKey: '_下载间隔',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 76,
+            nameKey: '_点击收藏按钮时下载作品',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_书签'],
+            searchWords: [],
+        },
+        {
+            no: 77,
+            nameKey: '_点击点赞按钮时下载作品',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 82,
+            nameKey: '_文件下载顺序',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_排序'],
+            searchWords: [],
+        },
+        {
+            no: 25,
+            nameKey: '_文件体积限制',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_上限'],
+            searchWords: [],
+        },
+        {
+            no: 20,
+            nameKey: '_把文件保存到用户上次选择的位置',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_路径'],
+            searchWords: [],
+        },
+        {
+            no: 52,
+            nameKey: '_下载完成后显示通知',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'behavior',
+            pinned: false,
+            searchWordKeys: ['_提醒'],
+            searchWords: [],
+        },
+        {
+            no: 101,
+            nameKey: '_管理下载记录',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'record',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 28,
+            nameKey: '_不下载重复文件',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'record',
+            pinned: false,
+            searchWordKeys: ['_去重'],
+            searchWords: [],
+        },
+        {
+            no: 100,
+            nameKey: '_在已下载的作品上显示边框',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'record',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 30,
+            nameKey: '_图片尺寸',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'imageSize',
+            pinned: false,
+            searchWordKeys: ['_分辨率'],
+            searchWords: [],
+        },
+        {
+            no: 4,
+            nameKey: '_动图保存格式',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'ugoira',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 24,
+            nameKey: '_同时转换多少个动图',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'ugoira',
+            pinned: false,
+            searchWordKeys: ['_并发', '_动图_动态图像'],
+            searchWords: [],
+        },
+        {
+            no: 26,
+            nameKey: '_小说保存格式',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 27,
+            nameKey: '_在小说里保存元数据',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 70,
+            nameKey: '_下载小说的封面图片',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 72,
+            nameKey: '_下载小说里的内嵌图片',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: ['_插图'],
+            searchWords: [],
+        },
+        {
+            no: 73,
+            nameKey: '_自动合并系列小说',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: ['_连载'],
+            searchWords: [],
+        },
+        {
+            no: 105,
+            nameKey: '_合并系列小说时的分割阈值',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'novel',
+            pinned: false,
+            searchWordKeys: ['_连载'],
+            searchWords: [],
+        },
+        {
+            no: 49,
+            nameKey: '_保存作品的元数据',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'metadata',
+            pinned: false,
+            searchWordKeys: ['_元信息'],
+            searchWords: [],
+        },
+        {
+            no: 89,
+            nameKey: '_保存作品的简介',
+            name: '',
+            categoryLevel1: 'download',
+            categoryLevel2: 'metadata',
+            pinned: false,
+            searchWordKeys: ['_介绍'],
+            searchWords: [],
+        },
+        // 增强
+        {
+            no: 55,
+            nameKey: '_预览作品',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'preview',
+            pinned: false,
+            searchWordKeys: ['_预览图片'],
+            searchWords: [],
+        },
+        {
+            no: 62,
+            nameKey: '_长按右键显示大图',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'preview',
+            pinned: false,
+            searchWordKeys: ['_原图'],
+            searchWords: [],
+        },
+        {
+            no: 87,
+            nameKey: '_预览作品的详细信息',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'preview',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 68,
+            nameKey: '_显示更大的缩略图',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnail',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 63,
+            nameKey: '_替换方形缩略图以显示图片比例',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnail',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 86,
+            nameKey: '_在多图作品页面里显示缩略图列表',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnail',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 42,
+            nameKey: '_把图片显示为灰色',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnail',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 102,
+            nameKey: '_缩略图上按钮的位置',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnailButtons',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 40,
+            nameKey: '_在作品缩略图上显示放大按钮',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnailButtons',
+            pinned: false,
+            searchWordKeys: ['_放大镜'],
+            searchWords: [],
+        },
+        {
+            no: 56,
+            nameKey: '_在作品缩略图上显示下载按钮',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnailButtons',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 14,
+            nameKey: '_复制按钮',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'thumbnailButtons',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 84,
+            nameKey: '_高亮关注的用户',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'other',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 34,
+            nameKey: '_收藏设置',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'other',
+            pinned: false,
+            searchWordKeys: ['_书签'],
+            searchWords: [],
+        },
+        {
+            no: 48,
+            nameKey: '_在搜索页面添加快捷搜索区域',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'searchPage',
+            pinned: false,
+            searchWordKeys: ['_快速搜索'],
+            searchWords: [],
+        },
+        {
+            no: 92,
+            nameKey: '_过滤搜索页面的作品',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'searchPage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 88,
+            nameKey: '_在搜索页面里移除已关注用户的作品',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'searchPage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 18,
+            nameKey: '_预览搜索结果',
+            name: '',
+            categoryLevel1: 'enhance',
+            categoryLevel2: 'searchPage',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        // 通用
+        {
+            no: 36,
+            nameKey: '_颜色主题',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'appearance',
+            pinned: false,
+            searchWordKeys: ['_深色模式'],
+            searchWords: [],
+        },
+        {
+            no: 41,
+            nameKey: '_背景图片',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'appearance',
+            pinned: false,
+            searchWordKeys: ['_壁纸', '_皮肤'],
+            searchWords: [],
+        },
+        {
+            no: 45,
+            nameKey: '_选项卡切换方式',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'appearance',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 53,
+            nameKey: '_高亮显示关键字',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'appearance',
+            pinned: false,
+            searchWordKeys: ['_关键词'],
+            searchWords: [],
+        },
+        {
+            no: 32,
+            nameKey: '_Language',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'language',
+            pinned: false,
+            searchWordKeys: [
+                '_语言',
+                '_中文_简体和繁体_搜索用',
+                '_简体中文_搜索用',
+                '_正體中文_搜索用',
+                '_英语_搜索用',
+                '_日语_搜索用',
+                '_韩语_搜索用',
+                '_俄语_搜索用',
+            ],
+            searchWords: [],
+        },
+        {
+            no: 93,
+            nameKey: '_日志区域的默认可见性',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'log',
+            pinned: false,
+            searchWordKeys: [],
+            searchWords: [],
+        },
+        {
+            no: 78,
+            nameKey: '_导出日志',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'log',
+            pinned: false,
+            searchWordKeys: ['_保存日志'],
+            searchWords: [],
+        },
+        {
+            no: 37,
+            nameKey: '_管理设置',
+            name: '',
+            categoryLevel1: 'general',
+            categoryLevel2: 'manageSettings',
+            pinned: false,
+            searchWordKeys: ['_导入设置', '_导出设置', '_重置设置'],
+            searchWords: [],
+        },
+    ];
+    /** 按分类组织的设置项 */
+    optionsByCategory = this.getOptionsByCategory();
+    getOptionsByCategory() {
+        const optionsByCategory = {
+            crawl: {},
+            naming: {},
+            download: {},
+            enhance: {},
+            general: {},
+        };
+        for (const option of this.options) {
+            // 添加二级分类数组
+            if (!optionsByCategory[option.categoryLevel1][option.categoryLevel2]) {
+                optionsByCategory[option.categoryLevel1][option.categoryLevel2] = [];
+            }
+            // 添加二级分类里的设置项
+            optionsByCategory[option.categoryLevel1][option.categoryLevel2].push(option);
+        }
+        return optionsByCategory;
+    }
+}
+const optionConfigs = new OptionConfigs();
+
+
+
+/***/ }),
+
 /***/ "./src/ts/setting/Options.ts":
 /*!***********************************!*\
   !*** ./src/ts/setting/Options.ts ***!
@@ -44848,10 +46168,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
 /* harmony import */ var _store_States__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../store/States */ "./src/ts/store/States.ts");
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
-/* harmony import */ var _Tools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Tools */ "./src/ts/Tools.ts");
-/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
-/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
-
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
 
 
 
@@ -44862,7 +46180,7 @@ __webpack_require__.r(__webpack_exports__);
 class PinOptions {
     init(allOption) {
         // 不在 pixivision 上启用
-        if (!_utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.isPixiv()) {
+        if (!_utils_Utils__WEBPACK_IMPORTED_MODULE_4__.Utils.isPixiv()) {
             return;
         }
         this.allOption = allOption;
@@ -44870,125 +46188,51 @@ class PinOptions {
     }
     allOption;
     pinnedClassName = 'pinned';
-    /** 保存当前置顶选项的列表 */
-    list;
     bindEvents() {
-        // 在设置初始化之后，第一次执行 display
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingInitialized, () => {
-            this.addPinButton();
-            this.display();
-            this.list = _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.slice();
+            this.bindLongPress();
+            this.syncPinnedClass();
         });
-        // 初始化之后，如果用户修改了置顶选项列表，则再次执行 display
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingChange, (ev) => {
             if (!_store_States__WEBPACK_IMPORTED_MODULE_2__.states.settingInitialized) {
                 return;
             }
             const data = ev.detail.data;
             if (data.name === 'pinnedOptions') {
-                // 对比新旧列表，找出有哪些选项被取消了置顶
-                const removed = this.list.filter((no) => !_Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.includes(no));
-                // 传入被取消置顶的选项
-                this.display(removed);
-                // 保存新的列表
-                this.list = _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.slice();
+                this.syncPinnedClass();
             }
         });
     }
-    /** 在每个选项前面添加置顶按钮 */
-    // 对于未置顶的选项，在鼠标经过时添加并显示置顶按钮；对于已置顶的选项，直接显示置顶按钮
-    addPinButton() {
+    bindLongPress() {
         for (const option of this.allOption) {
-            // 跳过分类标题
-            if (option.classList.contains('settingCategoryName')) {
+            const no = option.dataset.no;
+            if (!no || option.dataset.pinBound === 'true') {
                 continue;
             }
+            option.dataset.pinBound = 'true';
+            _utils_Utils__WEBPACK_IMPORTED_MODULE_4__.Utils.longPress(option, () => {
+                this.togglePinOption(Number.parseInt(no));
+            });
+        }
+    }
+    togglePinOption(noNum) {
+        if (_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.includes(noNum)) {
+            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions = _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.filter((no) => no !== noNum);
+            _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.warning(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_取消置顶'));
+        }
+        else {
+            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.push(noNum);
+            _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.success(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_已置顶'));
+        }
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_5__.setSetting)('pinnedOptions', _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions);
+    }
+    syncPinnedClass() {
+        for (const option of this.allOption) {
             const no = option.dataset.no;
             if (!no) {
                 continue;
             }
-            const noNum = Number.parseInt(no);
-            // 已置顶的选项，直接显示置顶按钮
-            if (_Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.includes(noNum)) {
-                option.classList.add(this.pinnedClassName);
-                this.bindTogglePinEvent(option, noNum);
-            }
-            else {
-                // 未置顶的选项，在鼠标经过时才会添加置顶按钮，以减少 DOM 元素数量
-                option.addEventListener('mouseover', () => {
-                    this.bindTogglePinEvent(option, noNum);
-                });
-            }
-        }
-    }
-    createPinButton(option) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.classList.add('pinButton');
-        btn.textContent = '📌';
-        btn.dataset.title = '_置顶';
-        _Language__WEBPACK_IMPORTED_MODULE_1__.lang.register(btn);
-        option.insertAdjacentElement('afterbegin', btn);
-        return btn;
-    }
-    /** 点击置顶按钮，或者长按选项的名称时，切换该选项的置顶状态 */
-    bindTogglePinEvent(option, noNum) {
-        const existingBtn = option.querySelector('.pinButton');
-        if (existingBtn) {
-            return;
-        }
-        const btn = this.createPinButton(option);
-        btn.addEventListener('click', () => {
-            this.tooglePinOption(noNum);
-        });
-        const a = option.querySelector('a.settingNameStyle');
-        if (a) {
-            _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.longPress(a, () => {
-                this.tooglePinOption(noNum);
-            });
-        }
-    }
-    /** 切换该选项的置顶状态 */
-    tooglePinOption(noNum) {
-        if (_Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.includes(noNum)) {
-            // 已置顶，取消置顶
-            _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions = _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.filter((no) => no !== noNum);
-            _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.warning(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_取消置顶'));
-        }
-        else {
-            // 未置顶，添加置顶
-            _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.push(noNum);
-            _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.success(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_已置顶'));
-        }
-        // 保存设置
-        (0,_Settings__WEBPACK_IMPORTED_MODULE_6__.setSetting)('pinnedOptions', _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions);
-    }
-    /** 设置选项的显示与隐藏 */
-    display(removed = []) {
-        // 倒序遍历，把置顶的选项显示在顶部
-        // 如果正序遍历的话，前面的选项（先置顶的选项）会被后置顶的选项挤下去，导致显示的顺序与添加的顺序相反
-        for (const no of _Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.slice().reverse()) {
-            const option = _Tools__WEBPACK_IMPORTED_MODULE_4__.Tools.getOption(this.allOption, no);
-            if (!option) {
-                continue;
-            }
-            option.classList.add(this.pinnedClassName);
-            // 总是显示置顶的选项
-            // 但是不处理“抓取多少作品”和“抓取多少页面”，因为它们是根据页面类型来显示或隐藏的，不在这里处理
-            if (no !== 0 && no !== 1) {
-                option.style.display = 'flex';
-            }
-        }
-        // 处理被取消置顶的选项
-        for (const no of removed) {
-            const option = _Tools__WEBPACK_IMPORTED_MODULE_4__.Tools.getOption(this.allOption, no);
-            if (!option) {
-                continue;
-            }
-            if (!_Settings__WEBPACK_IMPORTED_MODULE_6__.settings.pinnedOptions.includes(no)) {
-                // 移除类名
-                option.classList.remove(this.pinnedClassName);
-            }
+            option.classList[_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.includes(Number.parseInt(no)) ? 'add' : 'remove'](this.pinnedClassName);
         }
     }
 }
@@ -46332,10 +47576,61 @@ class Settings {
         onlyCrawlLastFewImagesCount: 1,
         doNotCrawlFirstImagesSwitch: false,
         doNotCrawlFirstImagesCount: 1,
-        pinnedOptions: [],
+        pinnedOptions: [0, 1,],
         debugForWiki: false,
         singleEPUBFileSizeLimit: 200,
         imageToGray: false,
+        /** 保存每个可折叠区域的展开/折叠状态 */
+        // home 里的二级分类名称是直接在这里指定的。其他导航分类里的二级分类名称来自 OptionConfigs.ts 里的 categorySchema 对象里，对应的一级分类的 level2.id。
+        expandedCards: {
+            home: {
+                /** 置顶的设置区域 */
+                pinnedOptions: false,
+                /** “开始抓取”区域 */
+                crawlBtns: true,
+                /** “附加功能”区域 */
+                otherBtns: false,
+                /** 下载区域 */
+                downloadArea: false,
+            },
+            crawl: {
+                scope: false,
+                workType: false,
+                workData: false,
+                tagAndTitle: false,
+                multiImage: false,
+                blockUsers: false,
+                strategy: false,
+            },
+            naming: {
+                names: false,
+                adjustFolders: false,
+                serial: false,
+                alias: false,
+                removeSpecialChars: false,
+            },
+            download: {
+                behavior: false,
+                record: false,
+                imageSize: false,
+                ugoira: false,
+                novel: false,
+                metadata: false,
+            },
+            enhance: {
+                preview: false,
+                thumbnail: false,
+                thumbnailButtons: false,
+                other: false,
+                searchPage: false,
+            },
+            general: {
+                appearance: false,
+                language: false,
+                log: false,
+                manageSettings: false,
+            },
+        },
     };
     allSettingKeys = Object.keys(this.defaultSettings);
     // 值为浮点数的设置
@@ -46686,6 +47981,954 @@ class Settings {
 const self = new Settings();
 const settings = self.settings;
 const setSetting = self.setSetting.bind(self);
+
+
+
+/***/ }),
+
+/***/ "./src/ts/setting/SettingsPanel.ts":
+/*!*****************************************!*\
+  !*** ./src/ts/setting/SettingsPanel.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SettingsPanel: () => (/* binding */ SettingsPanel)
+/* harmony export */ });
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../MsgBox */ "./src/ts/MsgBox.ts");
+/* harmony import */ var _store_Store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/Store */ "./src/ts/store/Store.ts");
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+/* harmony import */ var _download_DownloadStates__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../download/DownloadStates */ "./src/ts/download/DownloadStates.ts");
+/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
+
+
+
+
+
+
+
+
+
+const pageIds = [
+    'home',
+    'crawl',
+    'naming',
+    'download',
+    'enhance',
+    'general',
+    'help',
+    'search',
+];
+class SettingsPanel {
+    constructor(form) {
+        this.form = form;
+        this.centerPanel = document.querySelector('.centerWrap.settingsV2');
+        this.main = this.centerPanel.querySelector('.settingsPanel_main');
+        if (!this.centerPanel || !this.main) {
+            throw new Error('SettingsPanel shell not found');
+        }
+        for (const option of this.form.querySelectorAll('.option')) {
+            const no = Number.parseInt(option.dataset.no || '-1');
+            if (no > -1) {
+                this.optionElements.set(no, option);
+            }
+        }
+        this.cacheShellElements();
+        this.buildLayout();
+        this.bindEvents();
+        this.renderHelpActionVisibility();
+        this.switchPage('home');
+        this.updateSearchResult();
+        this.updateDownloadSummary();
+    }
+    form;
+    centerPanel;
+    main;
+    activePage = 'home';
+    lastNonSearchPage = 'home';
+    searchKeyword = '';
+    searchState = new Map();
+    optionElements = new Map();
+    canonicalContainers = new Map();
+    pageEls = new Map();
+    pageInners = new Map();
+    stickyEls = new Map();
+    navEls = new Map();
+    foldableSections = new Map();
+    searchSections = new Map();
+    helpActionEls = new Map();
+    searchInput;
+    clearSearchBtn;
+    expandAllBtn;
+    searchNavBtn;
+    homePinnedContent;
+    searchSummary;
+    searchGroupsWrap;
+    summaryWrap;
+    summaryStateText;
+    summaryProgress;
+    summaryStateIconUse;
+    helpActionsWrap;
+    debouncedSearch = _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.debounce(() => this.updateSearchResult(), 200);
+    cacheShellElements() {
+        this.searchInput = this.centerPanel.querySelector('#settingsPanelSearchInput');
+        this.clearSearchBtn = this.centerPanel.querySelector('#settingsPanelClearSearch');
+        this.expandAllBtn = this.centerPanel.querySelector('#settingsPanelToggleExpand');
+        this.searchNavBtn = this.centerPanel.querySelector('.settingsPanel_navItem[data-page="search"]');
+        this.summaryWrap = this.centerPanel.querySelector('#settingsPanelDownloadSummary');
+        this.summaryStateText = this.centerPanel.querySelector('.settingsPanel_downloadSummaryStateText');
+        this.summaryProgress = this.centerPanel.querySelector('.settingsPanel_downloadSummaryProgress');
+        this.summaryStateIconUse = this.centerPanel.querySelector('.settingsPanel_downloadSummaryStateIcon use');
+        const navButtons = this.centerPanel.querySelectorAll('.settingsPanel_navItem');
+        navButtons.forEach((button) => {
+            this.navEls.set(button.dataset.page, button);
+        });
+    }
+    buildLayout() {
+        const crawlBtnsBlock = this.findSlotBlock('stopCrawl');
+        const otherBtnsBlock = this.findSlotBlock('otherBtns');
+        const downloadBtnsBlock = this.findSlotBlock('exportResult');
+        const downloadArea = this.findSlot('downloadArea');
+        const progressBar = this.findSlot('progressBar');
+        const pagesWrap = document.createElement('div');
+        pagesWrap.className = 'settingsPanel_pages';
+        this.form.classList.add('settingsPanel_form');
+        this.form.replaceChildren(pagesWrap);
+        pageIds.forEach((page) => {
+            const pageEl = document.createElement('div');
+            pageEl.className = 'settingsPanel_page';
+            pageEl.dataset.page = page;
+            const sticky = document.createElement('button');
+            sticky.type = 'button';
+            sticky.className = 'settingsPanel_stickyHeader';
+            sticky.hidden = true;
+            sticky.innerHTML = `
+      <span class="settingsPanel_sectionHeadMain">
+        <span class="settingsPanel_sectionIconWrap hidden">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href=""></use>
+          </svg>
+        </span>
+        <span class="settingsPanel_sectionTitle"></span>
+      </span>
+      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
+        <use xlink:href="#arrow-down-2"></use>
+      </svg>
+      `;
+            pageEl.append(sticky);
+            const inner = document.createElement('div');
+            inner.className = 'settingsPanel_pageInner';
+            pageEl.append(inner);
+            pagesWrap.append(pageEl);
+            this.pageEls.set(page, pageEl);
+            this.pageInners.set(page, inner);
+            this.stickyEls.set(page, sticky);
+            sticky.addEventListener('click', () => {
+                const key = sticky.dataset.sectionKey;
+                if (!key) {
+                    return;
+                }
+                const section = this.foldableSections.get(key) || this.searchSections.get(key);
+                if (section) {
+                    this.toggleSection(section);
+                }
+            });
+        });
+        this.buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar);
+        this.buildCategoryPages();
+        this.buildHelpPage();
+        this.buildSearchPage();
+        for (const option of this.optionElements.values()) {
+            option.classList.add('settingsPanel_optionCard');
+        }
+        _Language__WEBPACK_IMPORTED_MODULE_2__.lang.register(pagesWrap);
+    }
+    buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar) {
+        const home = this.pageInners.get('home');
+        const pinnedSection = this.createSection({
+            page: 'home',
+            id: 'pinnedOptions',
+            titleKey: '_置顶的设置',
+            iconId: 'pin-line',
+            persisted: true,
+            stickyEligible: true,
+            type: 'title',
+        });
+        home.append(pinnedSection.root);
+        this.homePinnedContent = pinnedSection.content;
+        const crawlBlock = this.createSection({
+            page: 'home',
+            id: 'crawlBtns',
+            titleKey: '_开始抓取',
+            iconId: 'rocket',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        crawlBlock.content.append(crawlBtnsBlock);
+        home.append(crawlBlock.root);
+        const otherBlock = this.createSection({
+            page: 'home',
+            id: 'otherBtns',
+            titleKey: '_附加功能',
+            iconId: 'features',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        otherBlock.content.append(otherBtnsBlock);
+        home.append(otherBlock.root);
+        const downloadBlock = this.createSection({
+            page: 'home',
+            id: 'downloadArea',
+            titleKey: '_下载区域',
+            iconId: 'download-line',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        const downloadContentWrap = document.createElement('div');
+        downloadContentWrap.className = 'settingsPanel_downloadContentWrap';
+        downloadContentWrap.append(downloadBtnsBlock, downloadArea, progressBar);
+        downloadBlock.content.append(downloadContentWrap);
+        home.append(downloadBlock.root);
+    }
+    buildCategoryPages() {
+        const allCategories = Object.keys(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.categorySchema);
+        allCategories.forEach((page) => {
+            const inner = this.pageInners.get(page);
+            const groups = Object.values(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.categorySchema[page].level2).sort((a, b) => a.order - b.order);
+            groups.forEach((group) => {
+                const section = this.createSection({
+                    page,
+                    id: group.id,
+                    titleKey: group.nameKey,
+                    persisted: true,
+                    stickyEligible: true,
+                    type: 'title',
+                });
+                inner.append(section.root);
+                this.canonicalContainers.set(this.makeCanonicalKey(page, group.id), section.content);
+            });
+        });
+    }
+    buildHelpPage() {
+        const help = this.pageInners.get('help');
+        const tipsWrap = document.createElement('div');
+        tipsWrap.className = 'settingsPanel_helpTips';
+        tipsWrap.innerHTML = `
+    <div class="settingsPanel_tipCard" id="tipPinOption">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText" data-xztext="_提示可以置顶选项"></div>
+      <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+        <svg class="icon" aria-hidden="true"><use xlink:href="#yes_submit"></use></svg>
+      </button>
+    </div>
+    <div class="settingsPanel_tipCard" id="tipCloseAskFileSaveLocation">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText">
+        <span data-xztext="_提示"></span>
+        <span>: </span>
+        <span data-xztext="_建议您关闭询问文件保存位置"></span>
+      </div>
+      <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+        <svg class="icon" aria-hidden="true"><use xlink:href="#yes_submit"></use></svg>
+      </button>
+    </div>
+    <div class="settingsPanel_tipCard" id="tipOpenWikiLinkWrap">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText">
+        <span data-xztext="_提示"></span>
+        <span>: </span>
+        <span data-xztext="_提示查看wiki页面"></span>
+      </div>
+      <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+        <svg class="icon" aria-hidden="true"><use xlink:href="#yes_submit"></use></svg>
+      </button>
+    </div>
+    `;
+        help.append(tipsWrap);
+        this.helpActionsWrap = document.createElement('div');
+        this.helpActionsWrap.className = 'settingsPanel_helpActions';
+        help.append(this.helpActionsWrap);
+        const actions = [
+            { id: 'wiki', textKey: '_使用手册', iconId: 'wiki' },
+            { id: 'faq', textKey: '_常见问题', iconId: 'help' },
+            { id: 'getHelp', textKey: '_获取帮助', iconId: 'get-help' },
+            { id: 'recentUpdates', textKey: '_最近更新', iconId: 'new-2' },
+            { id: 'github', textKey: '_github', iconId: 'github' },
+            { id: 'fanbox', textKey: '_fanboxDownloader', iconId: 'F' },
+            { id: 'airport', textKey: '_机场推荐', iconId: 'paper-airplane' },
+            { id: 'sponsorship', textKey: '_赞助我', iconId: 'heart-line' },
+            { id: 'thirdParty', textKey: '_第三方库', iconId: 'list' },
+        ];
+        actions.forEach((action) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'settingsPanel_helpAction hasRippleAnimation';
+            button.dataset.action = action.id;
+            button.innerHTML = `
+      <svg class="icon settingsPanel_helpActionIcon" aria-hidden="true">
+        <use xlink:href="#${action.iconId}"></use>
+      </svg>
+      <span data-xztext="${action.textKey}"></span>
+      `;
+            this.helpActionsWrap.append(button);
+            this.helpActionEls.set(action.id, button);
+        });
+    }
+    buildSearchPage() {
+        const search = this.pageInners.get('search');
+        this.searchSummary = document.createElement('p');
+        this.searchSummary.className = 'settingsPanel_searchSummary';
+        search.append(this.searchSummary);
+        this.searchGroupsWrap = document.createElement('div');
+        this.searchGroupsWrap.className = 'settingsPanel_searchGroups';
+        search.append(this.searchGroupsWrap);
+    }
+    createSection({ page, id, titleKey, iconId, persisted, stickyEligible, type, }) {
+        const root = document.createElement('div');
+        root.className =
+            type === 'panel'
+                ? 'settingsPanel_panelSection'
+                : 'settingsPanel_titleSection';
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'settingsPanel_sectionHeader';
+        root.append(header);
+        const headerMain = document.createElement('span');
+        headerMain.className = 'settingsPanel_sectionHeadMain';
+        header.append(headerMain);
+        let iconUse;
+        if (iconId) {
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'settingsPanel_sectionIconWrap';
+            iconWrap.innerHTML = `
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#${iconId}"></use>
+      </svg>
+      `;
+            headerMain.append(iconWrap);
+            iconUse = iconWrap.querySelector('use');
+        }
+        const title = document.createElement('span');
+        title.className = 'settingsPanel_sectionTitle';
+        title.dataset.xztext = titleKey;
+        headerMain.append(title);
+        const arrow = document.createElement('svg');
+        arrow.className = 'icon settingsPanel_sectionArrow';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.innerHTML = `<use xlink:href="#arrow-down-2"></use>`;
+        header.append(arrow);
+        const content = document.createElement('div');
+        content.className =
+            type === 'panel'
+                ? 'settingsPanel_panelContent'
+                : 'settingsPanel_titleContent';
+        root.append(content);
+        const section = {
+            page,
+            id,
+            persisted,
+            stickyEligible,
+            root,
+            header,
+            content,
+            title,
+            iconUse,
+        };
+        const key = this.makeSectionKey(page, id);
+        this.foldableSections.set(key, section);
+        header.dataset.sectionKey = key;
+        this.applyExpandedState(section, this.getExpandedState(section));
+        header.addEventListener('click', () => this.toggleSection(section));
+        header.addEventListener('keydown', (event) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault();
+                this.toggleSection(section);
+            }
+        });
+        return section;
+    }
+    bindEvents() {
+        this.navEls.forEach((button, page) => {
+            button.addEventListener('click', () => this.handleNavRequest(page));
+            button.addEventListener('keydown', (event) => {
+                if ((event.code === 'Enter' || event.code === 'Space') &&
+                    event.target === button) {
+                    event.preventDefault();
+                    this.handleNavRequest(page);
+                }
+            });
+            if (!_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
+                button.addEventListener('mouseenter', () => {
+                    if (_Settings__WEBPACK_IMPORTED_MODULE_8__.settings.switchTabBar !== 'click') {
+                        this.handleNavRequest(page);
+                    }
+                });
+            }
+        });
+        this.searchInput.addEventListener('input', () => {
+            this.debouncedSearch();
+            this.updateSearchClearButton();
+        });
+        this.clearSearchBtn.addEventListener('click', () => {
+            this.searchInput.value = '';
+            this.updateSearchClearButton();
+            this.updateSearchResult();
+        });
+        this.expandAllBtn.addEventListener('click', () => this.toggleAllSections());
+        this.main.addEventListener('scroll', () => this.refreshStickyHeader());
+        this.summaryWrap
+            .querySelector('#settingsPanelSummaryStart')
+            ?.addEventListener('click', () => this.clickRealButton('#startDownload'));
+        this.summaryWrap
+            .querySelector('#settingsPanelSummaryPause')
+            ?.addEventListener('click', () => this.clickRealButton('#pauseDownload'));
+        this.summaryWrap
+            .querySelector('#settingsPanelSummaryStop')
+            ?.addEventListener('click', () => this.clickRealButton('#stopDownload'));
+        this.helpActionsWrap.addEventListener('click', (event) => {
+            const button = event.target.closest('.settingsPanel_helpAction');
+            if (!button) {
+                return;
+            }
+            this.handleHelpAction(button.dataset.action || '');
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.settingChange, (ev) => {
+            const data = ev.detail.data;
+            if (data.name === 'pinnedOptions') {
+                this.renderCurrentPage();
+            }
+            if (data.name === 'expandedCards') {
+                this.refreshPersistedSectionStates();
+            }
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.langChange, () => {
+            window.setTimeout(() => {
+                this.renderHelpActionVisibility();
+                this.renderCurrentPage();
+                this.updateSearchResult();
+                this.updateDownloadSummary();
+            }, 0);
+        });
+        [
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.crawlStart,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.crawlComplete,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.resultChange,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.resume,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadStart,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadPause,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadStop,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadComplete,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadSuccess,
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.skipDownload,
+        ].forEach((eventName) => {
+            window.addEventListener(eventName, () => {
+                this.updateDownloadSummary();
+            });
+        });
+        [_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.crawlComplete, _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.resume, _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.downloadStart].forEach((eventName) => {
+            window.addEventListener(eventName, () => {
+                this.expandHomeDownloadSection();
+            });
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.hasNewVer, () => {
+            this.helpActionEls.get('recentUpdates')?.classList.add('hasUpdate');
+        });
+    }
+    handleNavRequest(page) {
+        if (page === 'search' && this.searchKeyword === '') {
+            return;
+        }
+        if (this.searchKeyword !== '' && page !== 'search') {
+            this.lastNonSearchPage = page;
+            return;
+        }
+        this.switchPage(page);
+    }
+    switchPage(page) {
+        this.activePage = page;
+        if (page !== 'search') {
+            this.lastNonSearchPage = page;
+        }
+        this.pageEls.forEach((pageEl, key) => {
+            pageEl.classList.toggle('active', key === page);
+        });
+        this.navEls.forEach((button, key) => {
+            button.classList.toggle('active', key === page);
+        });
+        this.renderCurrentPage();
+    }
+    renderCurrentPage() {
+        if (this.activePage === 'search') {
+            this.renderSearchPage();
+        }
+        else {
+            this.placeOptionsToDefaultContainers(this.activePage === 'home');
+        }
+        this.updatePinnedSectionVisibility();
+        this.updateExpandAllButton();
+        window.setTimeout(() => this.refreshStickyHeader(), 0);
+    }
+    renderSearchPage() {
+        this.searchSections.clear();
+        this.searchGroupsWrap.innerHTML = '';
+        const matchMap = this.findSearchMatches(this.searchKeyword);
+        const groupOrder = [];
+        _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options.forEach((option) => {
+            const match = matchMap.get(option.no);
+            if (!match) {
+                return;
+            }
+            const groupKey = this.makeSectionKey('search', `${option.categoryLevel1}__${option.categoryLevel2}`);
+            if (!this.searchSections.has(groupKey)) {
+                const section = this.createSearchSection(option.categoryLevel1, option.categoryLevel2);
+                this.searchSections.set(groupKey, section);
+                groupOrder.push(groupKey);
+                this.searchGroupsWrap.append(section.root);
+            }
+            this.searchSections
+                .get(groupKey)
+                .content.append(this.optionElements.get(option.no));
+        });
+        this.placeUnmatchedOptionsBack(matchMap);
+        this.updateSearchOptionHighlight(matchMap);
+        if (groupOrder.length === 0) {
+            this.searchSummary.dataset.xztext =
+                '_没有找到符合条件的设置你可以尝试搜索更简短的关键词';
+            this.searchSummary.innerHTML = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_没有找到符合条件的设置你可以尝试搜索更简短的关键词');
+        }
+        else {
+            this.searchSummary.innerHTML = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_找到x条与搜索词有关的设置', groupOrder
+                .map((key) => this.searchSections.get(key).content.children.length)
+                .reduce((total, count) => total + count, 0)
+                .toString(), this.escapeHTML(this.searchKeyword));
+        }
+    }
+    updateSearchResult() {
+        this.searchKeyword = this.searchInput.value.trim();
+        this.searchNavBtn.hidden = this.searchKeyword === '';
+        if (this.searchKeyword === '') {
+            this.updateSearchOptionHighlight(new Map());
+            this.switchPage(this.lastNonSearchPage);
+            return;
+        }
+        this.switchPage('search');
+    }
+    findSearchMatches(keyword) {
+        const result = new Map();
+        const lowerKeyword = keyword.toLowerCase();
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options) {
+            const name = option.name.toLowerCase();
+            if (name.includes(lowerKeyword)) {
+                result.set(option.no, { matchedByName: true });
+                continue;
+            }
+            let matched = false;
+            for (const searchWord of option.searchWords) {
+                const word = searchWord.toLowerCase();
+                if (word.includes(lowerKeyword) || lowerKeyword.includes(word)) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (matched) {
+                result.set(option.no, { matchedByName: false });
+            }
+        }
+        return result;
+    }
+    placeOptionsToDefaultContainers(showPinnedOnHome) {
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options) {
+            const element = this.optionElements.get(option.no);
+            if (!element) {
+                continue;
+            }
+            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_8__.settings.pinnedOptions.includes(option.no)
+                ? this.homePinnedContent
+                : this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2);
+            target.append(element);
+        }
+        this.updateSearchOptionHighlight(new Map());
+    }
+    placeUnmatchedOptionsBack(matchMap) {
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options) {
+            if (matchMap.has(option.no)) {
+                continue;
+            }
+            const element = this.optionElements.get(option.no);
+            if (!element) {
+                continue;
+            }
+            this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2).append(element);
+        }
+    }
+    updateSearchOptionHighlight(matchMap) {
+        _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options.forEach((option) => {
+            const element = this.optionElements.get(option.no);
+            if (!element) {
+                return;
+            }
+            const target = this.findOptionNameTarget(element);
+            if (!target) {
+                return;
+            }
+            const match = matchMap.get(option.no);
+            if (!match || !match.matchedByName || this.searchKeyword === '') {
+                _Language__WEBPACK_IMPORTED_MODULE_2__.lang.updateText(target, option.nameKey);
+                return;
+            }
+            delete target.dataset.xztext;
+            delete target.dataset.xztextargs;
+            target.innerHTML = this.highlightText(option.name, this.searchKeyword);
+        });
+    }
+    findOptionNameTarget(option) {
+        const direct = option.querySelector('.settingNameStyle.optionName');
+        if (direct) {
+            return direct;
+        }
+        const nameLink = option.querySelector('.settingNameStyle');
+        if (!nameLink) {
+            return null;
+        }
+        return (nameLink.querySelector('.optionName, .textTip, [data-xztext]') || nameLink);
+    }
+    highlightText(text, keyword) {
+        const lowerText = text.toLowerCase();
+        const lowerKeyword = keyword.toLowerCase();
+        if (!lowerKeyword) {
+            return this.escapeHTML(text);
+        }
+        let cursor = 0;
+        let html = '';
+        while (cursor < text.length) {
+            const index = lowerText.indexOf(lowerKeyword, cursor);
+            if (index === -1) {
+                html += this.escapeHTML(text.slice(cursor));
+                break;
+            }
+            html += this.escapeHTML(text.slice(cursor, index));
+            html += `<mark class="settingsPanel_searchMark">${this.escapeHTML(text.slice(index, index + keyword.length))}</mark>`;
+            cursor = index + keyword.length;
+        }
+        return html;
+    }
+    escapeHTML(text) {
+        return text
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+    createSearchSection(level1, level2) {
+        const title = `${_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.categorySchema[level1].nameKey)} / ${_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.categorySchema[level1].level2[level2].nameKey)}`;
+        const root = document.createElement('div');
+        root.className = 'settingsPanel_titleSection';
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'settingsPanel_sectionHeader';
+        header.innerHTML = `
+      <span class="settingsPanel_sectionHeadMain">
+        <span class="settingsPanel_sectionTitle"></span>
+      </span>
+      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
+        <use xlink:href="#arrow-down-2"></use>
+      </svg>
+    `;
+        root.append(header);
+        const content = document.createElement('div');
+        content.className = 'settingsPanel_titleContent';
+        root.append(content);
+        const section = {
+            page: 'search',
+            id: `${level1}__${level2}`,
+            persisted: false,
+            stickyEligible: true,
+            root,
+            header,
+            content,
+            title: header.querySelector('.settingsPanel_sectionTitle'),
+        };
+        section.title.textContent = title;
+        const key = this.makeSectionKey('search', section.id);
+        header.dataset.sectionKey = key;
+        this.applyExpandedState(section, this.searchState.get(key) ?? true);
+        header.addEventListener('click', () => this.toggleSection(section));
+        header.addEventListener('keydown', (event) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault();
+                this.toggleSection(section);
+            }
+        });
+        return section;
+    }
+    toggleSection(section) {
+        const expanded = !this.getExpandedState(section);
+        this.setExpandedState(section, expanded);
+        this.updateExpandAllButton();
+        this.refreshStickyHeader();
+    }
+    getExpandedState(section) {
+        if (!section.persisted) {
+            return (this.searchState.get(this.makeSectionKey(section.page, section.id)) ??
+                true);
+        }
+        const pageState = this.getPersistedPageState(section.page);
+        return !!pageState?.[section.id];
+    }
+    setExpandedState(section, expanded) {
+        if (!section.persisted) {
+            this.searchState.set(this.makeSectionKey(section.page, section.id), expanded);
+            this.applyExpandedState(section, expanded);
+            return;
+        }
+        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_8__.settings.expandedCards);
+        const pageState = this.getPersistedPageState(section.page, nextExpandedCards);
+        if (pageState) {
+            pageState[section.id] = expanded;
+        }
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_8__.setSetting)('expandedCards', nextExpandedCards);
+        this.applyExpandedState(section, expanded);
+    }
+    applyExpandedState(section, expanded) {
+        section.root.classList.toggle('expanded', expanded);
+        section.root.classList.toggle('collapsed', !expanded);
+        section.content.style.display = expanded ? 'block' : 'none';
+        section.header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    }
+    refreshPersistedSectionStates() {
+        this.foldableSections.forEach((section) => {
+            this.applyExpandedState(section, this.getExpandedState(section));
+        });
+        this.updateExpandAllButton();
+        this.refreshStickyHeader();
+    }
+    toggleAllSections() {
+        const shouldExpand = !this.areAllSectionsExpanded();
+        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_8__.settings.expandedCards);
+        this.foldableSections.forEach((section) => {
+            const pageState = this.getPersistedPageState(section.page, nextExpandedCards);
+            if (pageState) {
+                pageState[section.id] = shouldExpand;
+            }
+            this.applyExpandedState(section, shouldExpand);
+        });
+        this.searchSections.forEach((section, key) => {
+            this.searchState.set(key, shouldExpand);
+            this.applyExpandedState(section, shouldExpand);
+        });
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_8__.setSetting)('expandedCards', nextExpandedCards);
+        this.updateExpandAllButton();
+        this.refreshStickyHeader();
+    }
+    areAllSectionsExpanded() {
+        for (const section of this.foldableSections.values()) {
+            if (!this.getExpandedState(section)) {
+                return false;
+            }
+        }
+        for (const section of this.searchSections.values()) {
+            if (!this.getExpandedState(section)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    updateExpandAllButton() {
+        this.expandAllBtn.classList.toggle('expanded', this.areAllSectionsExpanded());
+    }
+    refreshStickyHeader() {
+        const sticky = this.stickyEls.get(this.activePage);
+        if (!sticky) {
+            return;
+        }
+        const sections = this.getStickySectionsForActivePage();
+        if (sections.length === 0) {
+            sticky.hidden = true;
+            return;
+        }
+        const mainRect = this.main.getBoundingClientRect();
+        let current;
+        for (const section of sections) {
+            const headerRect = section.header.getBoundingClientRect();
+            const rootRect = section.root.getBoundingClientRect();
+            if (headerRect.top <= mainRect.top &&
+                rootRect.bottom > mainRect.top + headerRect.height) {
+                current = section;
+            }
+        }
+        if (!current) {
+            sticky.hidden = true;
+            return;
+        }
+        sticky.hidden = false;
+        sticky.dataset.sectionKey = this.makeSectionKey(current.page, current.id);
+        const stickyTitle = sticky.querySelector('.settingsPanel_sectionTitle');
+        stickyTitle.textContent = current.title.textContent || '';
+        const stickyIconWrap = sticky.querySelector('.settingsPanel_sectionIconWrap');
+        const stickyIconUse = sticky.querySelector('use');
+        if (current.iconUse) {
+            stickyIconWrap.classList.remove('hidden');
+            stickyIconUse.setAttribute('xlink:href', current.iconUse.getAttribute('xlink:href') || '');
+        }
+        else {
+            stickyIconWrap.classList.add('hidden');
+            stickyIconUse.setAttribute('xlink:href', '');
+        }
+    }
+    getStickySectionsForActivePage() {
+        if (this.activePage === 'search') {
+            return [...this.searchSections.values()].filter((section) => section.stickyEligible && this.getExpandedState(section));
+        }
+        return [...this.foldableSections.values()].filter((section) => section.page === this.activePage &&
+            section.stickyEligible &&
+            this.getExpandedState(section));
+    }
+    renderHelpActionVisibility() {
+        const airportBtn = this.helpActionEls.get('airport');
+        if (airportBtn) {
+            airportBtn.style.display = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.type === 'zh-cn' ? 'flex' : 'none';
+        }
+    }
+    handleHelpAction(action) {
+        switch (action) {
+            case 'wiki':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_使用手册说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_使用手册'),
+                });
+                return;
+            case 'faq': {
+                let msg = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_常见问题说明') + _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_账户可能被封禁的警告');
+                if (_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
+                    msg += _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_移动端浏览器可能不会建立文件夹的说明');
+                }
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(msg, {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_常见问题'),
+                });
+                return;
+            }
+            case 'getHelp':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_获取帮助的提示'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_获取帮助'),
+                });
+                return;
+            case 'recentUpdates':
+                _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('showRecentUpdates');
+                return;
+            case 'github':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_GitHub说明'), {
+                    title: 'GitHub',
+                });
+                return;
+            case 'fanbox':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_fanboxDownloader的说明'), {
+                    title: 'Pixiv Fanbox Downloader',
+                });
+                return;
+            case 'airport':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_机场推荐说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_机场推荐'),
+                });
+                return;
+            case 'sponsorship':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_赞助方式提示'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_赞助我'),
+                });
+                return;
+            case 'thirdParty':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_第三方库说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_第三方库'),
+                });
+                return;
+        }
+    }
+    updateDownloadSummary() {
+        const total = _store_Store__WEBPACK_IMPORTED_MODULE_4__.store.result.length;
+        const downloaded = total > 0 ? _download_DownloadStates__WEBPACK_IMPORTED_MODULE_6__.downloadStates.downloadedCount() : 0;
+        this.summaryProgress.textContent = `${downloaded} / ${total}`;
+        this.summaryWrap.style.display = total > 0 ? 'block' : 'none';
+        if (total === 0) {
+            this.setSummaryState('_未开始下载', 'play');
+            return;
+        }
+        const statusText = this.form.querySelector('.down_status')?.textContent?.trim() || '';
+        switch (statusText) {
+            case _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_正在下载中'):
+                this.setSummaryState('_正在下载中', 'right-arrow');
+                break;
+            case _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_下载已暂停'):
+                this.setSummaryState('_下载已暂停', 'pause');
+                break;
+            case _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_下载已停止'):
+                this.setSummaryState('_下载已停止', 'stop');
+                break;
+            case _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_下载完毕'):
+                this.setSummaryState('_下载完毕', 'complete');
+                break;
+            default:
+                this.setSummaryState('_未开始下载', 'play');
+                break;
+        }
+    }
+    setSummaryState(textKey, iconId) {
+        _Language__WEBPACK_IMPORTED_MODULE_2__.lang.updateText(this.summaryStateText, textKey);
+        this.summaryStateIconUse.setAttribute('xlink:href', `#${iconId}`);
+    }
+    expandHomeDownloadSection() {
+        const homeState = this.getPersistedPageState('home');
+        if (homeState?.downloadArea) {
+            return;
+        }
+        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_8__.settings.expandedCards);
+        const nextHomeState = this.getPersistedPageState('home', nextExpandedCards);
+        if (nextHomeState) {
+            nextHomeState.downloadArea = true;
+        }
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_8__.setSetting)('expandedCards', nextExpandedCards);
+    }
+    updatePinnedSectionVisibility() {
+        const pinnedSection = this.foldableSections.get(this.makeSectionKey('home', 'pinnedOptions'));
+        if (!pinnedSection) {
+            return;
+        }
+        pinnedSection.root.style.display =
+            _Settings__WEBPACK_IMPORTED_MODULE_8__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
+    }
+    updateSearchClearButton() {
+        this.clearSearchBtn.classList.toggle('visible', this.searchInput.value.trim() !== '');
+    }
+    clickRealButton(selector) {
+        const button = this.form.querySelector(selector);
+        button?.click();
+    }
+    findSlot(name) {
+        return this.form.querySelector(`slot[data-name="${name}"]`);
+    }
+    findSlotBlock(name) {
+        return this.findSlot(name).parentElement;
+    }
+    getCanonicalContainer(level1, level2) {
+        return this.canonicalContainers.get(this.makeCanonicalKey(level1, level2));
+    }
+    makeCanonicalKey(level1, level2) {
+        return `${level1}__${level2}`;
+    }
+    makeSectionKey(page, id) {
+        return `${page}__${id}`;
+    }
+    getPersistedPageState(page, expandedCards = _Settings__WEBPACK_IMPORTED_MODULE_8__.settings.expandedCards) {
+        return expandedCards[page];
+    }
+}
 
 
 

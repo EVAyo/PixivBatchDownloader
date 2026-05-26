@@ -78,6 +78,10 @@ class OptionConfigs {
         this.setOptionText()
       }
     )
+
+    window.addEventListener(EVT.list.langChange, () => {
+      this.setOptionText()
+    })
   }
 
   private setPinnedOptions() {

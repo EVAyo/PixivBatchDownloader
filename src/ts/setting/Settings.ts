@@ -58,13 +58,18 @@ import { lang } from '../Language'
 import { PageName } from '../PageType'
 import { ppdTask } from '../PPDTask'
 
-export type OptionCategoryLevel1 = 'crawl' | 'naming' | 'download' | 'enhance' | 'general'
+export type OptionCategoryLevel1 =
+  | 'crawl'
+  | 'naming'
+  | 'download'
+  | 'enhance'
+  | 'general'
 
 /** 保存每个可折叠区域的展开/折叠状态 */
 type ExpandedCards = {
   // 一级导航分类的名称：home（主页是个单独的分类）、crawl、naming、download、enhance、general（这些是设置项的分类）。
   // 备注：不需要保存 search 里的状态。
-  [key in (OptionCategoryLevel1 | 'home')]?: {
+  [key in OptionCategoryLevel1 | 'home']?: {
     // 二级分类的展开/折叠状态。true 为展开，false 为折叠
     [key: string]: boolean
   }
@@ -939,16 +944,16 @@ class Settings {
     onlyCrawlLastFewImagesCount: 1,
     doNotCrawlFirstImagesSwitch: false,
     doNotCrawlFirstImagesCount: 1,
-    pinnedOptions: [],
+    pinnedOptions: [0, 1,],
     debugForWiki: false,
     singleEPUBFileSizeLimit: 200,
     imageToGray: false,
     /** 保存每个可折叠区域的展开/折叠状态 */
     // home 里的二级分类名称是直接在这里指定的。其他导航分类里的二级分类名称来自 OptionConfigs.ts 里的 categorySchema 对象里，对应的一级分类的 level2.id。
     expandedCards: {
-      home:{
+      home: {
         /** 置顶的设置区域 */
-        pinnedOptions:false,
+        pinnedOptions: false,
         /** “开始抓取”区域 */
         crawlBtns: true,
         /** “附加功能”区域 */
@@ -956,44 +961,44 @@ class Settings {
         /** 下载区域 */
         downloadArea: false,
       },
-      crawl:{
-        scope:false,
-        workType:false,
-        workData:false,
-        tagAndTitle:false,
-        multiImage:false,
-        blockUsers:false,
-        strategy:false,
+      crawl: {
+        scope: false,
+        workType: false,
+        workData: false,
+        tagAndTitle: false,
+        multiImage: false,
+        blockUsers: false,
+        strategy: false,
       },
-      naming:{
-        names:false,
-        adjustFolders:false,
-        serial:false,
-        alias:false,
-        removeSpecialChars:false,
+      naming: {
+        names: false,
+        adjustFolders: false,
+        serial: false,
+        alias: false,
+        removeSpecialChars: false,
       },
-      download:{
-        behavior:false,
-        record:false,
-        imageSize:false,
-        ugoira:false,
-        novel:false,
-        metadata:false,
+      download: {
+        behavior: false,
+        record: false,
+        imageSize: false,
+        ugoira: false,
+        novel: false,
+        metadata: false,
       },
-      enhance:{
-        preview:false,
-        thumbnail:false,
-        thumbnailButtons:false,
-        other:false,
-        searchPage:false,
+      enhance: {
+        preview: false,
+        thumbnail: false,
+        thumbnailButtons: false,
+        other: false,
+        searchPage: false,
       },
-      general:{
-        appearance:false,
-        language:false,
-        log:false,
-        manageSettings:false,
+      general: {
+        appearance: false,
+        language: false,
+        log: false,
+        manageSettings: false,
       },
-    }
+    },
   }
 
   private allSettingKeys = Object.keys(this.defaultSettings)

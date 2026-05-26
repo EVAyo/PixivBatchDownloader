@@ -224,7 +224,7 @@ class SelectWork {
   private addBtn() {
     this.controlBtn = Tools.addBtn(
       'selectWorkBtns',
-      Colors.bgGreen,
+      Colors.bgBlue,
       '_手动选择作品',
       'Alt + S',
       'manuallySelectWork'

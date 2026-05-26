@@ -3,7 +3,8 @@ enum Colors {
   white = '#fff',
   black = '#000',
   red = '#f00',
-  theme = '#0ea8ef',
+  // theme = '#0ea8ef',
+  theme = '#199df5',
 
   // 带有语义的字体颜色
   textSuccess = '#00BD17',
@@ -12,7 +13,8 @@ enum Colors {
 
   // 背景颜色
   // 稍暗，适合在颜色区域的面积较大时使用
-  bgBlue = '#0ea8ef',
+  // bgBlue = '#0ea8ef',
+  bgBlue = '#09a0f4',
   bgGreen = '#14ad27',
   bgYellow = '#e49d00',
   bgRed = '#f33939',
