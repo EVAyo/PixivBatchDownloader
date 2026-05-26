@@ -38673,21 +38673,21 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
         `수집 범위`,
         `Область сбора`,
     ],
-    _分组_内容类型: [
-        `内容类型`,
-        `內容類型`,
-        `Content type`,
-        `コンテンツタイプ`,
-        `콘텐츠 유형`,
-        `Тип контента`,
+    _分组_作品类型: [
+        `作品类型`,
+        `作品類型`,
+        `Work type`,
+        `作品タイプ`,
+        `작품 유형`,
+        `Тип работы`,
     ],
-    _分组_过滤条件: [
-        `过滤条件`,
-        `過濾條件`,
-        `Filter conditions`,
-        `フィルター条件`,
-        `필터 조건`,
-        `Условия фильтрации`,
+    _分组_作品数据: [
+        `作品数据`,
+        `作品數據`,
+        `Work data`,
+        `作品データ`,
+        `작품 데이터`,
+        `Данные работы`,
     ],
     _分组_标签与标题: [
         `标签与标题`,
@@ -38708,10 +38708,10 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
     _分组_屏蔽用户: [
         `屏蔽用户`,
         `封鎖使用者`,
-        `Blocked users`,
+        `Block user`,
         `ユーザーをブロック`,
         `사용자 차단`,
-        `Заблокированные пользователи`,
+        `Заблокировать пользователя`,
     ],
     _分组_执行策略: [
         `执行策略`,
@@ -42221,7 +42221,6 @@ __webpack_require__.r(__webpack_exports__);
 // - 如果帮助文字直接在设置面板上显示，则使用“_提示”
 const formHtml = `
 <form class="settingForm">
-  <div class="tabsContent">
 
   <div class="option" data-no="0">
       <a href="" target="_blank" class="settingNameStyle">
@@ -42750,8 +42749,7 @@ const formHtml = `
       <slot data-name="crawlBtns"></slot>
       <slot data-name="selectWorkBtns"></slot>
     </div>
-  </div>
-  <div class="tabsContent">
+
     <ul class="namingRuleList artwork"></ul>
     <ul class="namingRuleList novel"></ul>
 
@@ -42764,16 +42762,11 @@ const formHtml = `
     </div>
     <slot data-name="downloadArea"></slot>
     <slot data-name="progressBar"></slot>
-  </div>
-  <div class="tabsContent">
+
     <div class="centerWrap_btns">
       <slot data-name="otherBtns"></slot>
     </div>
 
-
-    <div class="option settingCategoryName" data-no="65">
-      <span data-xztext="_命名"></span>
-    </div>
     <div class="option" data-no="13">
       <span class="fileNameRuleLine1">
         <a href="" target="_blank" class="settingNameStyle optionName" data-xztext="_图像作品的命名规则"></a>
@@ -43115,10 +43108,6 @@ const formHtml = `
       <span data-xztext="_系列小说的命名标记_page_title"></span>
     </p>
 
-    <div class="option settingCategoryName" data-no="58">
-      <span data-xztext="_下载"></span>
-    </div>
-
     <div class="option" data-no="16">
       <a href="" target="_blank" class="settingNameStyle">
         <span data-xztext="_下载线程"></span>
@@ -43454,10 +43443,6 @@ const formHtml = `
       <input type="checkbox" name="showNotificationAfterDownloadComplete" class="need_beautify checkbox_switch">
       <span class="beautify_switch" tabindex="0"></span>
     </div>
-
-    <div class="option settingCategoryName" data-no="60">
-      <span data-xztext="_增强"></span>
-    </div>
     
     <div class="option" data-no="42">
       <a href="" target="_blank" class="settingNameStyle">
@@ -43743,10 +43728,6 @@ const formHtml = `
       <label for="restrict2" data-xztext="_不公开"></label>
     </div>
 
-    <div class="option settingCategoryName" data-no="61">
-      <span data-xztext="_其他"></span>
-    </div>
-
     <div class="option" data-no="93">
       <a href="" target="_blank" class="has_tip settingNameStyle" data-xztip="_日志区域的默认可见性的说明">
         <span data-xztext="_日志区域的默认可见性"></span>
@@ -43880,7 +43861,6 @@ const formHtml = `
       <button type="button" class="textButton gray1" id="resetHelpTip" data-xztext="_重新显示帮助"></button>
     </div>
 
-  </div>
 </form>`;
 
 

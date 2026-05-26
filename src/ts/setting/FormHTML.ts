@@ -7,7 +7,6 @@ import { namingRuleConfig } from './NamingRuleConfig'
 // - 如果帮助文字直接在设置面板上显示，则使用“_提示”
 export const formHtml = `
 <form class="settingForm">
-  <div class="tabsContent">
 
   <div class="option" data-no="0">
       <a href="" target="_blank" class="settingNameStyle">
@@ -536,8 +535,7 @@ export const formHtml = `
       <slot data-name="crawlBtns"></slot>
       <slot data-name="selectWorkBtns"></slot>
     </div>
-  </div>
-  <div class="tabsContent">
+
     <ul class="namingRuleList artwork"></ul>
     <ul class="namingRuleList novel"></ul>
 
@@ -550,16 +548,11 @@ export const formHtml = `
     </div>
     <slot data-name="downloadArea"></slot>
     <slot data-name="progressBar"></slot>
-  </div>
-  <div class="tabsContent">
+
     <div class="centerWrap_btns">
       <slot data-name="otherBtns"></slot>
     </div>
 
-
-    <div class="option settingCategoryName" data-no="65">
-      <span data-xztext="_命名"></span>
-    </div>
     <div class="option" data-no="13">
       <span class="fileNameRuleLine1">
         <a href="" target="_blank" class="settingNameStyle optionName" data-xztext="_图像作品的命名规则"></a>
@@ -901,10 +894,6 @@ export const formHtml = `
       <span data-xztext="_系列小说的命名标记_page_title"></span>
     </p>
 
-    <div class="option settingCategoryName" data-no="58">
-      <span data-xztext="_下载"></span>
-    </div>
-
     <div class="option" data-no="16">
       <a href="" target="_blank" class="settingNameStyle">
         <span data-xztext="_下载线程"></span>
@@ -1240,10 +1229,6 @@ export const formHtml = `
       <input type="checkbox" name="showNotificationAfterDownloadComplete" class="need_beautify checkbox_switch">
       <span class="beautify_switch" tabindex="0"></span>
     </div>
-
-    <div class="option settingCategoryName" data-no="60">
-      <span data-xztext="_增强"></span>
-    </div>
     
     <div class="option" data-no="42">
       <a href="" target="_blank" class="settingNameStyle">
@@ -1529,10 +1514,6 @@ export const formHtml = `
       <label for="restrict2" data-xztext="_不公开"></label>
     </div>
 
-    <div class="option settingCategoryName" data-no="61">
-      <span data-xztext="_其他"></span>
-    </div>
-
     <div class="option" data-no="93">
       <a href="" target="_blank" class="has_tip settingNameStyle" data-xztip="_日志区域的默认可见性的说明">
         <span data-xztext="_日志区域的默认可见性"></span>
@@ -1666,5 +1647,4 @@ export const formHtml = `
       <button type="button" class="textButton gray1" id="resetHelpTip" data-xztext="_重新显示帮助"></button>
     </div>
 
-  </div>
 </form>`
