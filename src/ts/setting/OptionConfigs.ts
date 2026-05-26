@@ -48,7 +48,8 @@ type OptionMeta = {
   searchWords: string[]
 }
 
-type AllOptions = {
+/** 把所有设置按照分类层级进行组织 */
+type OptionsByCategory = {
     /** 一级分类的 ID */
   [key in Category]: {
       /** 二级分类的 ID */
@@ -100,7 +101,7 @@ class OptionConfigs {
     }
   }
 
-  /** 所有一级分类和其下的二级分类的 schema 信息 */
+  /** 所有一级分类和二级分类的 schema 信息 */
   public categorySchema: CategorySchema = {
     crawl: {
       id: 'crawl',
@@ -127,15 +128,15 @@ class OptionConfigs {
           order: 3,
           nameKey: '_分组_标签与标题',
         },
-        multiImage: {
-          id: 'multiImage',
-          order: 4,
-          nameKey: '_分组_多图作品',
-        },
         userFilter: {
           id: 'userFilter',
-          order: 5,
+          order: 4,
           nameKey: '_分组_用户过滤',
+        },
+        multiImage: {
+          id: 'multiImage',
+          order: 5,
+          nameKey: '_分组_多图作品',
         },
         strategy: {
           id: 'strategy',
@@ -159,15 +160,15 @@ class OptionConfigs {
           order: 1,
           nameKey: '_分组_文件夹规则',
         },
-        tagRules: {
-          id: 'tagRules',
-          order: 2,
-          nameKey: '_分组_标签规则',
-        },
         serialNumber: {
           id: 'serialNumber',
-          order: 3,
+          order: 2,
           nameKey: '_分组_序号规则',
+        },
+        tagRules: {
+          id: 'tagRules',
+          order: 3,
+          nameKey: '_分组_标签规则',
         },
         details: {
           id: 'details',
@@ -1287,6 +1288,28 @@ class OptionConfigs {
       searchWords: [],
     },
   ]
+
+  /** 按分类组织的设置项 */
+  public optionsByCategory: OptionsByCategory = this.getOptionsByCategory()
+
+  public getOptionsByCategory() {
+    const optionsByCategory: OptionsByCategory = {
+      crawl: {},
+      naming: {},
+      download: {},
+      enhance: {},
+      general: {},
+    }
+    for (const option of this.options) {
+      // 添加二级分类数组
+      if (!optionsByCategory[option.categoryLevel1][option.categoryLevel2]) {
+        optionsByCategory[option.categoryLevel1][option.categoryLevel2] = []
+      }
+      // 添加二级分类里的设置项
+      optionsByCategory[option.categoryLevel1][option.categoryLevel2].push(option)
+    }
+    return optionsByCategory
+  }
 }
 
 const optionConfigs = new OptionConfigs()
