@@ -16,28 +16,9 @@ import { OptionCategoryLevel1, settings, setSetting } from './Settings'
 import { SettingsForm } from './SettingsForm'
 import { SettingsPanelDownloadSummary } from './SettingsPanelDownloadSummary'
 import { SettingsPanelHelp } from './SettingsPanelHelp'
+import { SearchRestorePage, SettingsPanelSearch } from './SettingsPanelSearch'
+import { FoldableSection, PageId, PersistedPageId } from './SettingsPanelTypes'
 import '../OpenSettingsPanel'
-
-type PageId = 'home' | OptionCategoryLevel1 | 'help' | 'search'
-type PersistedPageId = 'home' | OptionCategoryLevel1
-
-type FoldableSection = {
-  page: PageId
-  id: string
-  persisted: boolean
-  stickyEligible: boolean
-  root: HTMLDivElement
-  header: HTMLButtonElement
-  contentShell: HTMLDivElement
-  contentWrap: HTMLDivElement
-  content: HTMLDivElement
-  title: HTMLSpanElement
-  iconUse?: SVGUseElement
-}
-
-type SearchMatch = {
-  matchedByName: boolean
-}
 
 const pageIds: PageId[] = [
   'home',
@@ -356,10 +337,6 @@ class SettingsPanel {
   }
 
   private activePage: PageId = 'home'
-  private lastNonSearchPage: Exclude<PageId, 'search'> = 'home'
-  private searchKeyword = ''
-  private readonly searchState = new Map<string, boolean>()
-
   private readonly optionElements = new Map<number, HTMLElement>()
   private readonly canonicalContainers = new Map<string, HTMLDivElement>()
   private readonly pageEls = new Map<PageId, HTMLDivElement>()
@@ -367,30 +344,15 @@ class SettingsPanel {
   private readonly stickyEls = new Map<PageId, HTMLButtonElement>()
   private readonly navEls = new Map<PageId, HTMLButtonElement>()
   private readonly foldableSections = new Map<string, FoldableSection>()
-  private readonly searchSections = new Map<string, FoldableSection>()
-  private searchInput!: HTMLInputElement
-  private clearSearchBtn!: HTMLButtonElement
   private expandAllBtn!: HTMLButtonElement
-  private searchNavBtn!: HTMLButtonElement
   private homePinnedContent!: HTMLDivElement
-  private searchSummary!: HTMLParagraphElement
-  private searchGroupsWrap!: HTMLDivElement
   private otherBtnsVisibilityObserver?: MutationObserver
   private downloadSummary!: SettingsPanelDownloadSummary
-  private debouncedSearch = Utils.debounce(() => this.updateSearchResult(), 200)
+  private searchPanel!: SettingsPanelSearch
 
   private cacheShellElements() {
-    this.searchInput = this.centerPanel.querySelector(
-      '#settingsPanelSearchInput'
-    ) as HTMLInputElement
-    this.clearSearchBtn = this.centerPanel.querySelector(
-      '#settingsPanelClearSearch'
-    ) as HTMLButtonElement
     this.expandAllBtn = this.centerPanel.querySelector(
       '#settingsPanelToggleExpand'
-    ) as HTMLButtonElement
-    this.searchNavBtn = this.centerPanel.querySelector(
-      '.settingsPanel_navItem[data-page="search"]'
     ) as HTMLButtonElement
 
     const navButtons = this.centerPanel.querySelectorAll(
@@ -452,11 +414,12 @@ class SettingsPanel {
         if (!key) {
           return
         }
-        const section =
-          this.foldableSections.get(key) || this.searchSections.get(key)
+        const section = this.foldableSections.get(key)
         if (section) {
           this.toggleSection(section)
+          return
         }
+        this.searchPanel.toggleSectionByKey(key)
       })
     })
 
@@ -614,15 +577,25 @@ class SettingsPanel {
   }
 
   private buildSearchPage() {
-    const search = this.pageInners.get('search')!
-
-    this.searchSummary = document.createElement('p')
-    this.searchSummary.className = 'settingsPanel_searchSummary'
-    search.append(this.searchSummary)
-
-    this.searchGroupsWrap = document.createElement('div')
-    this.searchGroupsWrap.className = 'settingsPanel_searchGroups'
-    search.append(this.searchGroupsWrap)
+    this.searchPanel = new SettingsPanelSearch({
+      root: this.pageInners.get('search')!,
+      input: this.centerPanel.querySelector(
+        '#settingsPanelSearchInput'
+      ) as HTMLInputElement,
+      clearButton: this.centerPanel.querySelector(
+        '#settingsPanelClearSearch'
+      ) as HTMLButtonElement,
+      navButton: this.centerPanel.querySelector(
+        '.settingsPanel_navItem[data-page="search"]'
+      ) as HTMLButtonElement,
+      optionElements: this.optionElements,
+      getCanonicalContainer: (level1, level2) =>
+        this.getCanonicalContainer(level1, level2),
+      onSectionStateChange: () => {
+        this.updateExpandAllButton()
+        this.refreshStickyHeader()
+      },
+    })
   }
 
   private createSection({
@@ -767,16 +740,7 @@ class SettingsPanel {
       }
     })
 
-    this.searchInput.addEventListener('input', () => {
-      this.debouncedSearch()
-      this.updateSearchClearButton()
-    })
-
-    this.clearSearchBtn.addEventListener('click', () => {
-      this.searchInput.value = ''
-      this.updateSearchClearButton()
-      this.updateSearchResult()
-    })
+    this.searchPanel.bindEvents(() => this.updateSearchResult())
 
     this.expandAllBtn.addEventListener('click', () => this.toggleAllSections())
 
@@ -796,21 +760,19 @@ class SettingsPanel {
     window.addEventListener(EVT.list.langChange, () => {
       window.setTimeout(() => {
         this.renderCurrentPage()
-        this.updateSearchResult()
       }, 0)
     })
   }
 
   private handleNavRequest(page: PageId) {
-    if (page === 'search' && this.searchKeyword === '') {
+    if (page === 'search' && !this.searchPanel.hasKeyword()) {
       return
     }
 
-    if (this.searchKeyword !== '' && page !== 'search') {
-      this.lastNonSearchPage = page as Exclude<PageId, 'search'>
+    if (this.searchPanel.hasKeyword() && page !== 'search') {
+      this.searchPanel.setLastNonSearchPage(page as SearchRestorePage)
       if (this.activePage === 'search') {
-        this.searchInput.value = ''
-        this.updateSearchClearButton()
+        this.searchPanel.clear()
         this.updateSearchResult()
       }
       return
@@ -822,7 +784,7 @@ class SettingsPanel {
   private switchPage(page: PageId) {
     this.activePage = page
     if (page !== 'search') {
-      this.lastNonSearchPage = page as Exclude<PageId, 'search'>
+      this.searchPanel.setLastNonSearchPage(page as SearchRestorePage)
     }
 
     this.pageEls.forEach((pageEl, key) => {
@@ -837,7 +799,7 @@ class SettingsPanel {
 
   private renderCurrentPage() {
     if (this.activePage === 'search') {
-      this.renderSearchPage()
+      this.searchPanel.renderPage()
     } else {
       this.placeOptionsToDefaultContainers(this.activePage === 'home')
     }
@@ -847,108 +809,13 @@ class SettingsPanel {
     window.setTimeout(() => this.refreshStickyHeader(), 0)
   }
 
-  private renderSearchPage() {
-    this.searchSections.clear()
-    this.searchGroupsWrap.innerHTML = ''
-
-    const matchMap = this.findSearchMatches(this.searchKeyword)
-    const groupOrder: string[] = []
-
-    optionConfigs.options.forEach((option) => {
-      const match = matchMap.get(option.no)
-      if (!match) {
-        return
-      }
-
-      const optionElement = this.optionElements.get(option.no)
-      if (!optionElement || this.isOptionCardHidden(optionElement)) {
-        return
-      }
-
-      const groupKey = this.makeSectionKey(
-        'search',
-        `${option.categoryLevel1}__${option.categoryLevel2}`
-      )
-      if (!this.searchSections.has(groupKey)) {
-        const section = this.createSearchSection(
-          option.categoryLevel1,
-          option.categoryLevel2
-        )
-        this.searchSections.set(groupKey, section)
-        groupOrder.push(groupKey)
-        this.searchGroupsWrap.append(section.root)
-      }
-
-      this.searchSections.get(groupKey)!.content.append(optionElement)
-    })
-
-    this.placeUnmatchedOptionsBack(matchMap)
-    this.updateSearchOptionHighlight(matchMap)
-
-    if (groupOrder.length === 0) {
-      this.searchSummary.dataset.xztext = '_没有找到符合条件的设置的提示'
-      this.searchSummary.innerHTML =
-        lang.transl('_没有找到符合条件的设置的提示')
-    } else {
-      this.searchSummary.innerHTML = lang.transl(
-        '_找到x条与搜索词有关的设置',
-        groupOrder
-          .map((key) => this.searchSections.get(key)!.content.children.length)
-          .reduce((total, count) => total + count, 0)
-          .toString(),
-        this.escapeHTML(this.searchKeyword)
-      )
-    }
-  }
-
   private updateSearchResult() {
-    this.searchKeyword = this.searchInput.value.trim()
-    this.searchNavBtn.hidden = this.searchKeyword === ''
-
-    if (this.searchKeyword === '') {
-      this.updateSearchOptionHighlight(new Map())
-      this.switchPage(this.lastNonSearchPage)
+    if (!this.searchPanel.updateResult()) {
+      this.switchPage(this.searchPanel.getLastNonSearchPage())
       return
     }
 
     this.switchPage('search')
-  }
-
-  private findSearchMatches(keyword: string) {
-    const result = new Map<number, SearchMatch>()
-    const lowerKeyword = keyword.toLowerCase()
-
-    for (const option of optionConfigs.options) {
-      const element = this.optionElements.get(option.no)
-      if (!element || this.isOptionCardHidden(element)) {
-        continue
-      }
-
-      const name = option.name.toLowerCase()
-      if (name.includes(lowerKeyword)) {
-        result.set(option.no, { matchedByName: true })
-        continue
-      }
-
-      let matched = false
-      for (const searchWord of option.searchWords) {
-        const word = searchWord.toLowerCase()
-        if (word.includes(lowerKeyword) || lowerKeyword.includes(word)) {
-          matched = true
-          break
-        }
-      }
-
-      if (matched) {
-        result.set(option.no, { matchedByName: false })
-      }
-    }
-
-    return result
-  }
-
-  private isOptionCardHidden(option: HTMLElement) {
-    return option.style.display === 'none'
   }
 
   private placeOptionsToDefaultContainers(showPinnedOnHome: boolean) {
@@ -968,173 +835,7 @@ class SettingsPanel {
       target.append(element)
     }
 
-    this.updateSearchOptionHighlight(new Map())
-  }
-
-  private placeUnmatchedOptionsBack(matchMap: Map<number, SearchMatch>) {
-    for (const option of optionConfigs.options) {
-      if (matchMap.has(option.no)) {
-        continue
-      }
-
-      const element = this.optionElements.get(option.no)
-      if (!element) {
-        continue
-      }
-      this.getCanonicalContainer(
-        option.categoryLevel1,
-        option.categoryLevel2
-      ).append(element)
-    }
-  }
-
-  private updateSearchOptionHighlight(matchMap: Map<number, SearchMatch>) {
-    optionConfigs.options.forEach((option) => {
-      const element = this.optionElements.get(option.no)
-      if (!element) {
-        return
-      }
-      const target = this.findOptionNameTarget(element)
-      if (!target) {
-        return
-      }
-
-      const match = matchMap.get(option.no)
-      if (!match || !match.matchedByName || this.searchKeyword === '') {
-        lang.updateText(target, option.nameKey)
-        return
-      }
-
-      delete target.dataset.xztext
-      delete target.dataset.xztextargs
-      target.innerHTML = this.highlightText(option.name, this.searchKeyword)
-    })
-  }
-
-  private findOptionNameTarget(option: HTMLElement) {
-    const direct = option.querySelector(
-      '.settingNameStyle.optionName'
-    ) as HTMLElement | null
-    if (direct) {
-      return direct
-    }
-
-    const nameLink = option.querySelector(
-      '.settingNameStyle'
-    ) as HTMLElement | null
-    if (!nameLink) {
-      return null
-    }
-
-    return (
-      (nameLink.querySelector(
-        '.optionName, .textTip, [data-xztext]'
-      ) as HTMLElement | null) || nameLink
-    )
-  }
-
-  private highlightText(text: string, keyword: string) {
-    const lowerText = text.toLowerCase()
-    const lowerKeyword = keyword.toLowerCase()
-
-    if (!lowerKeyword) {
-      return this.escapeHTML(text)
-    }
-
-    let cursor = 0
-    let html = ''
-    while (cursor < text.length) {
-      const index = lowerText.indexOf(lowerKeyword, cursor)
-      if (index === -1) {
-        html += this.escapeHTML(text.slice(cursor))
-        break
-      }
-
-      html += this.escapeHTML(text.slice(cursor, index))
-      html += `<mark class="settingsPanel_searchMark">${this.escapeHTML(
-        text.slice(index, index + keyword.length)
-      )}</mark>`
-      cursor = index + keyword.length
-    }
-
-    return html
-  }
-
-  private escapeHTML(text: string) {
-    return text
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;')
-  }
-
-  private createSearchSection(level1: OptionCategoryLevel1, level2: string) {
-    const title = `${lang.transl(
-      optionConfigs.categorySchema[level1].nameKey
-    )} / ${lang.transl(
-      optionConfigs.categorySchema[level1].level2[level2].nameKey
-    )}`
-
-    const root = document.createElement('div')
-    root.className = 'settingsPanel_titleSection'
-
-    const header = document.createElement('button')
-    header.type = 'button'
-    header.className = 'settingsPanel_sectionHeader'
-    header.innerHTML = `
-      <span class="settingsPanel_sectionHeadMain">
-        <span class="settingsPanel_sectionTitle"></span>
-      </span>
-      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
-        <use xlink:href="#arrow-down-2"></use>
-      </svg>
-    `
-    root.append(header)
-
-    const contentShell = document.createElement('div')
-    contentShell.className =
-      'settingsPanel_sectionContentShell settingsPanel_titleContentShell'
-    root.append(contentShell)
-
-    const contentWrap = document.createElement('div')
-    contentWrap.className = 'settingsPanel_sectionContentWrap'
-    contentShell.append(contentWrap)
-
-    const content = document.createElement('div')
-    content.className = 'settingsPanel_titleContent'
-    contentWrap.append(content)
-
-    const section: FoldableSection = {
-      page: 'search',
-      id: `${level1}__${level2}`,
-      persisted: false,
-      stickyEligible: true,
-      root,
-      header,
-      contentShell,
-      contentWrap,
-      content,
-      title: header.querySelector(
-        '.settingsPanel_sectionTitle'
-      ) as HTMLSpanElement,
-    }
-    section.title.textContent = title
-
-    const key = this.makeSectionKey('search', section.id)
-    header.dataset.sectionKey = key
-
-    this.applyExpandedState(section, this.searchState.get(key) ?? true)
-
-    header.addEventListener('click', () => this.toggleSection(section))
-    header.addEventListener('keydown', (event) => {
-      if (event.code === 'Enter' || event.code === 'Space') {
-        event.preventDefault()
-        this.toggleSection(section)
-      }
-    })
-
-    return section
+    this.searchPanel.resetOptionHighlight()
   }
 
   private toggleSection(section: FoldableSection) {
@@ -1145,13 +846,6 @@ class SettingsPanel {
   }
 
   private getExpandedState(section: FoldableSection) {
-    if (!section.persisted) {
-      return (
-        this.searchState.get(this.makeSectionKey(section.page, section.id)) ??
-        true
-      )
-    }
-
     const pageState = this.getPersistedPageState(
       section.page as PersistedPageId
     )
@@ -1159,15 +853,6 @@ class SettingsPanel {
   }
 
   private setExpandedState(section: FoldableSection, expanded: boolean) {
-    if (!section.persisted) {
-      this.searchState.set(
-        this.makeSectionKey(section.page, section.id),
-        expanded
-      )
-      this.applyExpandedState(section, expanded)
-      return
-    }
-
     const nextExpandedCards = Utils.deepCopy(settings.expandedCards)
     const pageState = this.getPersistedPageState(
       section.page as PersistedPageId,
@@ -1211,10 +896,7 @@ class SettingsPanel {
       this.applyExpandedState(section, shouldExpand)
     })
 
-    this.searchSections.forEach((section, key) => {
-      this.searchState.set(key, shouldExpand)
-      this.applyExpandedState(section, shouldExpand)
-    })
+    this.searchPanel.setAllExpanded(shouldExpand)
 
     setSetting('expandedCards', nextExpandedCards)
     this.updateExpandAllButton()
@@ -1242,12 +924,9 @@ class SettingsPanel {
       }
     }
 
-    for (const section of this.searchSections.values()) {
-      total++
-      if (this.getExpandedState(section)) {
-        expanded++
-      }
-    }
+    const searchStats = this.searchPanel.getExpandStats()
+    total += searchStats.total
+    expanded += searchStats.expanded
 
     if (total === 0 || expanded === 0) {
       return 'collapsed'
@@ -1317,9 +996,7 @@ class SettingsPanel {
 
   private getStickySectionsForActivePage() {
     if (this.activePage === 'search') {
-      return [...this.searchSections.values()].filter(
-        (section) => section.stickyEligible && this.getExpandedState(section)
-      )
+      return this.searchPanel.getStickySections()
     }
 
     return [...this.foldableSections.values()].filter(
@@ -1339,13 +1016,6 @@ class SettingsPanel {
     }
     pinnedSection.root.style.display =
       settings.pinnedOptions.length > 0 ? 'block' : 'none'
-  }
-
-  private updateSearchClearButton() {
-    this.clearSearchBtn.classList.toggle(
-      'visible',
-      this.searchInput.value.trim() !== ''
-    )
   }
 
   private playNavRipple(button: HTMLButtonElement) {

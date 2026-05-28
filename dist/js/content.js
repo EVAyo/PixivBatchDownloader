@@ -48053,7 +48053,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
 /* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
 /* harmony import */ var _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./SettingsPanelHelp */ "./src/ts/setting/SettingsPanelHelp.ts");
-/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
+/* harmony import */ var _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./SettingsPanelSearch */ "./src/ts/setting/SettingsPanelSearch.ts");
+/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
+
 
 
 
@@ -48326,9 +48328,6 @@ class SettingsPanel {
         }
     }
     activePage = 'home';
-    lastNonSearchPage = 'home';
-    searchKeyword = '';
-    searchState = new Map();
     optionElements = new Map();
     canonicalContainers = new Map();
     pageEls = new Map();
@@ -48336,22 +48335,13 @@ class SettingsPanel {
     stickyEls = new Map();
     navEls = new Map();
     foldableSections = new Map();
-    searchSections = new Map();
-    searchInput;
-    clearSearchBtn;
     expandAllBtn;
-    searchNavBtn;
     homePinnedContent;
-    searchSummary;
-    searchGroupsWrap;
     otherBtnsVisibilityObserver;
     downloadSummary;
-    debouncedSearch = _utils_Utils__WEBPACK_IMPORTED_MODULE_6__.Utils.debounce(() => this.updateSearchResult(), 200);
+    searchPanel;
     cacheShellElements() {
-        this.searchInput = this.centerPanel.querySelector('#settingsPanelSearchInput');
-        this.clearSearchBtn = this.centerPanel.querySelector('#settingsPanelClearSearch');
         this.expandAllBtn = this.centerPanel.querySelector('#settingsPanelToggleExpand');
-        this.searchNavBtn = this.centerPanel.querySelector('.settingsPanel_navItem[data-page="search"]');
         const navButtons = this.centerPanel.querySelectorAll('.settingsPanel_navItem');
         navButtons.forEach((button) => {
             this.navEls.set(button.dataset.page, button);
@@ -48401,10 +48391,12 @@ class SettingsPanel {
                 if (!key) {
                     return;
                 }
-                const section = this.foldableSections.get(key) || this.searchSections.get(key);
+                const section = this.foldableSections.get(key);
                 if (section) {
                     this.toggleSection(section);
+                    return;
                 }
+                this.searchPanel.toggleSectionByKey(key);
             });
         });
         this.buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar);
@@ -48523,13 +48515,18 @@ class SettingsPanel {
         new _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_15__.SettingsPanelHelp(help);
     }
     buildSearchPage() {
-        const search = this.pageInners.get('search');
-        this.searchSummary = document.createElement('p');
-        this.searchSummary.className = 'settingsPanel_searchSummary';
-        search.append(this.searchSummary);
-        this.searchGroupsWrap = document.createElement('div');
-        this.searchGroupsWrap.className = 'settingsPanel_searchGroups';
-        search.append(this.searchGroupsWrap);
+        this.searchPanel = new _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_16__.SettingsPanelSearch({
+            root: this.pageInners.get('search'),
+            input: this.centerPanel.querySelector('#settingsPanelSearchInput'),
+            clearButton: this.centerPanel.querySelector('#settingsPanelClearSearch'),
+            navButton: this.centerPanel.querySelector('.settingsPanel_navItem[data-page="search"]'),
+            optionElements: this.optionElements,
+            getCanonicalContainer: (level1, level2) => this.getCanonicalContainer(level1, level2),
+            onSectionStateChange: () => {
+                this.updateExpandAllButton();
+                this.refreshStickyHeader();
+            },
+        });
     }
     createSection({ page, id, titleKey, iconId, persisted, stickyEligible, type, }) {
         const root = document.createElement('div');
@@ -48630,15 +48627,7 @@ class SettingsPanel {
                 });
             }
         });
-        this.searchInput.addEventListener('input', () => {
-            this.debouncedSearch();
-            this.updateSearchClearButton();
-        });
-        this.clearSearchBtn.addEventListener('click', () => {
-            this.searchInput.value = '';
-            this.updateSearchClearButton();
-            this.updateSearchResult();
-        });
+        this.searchPanel.bindEvents(() => this.updateSearchResult());
         this.expandAllBtn.addEventListener('click', () => this.toggleAllSections());
         this.main.addEventListener('scroll', () => this.refreshStickyHeader());
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.settingChange, (ev) => {
@@ -48653,19 +48642,17 @@ class SettingsPanel {
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.langChange, () => {
             window.setTimeout(() => {
                 this.renderCurrentPage();
-                this.updateSearchResult();
             }, 0);
         });
     }
     handleNavRequest(page) {
-        if (page === 'search' && this.searchKeyword === '') {
+        if (page === 'search' && !this.searchPanel.hasKeyword()) {
             return;
         }
-        if (this.searchKeyword !== '' && page !== 'search') {
-            this.lastNonSearchPage = page;
+        if (this.searchPanel.hasKeyword() && page !== 'search') {
+            this.searchPanel.setLastNonSearchPage(page);
             if (this.activePage === 'search') {
-                this.searchInput.value = '';
-                this.updateSearchClearButton();
+                this.searchPanel.clear();
                 this.updateSearchResult();
             }
             return;
@@ -48675,7 +48662,7 @@ class SettingsPanel {
     switchPage(page) {
         this.activePage = page;
         if (page !== 'search') {
-            this.lastNonSearchPage = page;
+            this.searchPanel.setLastNonSearchPage(page);
         }
         this.pageEls.forEach((pageEl, key) => {
             pageEl.classList.toggle('active', key === page);
@@ -48687,7 +48674,7 @@ class SettingsPanel {
     }
     renderCurrentPage() {
         if (this.activePage === 'search') {
-            this.renderSearchPage();
+            this.searchPanel.renderPage();
         }
         else {
             this.placeOptionsToDefaultContainers(this.activePage === 'home');
@@ -48696,82 +48683,12 @@ class SettingsPanel {
         this.updateExpandAllButton();
         window.setTimeout(() => this.refreshStickyHeader(), 0);
     }
-    renderSearchPage() {
-        this.searchSections.clear();
-        this.searchGroupsWrap.innerHTML = '';
-        const matchMap = this.findSearchMatches(this.searchKeyword);
-        const groupOrder = [];
-        _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.options.forEach((option) => {
-            const match = matchMap.get(option.no);
-            if (!match) {
-                return;
-            }
-            const optionElement = this.optionElements.get(option.no);
-            if (!optionElement || this.isOptionCardHidden(optionElement)) {
-                return;
-            }
-            const groupKey = this.makeSectionKey('search', `${option.categoryLevel1}__${option.categoryLevel2}`);
-            if (!this.searchSections.has(groupKey)) {
-                const section = this.createSearchSection(option.categoryLevel1, option.categoryLevel2);
-                this.searchSections.set(groupKey, section);
-                groupOrder.push(groupKey);
-                this.searchGroupsWrap.append(section.root);
-            }
-            this.searchSections.get(groupKey).content.append(optionElement);
-        });
-        this.placeUnmatchedOptionsBack(matchMap);
-        this.updateSearchOptionHighlight(matchMap);
-        if (groupOrder.length === 0) {
-            this.searchSummary.dataset.xztext = '_没有找到符合条件的设置的提示';
-            this.searchSummary.innerHTML =
-                _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_没有找到符合条件的设置的提示');
-        }
-        else {
-            this.searchSummary.innerHTML = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_找到x条与搜索词有关的设置', groupOrder
-                .map((key) => this.searchSections.get(key).content.children.length)
-                .reduce((total, count) => total + count, 0)
-                .toString(), this.escapeHTML(this.searchKeyword));
-        }
-    }
     updateSearchResult() {
-        this.searchKeyword = this.searchInput.value.trim();
-        this.searchNavBtn.hidden = this.searchKeyword === '';
-        if (this.searchKeyword === '') {
-            this.updateSearchOptionHighlight(new Map());
-            this.switchPage(this.lastNonSearchPage);
+        if (!this.searchPanel.updateResult()) {
+            this.switchPage(this.searchPanel.getLastNonSearchPage());
             return;
         }
         this.switchPage('search');
-    }
-    findSearchMatches(keyword) {
-        const result = new Map();
-        const lowerKeyword = keyword.toLowerCase();
-        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.options) {
-            const element = this.optionElements.get(option.no);
-            if (!element || this.isOptionCardHidden(element)) {
-                continue;
-            }
-            const name = option.name.toLowerCase();
-            if (name.includes(lowerKeyword)) {
-                result.set(option.no, { matchedByName: true });
-                continue;
-            }
-            let matched = false;
-            for (const searchWord of option.searchWords) {
-                const word = searchWord.toLowerCase();
-                if (word.includes(lowerKeyword) || lowerKeyword.includes(word)) {
-                    matched = true;
-                    break;
-                }
-            }
-            if (matched) {
-                result.set(option.no, { matchedByName: false });
-            }
-        }
-        return result;
-    }
-    isOptionCardHidden(option) {
-        return option.style.display === 'none';
     }
     placeOptionsToDefaultContainers(showPinnedOnHome) {
         for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.options) {
@@ -48784,129 +48701,7 @@ class SettingsPanel {
                 : this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2);
             target.append(element);
         }
-        this.updateSearchOptionHighlight(new Map());
-    }
-    placeUnmatchedOptionsBack(matchMap) {
-        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.options) {
-            if (matchMap.has(option.no)) {
-                continue;
-            }
-            const element = this.optionElements.get(option.no);
-            if (!element) {
-                continue;
-            }
-            this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2).append(element);
-        }
-    }
-    updateSearchOptionHighlight(matchMap) {
-        _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.options.forEach((option) => {
-            const element = this.optionElements.get(option.no);
-            if (!element) {
-                return;
-            }
-            const target = this.findOptionNameTarget(element);
-            if (!target) {
-                return;
-            }
-            const match = matchMap.get(option.no);
-            if (!match || !match.matchedByName || this.searchKeyword === '') {
-                _Language__WEBPACK_IMPORTED_MODULE_3__.lang.updateText(target, option.nameKey);
-                return;
-            }
-            delete target.dataset.xztext;
-            delete target.dataset.xztextargs;
-            target.innerHTML = this.highlightText(option.name, this.searchKeyword);
-        });
-    }
-    findOptionNameTarget(option) {
-        const direct = option.querySelector('.settingNameStyle.optionName');
-        if (direct) {
-            return direct;
-        }
-        const nameLink = option.querySelector('.settingNameStyle');
-        if (!nameLink) {
-            return null;
-        }
-        return (nameLink.querySelector('.optionName, .textTip, [data-xztext]') || nameLink);
-    }
-    highlightText(text, keyword) {
-        const lowerText = text.toLowerCase();
-        const lowerKeyword = keyword.toLowerCase();
-        if (!lowerKeyword) {
-            return this.escapeHTML(text);
-        }
-        let cursor = 0;
-        let html = '';
-        while (cursor < text.length) {
-            const index = lowerText.indexOf(lowerKeyword, cursor);
-            if (index === -1) {
-                html += this.escapeHTML(text.slice(cursor));
-                break;
-            }
-            html += this.escapeHTML(text.slice(cursor, index));
-            html += `<mark class="settingsPanel_searchMark">${this.escapeHTML(text.slice(index, index + keyword.length))}</mark>`;
-            cursor = index + keyword.length;
-        }
-        return html;
-    }
-    escapeHTML(text) {
-        return text
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#39;');
-    }
-    createSearchSection(level1, level2) {
-        const title = `${_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl(_OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.categorySchema[level1].nameKey)} / ${_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl(_OptionConfigs__WEBPACK_IMPORTED_MODULE_12__.optionConfigs.categorySchema[level1].level2[level2].nameKey)}`;
-        const root = document.createElement('div');
-        root.className = 'settingsPanel_titleSection';
-        const header = document.createElement('button');
-        header.type = 'button';
-        header.className = 'settingsPanel_sectionHeader';
-        header.innerHTML = `
-      <span class="settingsPanel_sectionHeadMain">
-        <span class="settingsPanel_sectionTitle"></span>
-      </span>
-      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
-        <use xlink:href="#arrow-down-2"></use>
-      </svg>
-    `;
-        root.append(header);
-        const contentShell = document.createElement('div');
-        contentShell.className =
-            'settingsPanel_sectionContentShell settingsPanel_titleContentShell';
-        root.append(contentShell);
-        const contentWrap = document.createElement('div');
-        contentWrap.className = 'settingsPanel_sectionContentWrap';
-        contentShell.append(contentWrap);
-        const content = document.createElement('div');
-        content.className = 'settingsPanel_titleContent';
-        contentWrap.append(content);
-        const section = {
-            page: 'search',
-            id: `${level1}__${level2}`,
-            persisted: false,
-            stickyEligible: true,
-            root,
-            header,
-            contentShell,
-            contentWrap,
-            content,
-            title: header.querySelector('.settingsPanel_sectionTitle'),
-        };
-        section.title.textContent = title;
-        const key = this.makeSectionKey('search', section.id);
-        header.dataset.sectionKey = key;
-        this.applyExpandedState(section, this.searchState.get(key) ?? true);
-        header.addEventListener('click', () => this.toggleSection(section));
-        header.addEventListener('keydown', (event) => {
-            if (event.code === 'Enter' || event.code === 'Space') {
-                event.preventDefault();
-                this.toggleSection(section);
-            }
-        });
-        return section;
+        this.searchPanel.resetOptionHighlight();
     }
     toggleSection(section) {
         const expanded = !this.getExpandedState(section);
@@ -48915,19 +48710,10 @@ class SettingsPanel {
         this.refreshStickyHeader();
     }
     getExpandedState(section) {
-        if (!section.persisted) {
-            return (this.searchState.get(this.makeSectionKey(section.page, section.id)) ??
-                true);
-        }
         const pageState = this.getPersistedPageState(section.page);
         return !!pageState?.[section.id];
     }
     setExpandedState(section, expanded) {
-        if (!section.persisted) {
-            this.searchState.set(this.makeSectionKey(section.page, section.id), expanded);
-            this.applyExpandedState(section, expanded);
-            return;
-        }
         const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_6__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_13__.settings.expandedCards);
         const pageState = this.getPersistedPageState(section.page, nextExpandedCards);
         if (pageState) {
@@ -48960,10 +48746,7 @@ class SettingsPanel {
             }
             this.applyExpandedState(section, shouldExpand);
         });
-        this.searchSections.forEach((section, key) => {
-            this.searchState.set(key, shouldExpand);
-            this.applyExpandedState(section, shouldExpand);
-        });
+        this.searchPanel.setAllExpanded(shouldExpand);
         (0,_Settings__WEBPACK_IMPORTED_MODULE_13__.setSetting)('expandedCards', nextExpandedCards);
         this.updateExpandAllButton();
         this.refreshStickyHeader();
@@ -48985,12 +48768,9 @@ class SettingsPanel {
                 expanded++;
             }
         }
-        for (const section of this.searchSections.values()) {
-            total++;
-            if (this.getExpandedState(section)) {
-                expanded++;
-            }
-        }
+        const searchStats = this.searchPanel.getExpandStats();
+        total += searchStats.total;
+        expanded += searchStats.expanded;
         if (total === 0 || expanded === 0) {
             return 'collapsed';
         }
@@ -49040,7 +48820,7 @@ class SettingsPanel {
     }
     getStickySectionsForActivePage() {
         if (this.activePage === 'search') {
-            return [...this.searchSections.values()].filter((section) => section.stickyEligible && this.getExpandedState(section));
+            return this.searchPanel.getStickySections();
         }
         return [...this.foldableSections.values()].filter((section) => section.page === this.activePage &&
             section.stickyEligible &&
@@ -49053,9 +48833,6 @@ class SettingsPanel {
         }
         pinnedSection.root.style.display =
             _Settings__WEBPACK_IMPORTED_MODULE_13__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
-    }
-    updateSearchClearButton() {
-        this.clearSearchBtn.classList.toggle('visible', this.searchInput.value.trim() !== '');
     }
     playNavRipple(button) {
         this.playRipple(button);
@@ -49446,6 +49223,359 @@ class SettingsPanelHelp {
         window.setTimeout(() => {
             button.classList.remove('ripple-active');
         }, 650);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./src/ts/setting/SettingsPanelSearch.ts":
+/*!***********************************************!*\
+  !*** ./src/ts/setting/SettingsPanelSearch.ts ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SettingsPanelSearch: () => (/* binding */ SettingsPanelSearch)
+/* harmony export */ });
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+
+
+
+class SettingsPanelSearch {
+    constructor({ root, input, clearButton, navButton, optionElements, getCanonicalContainer, onSectionStateChange, }) {
+        this.root = root;
+        this.input = input;
+        this.clearButton = clearButton;
+        this.navButton = navButton;
+        this.optionElements = optionElements;
+        this.getCanonicalContainer = getCanonicalContainer;
+        this.onSectionStateChange = onSectionStateChange;
+        this.summary = document.createElement('p');
+        this.summary.className = 'settingsPanel_searchSummary';
+        this.groupsWrap = document.createElement('div');
+        this.groupsWrap.className = 'settingsPanel_searchGroups';
+        this.root.append(this.summary, this.groupsWrap);
+        this.updateControlState();
+    }
+    root;
+    input;
+    clearButton;
+    navButton;
+    summary;
+    groupsWrap;
+    keyword = '';
+    lastNonSearchPage = 'home';
+    onResultChange;
+    onSectionStateChange;
+    optionElements;
+    getCanonicalContainer;
+    sections = new Map();
+    sectionState = new Map();
+    debouncedResultChange = _utils_Utils__WEBPACK_IMPORTED_MODULE_1__.Utils.debounce(() => {
+        this.onResultChange?.();
+    }, 200);
+    bindEvents(onResultChange) {
+        this.onResultChange = onResultChange;
+        this.input.addEventListener('input', () => {
+            this.debouncedResultChange();
+            this.updateClearButton();
+        });
+        this.clearButton.addEventListener('click', () => {
+            this.clear();
+            this.onResultChange?.();
+        });
+    }
+    setLastNonSearchPage(page) {
+        this.lastNonSearchPage = page;
+    }
+    getLastNonSearchPage() {
+        return this.lastNonSearchPage;
+    }
+    hasKeyword() {
+        return this.keyword !== '';
+    }
+    updateResult() {
+        this.keyword = this.input.value.trim();
+        this.navButton.hidden = this.keyword === '';
+        if (this.keyword === '') {
+            this.updateSearchOptionHighlight(new Map());
+            return false;
+        }
+        return true;
+    }
+    clear() {
+        this.input.value = '';
+        this.keyword = '';
+        this.updateControlState();
+        this.resetOptionHighlight();
+    }
+    renderPage() {
+        this.sections.clear();
+        this.groupsWrap.innerHTML = '';
+        const matchMap = this.findSearchMatches(this.keyword);
+        const groupOrder = [];
+        _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.options.forEach((option) => {
+            const match = matchMap.get(option.no);
+            if (!match) {
+                return;
+            }
+            const optionElement = this.optionElements.get(option.no);
+            if (!optionElement || this.isOptionCardHidden(optionElement)) {
+                return;
+            }
+            const groupKey = this.makeSectionKey(`${option.categoryLevel1}__${option.categoryLevel2}`);
+            if (!this.sections.has(groupKey)) {
+                const section = this.createSearchSection(option.categoryLevel1, option.categoryLevel2);
+                this.sections.set(groupKey, section);
+                groupOrder.push(groupKey);
+                this.groupsWrap.append(section.root);
+            }
+            this.sections.get(groupKey).content.append(optionElement);
+        });
+        this.placeUnmatchedOptionsBack(matchMap);
+        this.updateSearchOptionHighlight(matchMap);
+        if (groupOrder.length === 0) {
+            this.summary.dataset.xztext = '_没有找到符合条件的设置的提示';
+            this.summary.innerHTML = _Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_没有找到符合条件的设置的提示');
+            return;
+        }
+        delete this.summary.dataset.xztext;
+        this.summary.innerHTML = _Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_找到x条与搜索词有关的设置', groupOrder
+            .map((key) => this.sections.get(key).content.children.length)
+            .reduce((total, count) => total + count, 0)
+            .toString(), this.escapeHTML(this.keyword));
+    }
+    toggleSectionByKey(key) {
+        const section = this.sections.get(key);
+        if (!section) {
+            return false;
+        }
+        this.toggleSection(section);
+        return true;
+    }
+    setAllExpanded(shouldExpand) {
+        this.sections.forEach((section, key) => {
+            this.sectionState.set(key, shouldExpand);
+            this.applyExpandedState(section, shouldExpand);
+        });
+    }
+    getExpandStats() {
+        let expanded = 0;
+        for (const section of this.sections.values()) {
+            if (this.getExpandedState(section)) {
+                expanded++;
+            }
+        }
+        return {
+            total: this.sections.size,
+            expanded,
+        };
+    }
+    getStickySections() {
+        return [...this.sections.values()].filter((section) => section.stickyEligible && this.getExpandedState(section));
+    }
+    resetOptionHighlight() {
+        this.updateSearchOptionHighlight(new Map());
+    }
+    updateControlState() {
+        this.updateClearButton();
+        this.navButton.hidden = this.input.value.trim() === '';
+    }
+    updateClearButton() {
+        this.clearButton.classList.toggle('visible', this.input.value.trim() !== '');
+    }
+    findSearchMatches(keyword) {
+        const result = new Map();
+        const lowerKeyword = keyword.toLowerCase();
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.options) {
+            const element = this.optionElements.get(option.no);
+            if (!element || this.isOptionCardHidden(element)) {
+                continue;
+            }
+            const name = option.name.toLowerCase();
+            if (name.includes(lowerKeyword)) {
+                result.set(option.no, { matchedByName: true });
+                continue;
+            }
+            let matched = false;
+            for (const searchWord of option.searchWords) {
+                const word = searchWord.toLowerCase();
+                if (word.includes(lowerKeyword) || lowerKeyword.includes(word)) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (matched) {
+                result.set(option.no, { matchedByName: false });
+            }
+        }
+        return result;
+    }
+    isOptionCardHidden(option) {
+        return option.style.display === 'none';
+    }
+    placeUnmatchedOptionsBack(matchMap) {
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.options) {
+            if (matchMap.has(option.no)) {
+                continue;
+            }
+            const element = this.optionElements.get(option.no);
+            if (!element) {
+                continue;
+            }
+            this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2)
+                .append(element);
+        }
+    }
+    updateSearchOptionHighlight(matchMap) {
+        _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.options.forEach((option) => {
+            const element = this.optionElements.get(option.no);
+            if (!element) {
+                return;
+            }
+            const target = this.findOptionNameTarget(element);
+            if (!target) {
+                return;
+            }
+            const match = matchMap.get(option.no);
+            if (!match || !match.matchedByName || this.keyword === '') {
+                _Language__WEBPACK_IMPORTED_MODULE_0__.lang.updateText(target, option.nameKey);
+                return;
+            }
+            delete target.dataset.xztext;
+            delete target.dataset.xztextargs;
+            target.innerHTML = this.highlightText(option.name, this.keyword);
+        });
+    }
+    findOptionNameTarget(option) {
+        const direct = option.querySelector('.settingNameStyle.optionName');
+        if (direct) {
+            return direct;
+        }
+        const nameLink = option.querySelector('.settingNameStyle');
+        if (!nameLink) {
+            return null;
+        }
+        return (nameLink.querySelector('.optionName, .textTip, [data-xztext]') || nameLink);
+    }
+    highlightText(text, keyword) {
+        const lowerText = text.toLowerCase();
+        const lowerKeyword = keyword.toLowerCase();
+        if (!lowerKeyword) {
+            return this.escapeHTML(text);
+        }
+        let cursor = 0;
+        let html = '';
+        while (cursor < text.length) {
+            const index = lowerText.indexOf(lowerKeyword, cursor);
+            if (index === -1) {
+                html += this.escapeHTML(text.slice(cursor));
+                break;
+            }
+            html += this.escapeHTML(text.slice(cursor, index));
+            html += `<mark class="settingsPanel_searchMark">${this.escapeHTML(text.slice(index, index + keyword.length))}</mark>`;
+            cursor = index + keyword.length;
+        }
+        return html;
+    }
+    escapeHTML(text) {
+        return text
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+    createSearchSection(level1, level2) {
+        const group = _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.categorySchema[level1].level2[level2];
+        const title = `${_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl(_OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.categorySchema[level1].nameKey)} / ${_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl(group.nameKey)}`;
+        const root = document.createElement('div');
+        root.className = 'settingsPanel_titleSection';
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'settingsPanel_sectionHeader';
+        header.innerHTML = `
+      <span class="settingsPanel_sectionHeadMain"></span>
+      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
+        <use xlink:href="#arrow-down-2"></use>
+      </svg>
+    `;
+        root.append(header);
+        const headerMain = header.querySelector('.settingsPanel_sectionHeadMain');
+        let iconUse;
+        if (group.icon) {
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'settingsPanel_sectionIconWrap';
+            iconWrap.innerHTML = `
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#${group.icon}"></use>
+        </svg>
+      `;
+            headerMain.append(iconWrap);
+            iconUse = iconWrap.querySelector('use');
+        }
+        const titleEl = document.createElement('span');
+        titleEl.className = 'settingsPanel_sectionTitle';
+        headerMain.append(titleEl);
+        const contentShell = document.createElement('div');
+        contentShell.className =
+            'settingsPanel_sectionContentShell settingsPanel_titleContentShell';
+        root.append(contentShell);
+        const contentWrap = document.createElement('div');
+        contentWrap.className = 'settingsPanel_sectionContentWrap';
+        contentShell.append(contentWrap);
+        const content = document.createElement('div');
+        content.className = 'settingsPanel_titleContent';
+        contentWrap.append(content);
+        const section = {
+            page: 'search',
+            id: `${level1}__${level2}`,
+            persisted: false,
+            stickyEligible: true,
+            root,
+            header,
+            contentShell,
+            contentWrap,
+            content,
+            title: titleEl,
+            iconUse,
+        };
+        section.title.textContent = title;
+        this.applyExpandedState(section, this.sectionState.get(this.makeSectionKey(section.id)) ?? true);
+        header.dataset.sectionKey = this.makeSectionKey(section.id);
+        header.addEventListener('click', () => this.toggleSection(section));
+        header.addEventListener('keydown', (event) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault();
+                this.toggleSection(section);
+            }
+        });
+        return section;
+    }
+    toggleSection(section) {
+        const expanded = !this.getExpandedState(section);
+        this.sectionState.set(this.makeSectionKey(section.id), expanded);
+        this.applyExpandedState(section, expanded);
+        this.onSectionStateChange();
+    }
+    getExpandedState(section) {
+        return this.sectionState.get(this.makeSectionKey(section.id)) ?? true;
+    }
+    applyExpandedState(section, expanded) {
+        section.root.classList.toggle('expanded', expanded);
+        section.root.classList.toggle('collapsed', !expanded);
+        section.header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        section.contentWrap.toggleAttribute('inert', !expanded);
+        section.contentWrap.setAttribute('aria-hidden', expanded ? 'false' : 'true');
+    }
+    makeSectionKey(id) {
+        return `search__${id}`;
     }
 }
 
