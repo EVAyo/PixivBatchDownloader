@@ -48052,7 +48052,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
 /* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
 /* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
-/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
+/* harmony import */ var _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./SettingsPanelHelp */ "./src/ts/setting/SettingsPanelHelp.ts");
+/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
+
 
 
 
@@ -48098,7 +48100,6 @@ class SettingsPanel {
         this.buildLayout();
         this.downloadSummary = new _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_14__.SettingsPanelDownloadSummary(this.centerPanel.querySelector('#settingsPanelDownloadSummary'), this.form);
         this.bindEvents();
-        this.renderHelpActionVisibility();
         this.switchPage('home');
         this.updateSearchResult();
     }
@@ -48336,7 +48337,6 @@ class SettingsPanel {
     navEls = new Map();
     foldableSections = new Map();
     searchSections = new Map();
-    helpActionEls = new Map();
     searchInput;
     clearSearchBtn;
     expandAllBtn;
@@ -48344,7 +48344,6 @@ class SettingsPanel {
     homePinnedContent;
     searchSummary;
     searchGroupsWrap;
-    helpActionsWrap;
     otherBtnsVisibilityObserver;
     downloadSummary;
     debouncedSearch = _utils_Utils__WEBPACK_IMPORTED_MODULE_6__.Utils.debounce(() => this.updateSearchResult(), 200);
@@ -48521,62 +48520,7 @@ class SettingsPanel {
     }
     buildHelpPage() {
         const help = this.pageInners.get('help');
-        const tipsWrap = document.createElement('div');
-        tipsWrap.className = 'settingsPanel_helpTips';
-        tipsWrap.innerHTML = `
-    <div class="settingsPanel_tipCard" id="tipPinOption">
-      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
-      <div class="settingsPanel_tipText">
-        <span class="settingsPanel_tipTextContent" data-xztext="_提示可以置顶选项"></span>
-        <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
-          <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
-        </button>
-      </div>
-    </div>
-    <div class="settingsPanel_tipCard" id="tipOpenWikiLinkWrap">
-      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
-      <div class="settingsPanel_tipText">
-        <span class="settingsPanel_tipTextContent">
-          <span data-xztext="_提示查看wiki页面"></span>
-          <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
-            <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
-          </button>
-        </span>
-      </div>
-    </div>
-    `;
-        help.append(tipsWrap);
-        this.helpActionsWrap = document.createElement('div');
-        this.helpActionsWrap.className = 'settingsPanel_helpActions';
-        help.append(this.helpActionsWrap);
-        const actions = [
-            { id: 'wiki', textKey: '_使用手册', iconId: 'wiki' },
-            { id: 'faq', textKey: '_常见问题', iconId: 'help' },
-            { id: 'recentUpdates', textKey: '_最近更新', iconId: 'new-2' },
-            { id: 'sponsorship', textKey: '_赞助我', iconId: 'heart-line' },
-            { id: 'github', textKey: '_github', iconId: 'github' },
-            { id: 'discord', textKey: '_Discord', iconId: 'discord' },
-            { id: 'qq', textKey: '_QQ群', iconId: 'qq' },
-            { id: 'airport', textKey: '_机场推荐', iconId: 'paper-airplane' },
-            { id: 'fanbox', textKey: '_fanboxDownloader', iconId: 'box-open' },
-            { id: 'thirdParty', textKey: '_第三方库', iconId: 'list' },
-            { id: 'reset', textKey: '_重新显示帮助', iconId: 'reset' },
-        ];
-        actions.forEach((action) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'settingsPanel_helpAction hasRippleAnimation';
-            button.dataset.action = action.id;
-            button.innerHTML = `
-      <svg class="icon settingsPanel_helpActionIcon" aria-hidden="true">
-        <use xlink:href="#${action.iconId}"></use>
-      </svg>
-      <span data-xztext="${action.textKey}"></span>
-      <span class="ripple"></span>
-      `;
-            this.helpActionsWrap.append(button);
-            this.helpActionEls.set(action.id, button);
-        });
+        new _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_15__.SettingsPanelHelp(help);
     }
     buildSearchPage() {
         const search = this.pageInners.get('search');
@@ -48697,14 +48641,6 @@ class SettingsPanel {
         });
         this.expandAllBtn.addEventListener('click', () => this.toggleAllSections());
         this.main.addEventListener('scroll', () => this.refreshStickyHeader());
-        this.helpActionsWrap.addEventListener('click', (event) => {
-            const button = event.target.closest('.settingsPanel_helpAction');
-            if (!button) {
-                return;
-            }
-            this.playRipple(button);
-            this.handleHelpAction(button.dataset.action || '');
-        });
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.settingChange, (ev) => {
             const data = ev.detail.data;
             if (data.name === 'pinnedOptions') {
@@ -48716,13 +48652,9 @@ class SettingsPanel {
         });
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.langChange, () => {
             window.setTimeout(() => {
-                this.renderHelpActionVisibility();
                 this.renderCurrentPage();
                 this.updateSearchResult();
             }, 0);
-        });
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.list.hasNewVer, () => {
-            this.helpActionEls.get('recentUpdates')?.classList.add('hasUpdate');
         });
     }
     handleNavRequest(page) {
@@ -49114,76 +49046,6 @@ class SettingsPanel {
             section.stickyEligible &&
             this.getExpandedState(section));
     }
-    renderHelpActionVisibility() {
-        // 有些按钮只在简体中文语言里显示
-        const onlyShowInZhCN = ['airport', 'qq'];
-        onlyShowInZhCN.forEach((id) => {
-            const btn = this.helpActionEls.get(id);
-            if (btn) {
-                btn.style.display = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.type === 'zh-cn' ? 'flex' : 'none';
-            }
-        });
-    }
-    handleHelpAction(action) {
-        switch (action) {
-            case 'wiki':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_使用手册说明'), {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_使用手册'),
-                });
-                return;
-            case 'faq': {
-                let msg = _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_常见问题说明') + _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_账户可能被封禁的警告');
-                if (_Config__WEBPACK_IMPORTED_MODULE_1__.Config.mobile) {
-                    msg += _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_移动端浏览器可能不会建立文件夹的说明');
-                }
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(msg, {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_常见问题'),
-                });
-                return;
-            }
-            case 'recentUpdates':
-                _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('showRecentUpdates');
-                return;
-            case 'github':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_GitHub说明'), {
-                    title: 'GitHub',
-                });
-                return;
-            case 'discord':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_Discord说明'), {
-                    title: 'Discord',
-                });
-                return;
-            case 'qq':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_QQ群说明'), {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_QQ群'),
-                });
-                return;
-            case 'fanbox':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_fanboxDownloader的说明'), {
-                    title: 'Pixiv Fanbox Downloader',
-                });
-                return;
-            case 'airport':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_机场推荐说明'), {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_机场推荐'),
-                });
-                return;
-            case 'sponsorship':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_赞助方式提示'), {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_赞助我'),
-                });
-                return;
-            case 'thirdParty':
-                _MsgBox__WEBPACK_IMPORTED_MODULE_4__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_第三方库说明'), {
-                    title: _Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_第三方库'),
-                });
-                return;
-            case 'reset':
-                _EVT__WEBPACK_IMPORTED_MODULE_2__.EVT.fire('resetHelpTip');
-                return;
-        }
-    }
     updatePinnedSectionVisibility() {
         const pinnedSection = this.foldableSections.get(this.makeSectionKey('home', 'pinnedOptions'));
         if (!pinnedSection) {
@@ -49257,6 +49119,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/** 在设置面板上始终显示的下载摘要区域 */
 class SettingsPanelDownloadSummary {
     constructor(wrap, form, onStateChanged) {
         this.wrap = wrap;
@@ -49394,6 +49257,195 @@ class SettingsPanelDownloadSummary {
     clickRealButton(selector) {
         const button = this.form.querySelector(selector);
         button?.click();
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./src/ts/setting/SettingsPanelHelp.ts":
+/*!*********************************************!*\
+  !*** ./src/ts/setting/SettingsPanelHelp.ts ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SettingsPanelHelp: () => (/* binding */ SettingsPanelHelp)
+/* harmony export */ });
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../MsgBox */ "./src/ts/MsgBox.ts");
+
+
+
+
+class SettingsPanelHelp {
+    constructor(root) {
+        this.root = root;
+        this.render();
+        this.bindEvents();
+        this.renderActionVisibility();
+    }
+    root;
+    actionsWrap;
+    actionEls = new Map();
+    render() {
+        const tipsWrap = document.createElement('div');
+        tipsWrap.className = 'settingsPanel_helpTips';
+        tipsWrap.innerHTML = `
+    <div class="settingsPanel_tipCard" id="tipPinOption">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText">
+        <span class="settingsPanel_tipTextContent" data-xztext="_提示可以置顶选项"></span>
+        <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+          <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
+        </button>
+      </div>
+    </div>
+    <div class="settingsPanel_tipCard" id="tipOpenWikiLinkWrap">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText">
+        <span class="settingsPanel_tipTextContent">
+          <span data-xztext="_提示查看wiki页面"></span>
+          <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+            <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
+          </button>
+        </span>
+      </div>
+    </div>
+    `;
+        this.root.append(tipsWrap);
+        this.actionsWrap = document.createElement('div');
+        this.actionsWrap.className = 'settingsPanel_helpActions';
+        this.root.append(this.actionsWrap);
+        const actions = [
+            { id: 'wiki', textKey: '_使用手册', iconId: 'wiki' },
+            { id: 'faq', textKey: '_常见问题', iconId: 'help' },
+            { id: 'recentUpdates', textKey: '_最近更新', iconId: 'new-2' },
+            { id: 'sponsorship', textKey: '_赞助我', iconId: 'heart-line' },
+            { id: 'github', textKey: '_github', iconId: 'github' },
+            { id: 'discord', textKey: '_Discord', iconId: 'discord' },
+            { id: 'qq', textKey: '_QQ群', iconId: 'qq' },
+            { id: 'airport', textKey: '_机场推荐', iconId: 'paper-airplane' },
+            { id: 'fanbox', textKey: '_fanboxDownloader', iconId: 'box-open' },
+            { id: 'thirdParty', textKey: '_第三方库', iconId: 'list' },
+            { id: 'reset', textKey: '_重新显示帮助', iconId: 'reset' },
+        ];
+        actions.forEach((action) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'settingsPanel_helpAction hasRippleAnimation';
+            button.dataset.action = action.id;
+            button.innerHTML = `
+      <svg class="icon settingsPanel_helpActionIcon" aria-hidden="true">
+        <use xlink:href="#${action.iconId}"></use>
+      </svg>
+      <span data-xztext="${action.textKey}"></span>
+      <span class="ripple"></span>
+      `;
+            this.actionsWrap.append(button);
+            this.actionEls.set(action.id, button);
+        });
+    }
+    bindEvents() {
+        this.actionsWrap.addEventListener('click', (event) => {
+            const button = event.target.closest('.settingsPanel_helpAction');
+            if (!button) {
+                return;
+            }
+            this.playRipple(button);
+            this.handleAction(button.dataset.action || '');
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.langChange, () => {
+            this.renderActionVisibility();
+        });
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.hasNewVer, () => {
+            this.actionEls.get('recentUpdates')?.classList.add('hasUpdate');
+        });
+    }
+    renderActionVisibility() {
+        const onlyShowInZhCN = ['airport', 'qq'];
+        onlyShowInZhCN.forEach((id) => {
+            const btn = this.actionEls.get(id);
+            if (btn) {
+                btn.style.display = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.type === 'zh-cn' ? 'flex' : 'none';
+            }
+        });
+    }
+    handleAction(action) {
+        switch (action) {
+            case 'wiki':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_使用手册说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_使用手册'),
+                });
+                return;
+            case 'faq': {
+                let msg = _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_常见问题说明') + _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_账户可能被封禁的警告');
+                if (_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
+                    msg += _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_移动端浏览器可能不会建立文件夹的说明');
+                }
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(msg, {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_常见问题'),
+                });
+                return;
+            }
+            case 'recentUpdates':
+                _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('showRecentUpdates');
+                return;
+            case 'github':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_GitHub说明'), {
+                    title: 'GitHub',
+                });
+                return;
+            case 'discord':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_Discord说明'), {
+                    title: 'Discord',
+                });
+                return;
+            case 'qq':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_QQ群说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_QQ群'),
+                });
+                return;
+            case 'fanbox':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_fanboxDownloader的说明'), {
+                    title: 'Pixiv Fanbox Downloader',
+                });
+                return;
+            case 'airport':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_机场推荐说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_机场推荐'),
+                });
+                return;
+            case 'sponsorship':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_赞助方式提示'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_赞助我'),
+                });
+                return;
+            case 'thirdParty':
+                _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.show(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_第三方库说明'), {
+                    title: _Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_第三方库'),
+                });
+                return;
+            case 'reset':
+                _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('resetHelpTip');
+                return;
+        }
+    }
+    playRipple(button) {
+        if (!button.querySelector('.ripple')) {
+            return;
+        }
+        button.classList.remove('ripple-active');
+        void button.offsetWidth;
+        button.classList.add('ripple-active');
+        window.setTimeout(() => {
+            button.classList.remove('ripple-active');
+        }, 650);
     }
 }
 
