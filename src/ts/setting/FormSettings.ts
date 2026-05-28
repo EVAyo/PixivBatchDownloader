@@ -157,7 +157,7 @@ class FormSettings {
       'ugoiraSaveAsUgoira',
       'saveThumbnailForUgoira',
       'imageToGray',
-      'clickSettingCardToToggleSwitch',
+      'clickOptionCardToToggleSwitch',
     ],
     text: [
       'onlyCrawlFirstFewImagesCount',
@@ -352,6 +352,13 @@ class FormSettings {
       const el = this.form[name] as
         | HTMLInputElement
         | NodeListOf<HTMLInputElement>
+
+      if (!el) {
+        // 找不到该设置对应的 input 元素
+        console.error('Element not found for setting:', name)
+        return
+      }
+
       let elArray: HTMLInputElement[] = []
       if ((el as NodeListOf<HTMLInputElement>).length !== undefined) {
         elArray = Array.from(el as NodeListOf<HTMLInputElement>)

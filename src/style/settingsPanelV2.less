@@ -28,8 +28,8 @@
   }
 
   p {
-    line-height: @height;
-    min-height: @height;
+    line-height: @lineHeight;
+    min-height: @lineHeight;
     height: auto;
     margin: 0;
     max-width: 100%;
@@ -131,7 +131,7 @@
     }
 
     .showFileNameTip {
-      height: @height;
+      height: @lineHeight;
     }
 
     .centerWrap_top_btn:hover,
@@ -195,28 +195,9 @@
           opacity: 1;
         }
 
-        // 在选项左侧显示 new 图标
-        &.new::before {
-          content: '✨';
-          position: absolute;
-          z-index: 1;
-          width: 24px;
-          left: -22px;
-          height: 26px;
-          top: 3px;
-          text-align: center;
-          font-size: 1.1em;
-        }
-
-        // 鼠标经过或显示置顶按钮时，不显示 new 图标，以避免重叠
-        &:hover::before,
-        &.pinned.new::before {
-          display: none;
-        }
-
         // 给内部元素设置统一的行高。否则的话，span 元素没有行高的话，其高度就是字体尺寸（14px），对齐到顶部后太靠上了，与其他元素的中轴线没有对齐
         & > * {
-          line-height: @height;
+          line-height: @lineHeight;
           flex-shrink: 0;
         }
 
@@ -234,7 +215,7 @@
           }
         }
 
-        // 对于美化的复选框，其原本高度是 14px，使用 margin 将其占据的高度撑到 @height
+        // 对于美化的复选框，其原本高度是 14px，使用 margin 将其占据的高度撑到 @lineHeight
         .beautify_switch,
         .beautify_checkbox {
           margin: 6px 0;
@@ -246,8 +227,8 @@
 
         .subOptionWrap {
           max-width: 100%;
-          min-height: @height;
-          line-height: @height;
+          min-height: @lineHeight;
+          line-height: @lineHeight;
           display: inline-flex;
           flex-wrap: wrap;
           align-items: flex-start;
@@ -255,7 +236,7 @@
           column-gap: 4px;
 
           & > * {
-            line-height: @height;
+            line-height: @lineHeight;
           }
 
           &.noGrow {
@@ -280,9 +261,9 @@
 
           span {
             display: inline-block;
-            height: @height;
+            height: @lineHeight;
             padding: 0px 20px;
-            line-height: @height !important;
+            line-height: @lineHeight !important;
             font-size: 1.1em;
             color: #666;
             font-weight: bold;
@@ -422,7 +403,7 @@
 
       p button,
       .controlBar span {
-        line-height: @height;
+        line-height: @lineHeight;
       }
 
       .centerPanelTextArea {
@@ -433,7 +414,7 @@
         padding: 0;
         flex-basis: 100%;
         flex-grow: 1;
-        min-height: @height;
+        min-height: @lineHeight;
         line-height: 1.7;
         // 在排行榜页面，Pixiv 设置了 textarea 的高度为 20 px，
         // 需要解除限制，否则下载器的输入区域无法撑开高度
@@ -820,7 +801,7 @@
         display: none;
 
         .download_status_text_wrap {
-          line-height: @height;
+          line-height: @lineHeight;
           margin-top: 10px;
 
           & > * {
@@ -856,7 +837,7 @@
 
         button {
           color: #333;
-          height: @height;
+          height: @lineHeight;
         }
       }
 
@@ -939,7 +920,7 @@
       width: auto !important;
     }
 
-    // 背景图片的不透明度滑动条，调整其占据的高度为 @height
+    // 背景图片的不透明度滑动条，调整其占据的高度为 @lineHeight
     input[name='bgOpacity'] {
       margin: 5px 0;
     }

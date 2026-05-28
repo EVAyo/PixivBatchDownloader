@@ -7,7 +7,7 @@ type NewOption = {
 }
 
 /** 在新添加的设置上显示 new 角标 */
-class ShowNewIcon {
+class ShowOptionsNewFlag {
   public init(allOption: NodeListOf<HTMLElement>) {
     this.allOption = allOption
     this.bindEvents()
@@ -169,5 +169,5 @@ class ShowNewIcon {
   }
 }
 
-const showNewIcon = new ShowNewIcon()
-export { showNewIcon }
+const showOptionsNewFlag = new ShowOptionsNewFlag()
+export { showOptionsNewFlag }

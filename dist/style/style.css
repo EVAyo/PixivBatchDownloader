@@ -631,21 +631,6 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con .settingForm .option.pinned .pinButton {
   opacity: 1;
 }
-.centerWrap .centerWrap_con .settingForm .option.new::before {
-  content: '✨';
-  position: absolute;
-  z-index: 1;
-  width: 24px;
-  left: -22px;
-  height: 26px;
-  top: 3px;
-  text-align: center;
-  font-size: 1.1em;
-}
-.centerWrap .centerWrap_con .settingForm .option:hover::before,
-.centerWrap .centerWrap_con .settingForm .option.pinned.new::before {
-  display: none;
-}
 .centerWrap .centerWrap_con .settingForm .option > * {
   line-height: 26px;
   flex-shrink: 0;

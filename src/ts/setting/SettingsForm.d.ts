@@ -207,5 +207,5 @@ export interface SettingsForm extends HTMLFormElement {
   singleEPUBFileSizeLimit: HTMLInputElement
   useTagAliasForTagsNamingRule: HTMLInputElement
   imageToGray: HTMLInputElement
-  clickSettingCardToToggleSwitch: HTMLInputElement
+  clickOptionCardToToggleSwitch: HTMLInputElement
 }
