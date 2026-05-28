@@ -1,28 +1,18 @@
 import { Config } from '../Config'
 import { EVT } from '../EVT'
-import { lang } from '../Language'
-import { LangTextKey } from '../langText'
 import { Utils } from '../utils/Utils'
 import { optionConfigs } from './OptionConfigs'
 import { OptionCategoryLevel1, settings, setSetting } from './Settings'
 import { SettingsForm } from './SettingsForm'
 import { SettingsPanelDownloadSummary } from './SettingsPanelDownloadSummary'
-import { SettingsPanelHelp } from './SettingsPanelHelp'
+import {
+  SettingsPanelLayout,
+  SettingsPanelLayoutResult,
+} from './SettingsPanelLayout'
 import { SettingsPanelShell } from './SettingsPanelShell'
 import { SearchRestorePage, SettingsPanelSearch } from './SettingsPanelSearch'
 import { FoldableSection, PageId, PersistedPageId } from './SettingsPanelTypes'
 import '../OpenSettingsPanel'
-
-const pageIds: PageId[] = [
-  'home',
-  'crawl',
-  'naming',
-  'download',
-  'enhance',
-  'general',
-  'help',
-  'search',
-]
 
 class SettingsPanel {
   constructor(form: SettingsForm) {
@@ -43,8 +33,6 @@ class SettingsPanel {
         this.optionElements.set(no, option as HTMLElement)
       }
     }
-
-    this.cacheShellElements()
     this.buildLayout()
     this.downloadSummary = new SettingsPanelDownloadSummary(
       this.centerPanel.querySelector(
@@ -63,247 +51,41 @@ class SettingsPanel {
 
   private activePage: PageId = 'home'
   private readonly optionElements = new Map<number, HTMLElement>()
-  private readonly canonicalContainers = new Map<string, HTMLDivElement>()
-  private readonly pageEls = new Map<PageId, HTMLDivElement>()
-  private readonly pageInners = new Map<PageId, HTMLDivElement>()
-  private readonly stickyEls = new Map<PageId, HTMLButtonElement>()
-  private readonly navEls = new Map<PageId, HTMLButtonElement>()
-  private readonly foldableSections = new Map<string, FoldableSection>()
+  private canonicalContainers!: Map<string, HTMLDivElement>
+  private pageEls!: Map<PageId, HTMLDivElement>
+  private stickyEls!: Map<PageId, HTMLButtonElement>
+  private navEls!: Map<PageId, HTMLButtonElement>
+  private foldableSections!: Map<string, FoldableSection>
   private expandAllBtn!: HTMLButtonElement
   private homePinnedContent!: HTMLDivElement
-  private otherBtnsVisibilityObserver?: MutationObserver
   private downloadSummary!: SettingsPanelDownloadSummary
   private searchPanel!: SettingsPanelSearch
 
-  private cacheShellElements() {
+  private buildLayout() {
+    const layout: SettingsPanelLayoutResult = new SettingsPanelLayout({
+      form: this.form,
+      centerPanel: this.centerPanel,
+      optionElements: this.optionElements,
+      getExpandedState: (section) => this.getExpandedState(section),
+      applyExpandedState: (section, expanded) =>
+        this.applyExpandedState(section, expanded),
+      toggleSection: (section) => this.toggleSection(section),
+      makeSectionKey: (page, id) => this.makeSectionKey(page, id),
+      makeCanonicalKey: (level1, level2) =>
+        this.makeCanonicalKey(level1, level2),
+    }).build()
+
+    this.pageEls = layout.pageEls
+    this.stickyEls = layout.stickyEls
+    this.navEls = layout.navEls
+    this.foldableSections = layout.foldableSections
+    this.canonicalContainers = layout.canonicalContainers
+    this.homePinnedContent = layout.homePinnedContent
     this.expandAllBtn = this.centerPanel.querySelector(
       '#settingsPanelToggleExpand'
     ) as HTMLButtonElement
-
-    const navButtons = this.centerPanel.querySelectorAll(
-      '.settingsPanel_navItem'
-    ) as NodeListOf<HTMLButtonElement>
-    navButtons.forEach((button) => {
-      this.navEls.set(button.dataset.page as PageId, button)
-    })
-  }
-
-  private buildLayout() {
-    const crawlBtnsBlock = this.findSlotBlock('stopCrawl')
-    const otherBtnsBlock = this.findSlotBlock('otherBtns')
-    const downloadBtnsBlock = this.findSlotBlock('exportResult')
-    const downloadArea = this.findSlot('downloadArea')
-    const progressBar = this.findSlot('progressBar')
-
-    const pagesWrap = document.createElement('div')
-    pagesWrap.className = 'settingsPanel_pages'
-
-    this.form.classList.add('settingsPanel_form')
-    this.form.replaceChildren(pagesWrap)
-
-    pageIds.forEach((page) => {
-      const pageEl = document.createElement('div')
-      pageEl.className = 'settingsPanel_page'
-      pageEl.dataset.page = page
-
-      const sticky = document.createElement('button')
-      sticky.type = 'button'
-      sticky.className = 'settingsPanel_stickyHeader'
-      sticky.hidden = true
-      sticky.innerHTML = `
-      <span class="settingsPanel_sectionHeadMain">
-        <span class="settingsPanel_sectionIconWrap hidden">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href=""></use>
-          </svg>
-        </span>
-        <span class="settingsPanel_sectionTitle"></span>
-      </span>
-      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
-        <use xlink:href="#arrow-down-2"></use>
-      </svg>
-      `
-      pageEl.append(sticky)
-
-      const inner = document.createElement('div')
-      inner.className = 'settingsPanel_pageInner'
-      pageEl.append(inner)
-
-      pagesWrap.append(pageEl)
-      this.pageEls.set(page, pageEl)
-      this.pageInners.set(page, inner)
-      this.stickyEls.set(page, sticky)
-
-      sticky.addEventListener('click', () => {
-        const key = sticky.dataset.sectionKey
-        if (!key) {
-          return
-        }
-        const section = this.foldableSections.get(key)
-        if (section) {
-          this.toggleSection(section)
-          return
-        }
-        this.searchPanel.toggleSectionByKey(key)
-      })
-    })
-
-    this.buildHomePage(
-      crawlBtnsBlock,
-      otherBtnsBlock,
-      downloadBtnsBlock,
-      downloadArea,
-      progressBar
-    )
-    this.buildCategoryPages()
-    this.buildHelpPage()
-    this.buildSearchPage()
-
-    for (const option of this.optionElements.values()) {
-      option.classList.add('settingsPanel_optionCard')
-    }
-
-    lang.register(pagesWrap)
-  }
-
-  private buildHomePage(
-    crawlBtnsBlock: HTMLDivElement,
-    otherBtnsBlock: HTMLDivElement,
-    downloadBtnsBlock: HTMLDivElement,
-    downloadArea: HTMLElement,
-    progressBar: HTMLElement
-  ) {
-    const home = this.pageInners.get('home')!
-
-    const homeTipsWrap = document.createElement('div')
-    homeTipsWrap.className = 'settingsPanel_helpTips settingsPanel_homeTips'
-    homeTipsWrap.innerHTML = `
-    <div class="settingsPanel_tipCard" id="tipCloseAskFileSaveLocation">
-      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
-      <div class="settingsPanel_tipText">
-        <span class="settingsPanel_tipTextContent">
-          <span data-xztext="_建议您关闭询问文件保存位置"></span>
-          <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
-            <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
-          </button>
-        </span>
-      </div>
-    </div>
-    `
-    home.append(homeTipsWrap)
-
-    const pinnedSection = this.createSection({
-      page: 'home',
-      id: 'pinnedOptions',
-      titleKey: '_置顶的设置',
-      iconId: 'pin-line',
-      persisted: true,
-      stickyEligible: true,
-      type: 'title',
-    })
-    home.append(pinnedSection.root)
-    this.homePinnedContent = pinnedSection.content
-
-    const crawlBlock = this.createSection({
-      page: 'home',
-      id: 'crawlBtns',
-      titleKey: '_开始抓取',
-      iconId: 'rocket',
-      persisted: true,
-      stickyEligible: false,
-      type: 'panel',
-    })
-    crawlBlock.content.append(crawlBtnsBlock)
-    home.append(crawlBlock.root)
-
-    const otherBlock = this.createSection({
-      page: 'home',
-      id: 'otherBtns',
-      titleKey: '_附加功能',
-      iconId: 'features',
-      persisted: true,
-      stickyEligible: false,
-      type: 'panel',
-    })
-    otherBlock.content.append(otherBtnsBlock)
-    home.append(otherBlock.root)
-    this.bindHomeOtherBtnsVisibility(otherBlock, otherBtnsBlock)
-
-    const downloadBlock = this.createSection({
-      page: 'home',
-      id: 'downloadArea',
-      titleKey: '_下载区域',
-      iconId: 'download',
-      persisted: true,
-      stickyEligible: false,
-      type: 'panel',
-    })
-    const downloadContentWrap = document.createElement('div')
-    downloadContentWrap.className = 'settingsPanel_downloadContentWrap'
-    downloadContentWrap.append(downloadBtnsBlock, downloadArea, progressBar)
-    downloadBlock.content.append(downloadContentWrap)
-    home.append(downloadBlock.root)
-  }
-
-  private bindHomeOtherBtnsVisibility(
-    otherBlock: FoldableSection,
-    otherBtnsBlock: HTMLDivElement
-  ) {
-    const toggleOtherBlock = () => {
-      const hasButtons = otherBtnsBlock.querySelector('button') !== null
-      otherBlock.root.style.display = hasButtons ? '' : 'none'
-    }
-
-    toggleOtherBlock()
-
-    this.otherBtnsVisibilityObserver?.disconnect()
-    this.otherBtnsVisibilityObserver = new MutationObserver(() => {
-      toggleOtherBlock()
-    })
-    this.otherBtnsVisibilityObserver.observe(otherBtnsBlock, {
-      childList: true,
-      subtree: true,
-    })
-  }
-
-  private buildCategoryPages() {
-    const allCategories = Object.keys(
-      optionConfigs.categorySchema
-    ) as OptionCategoryLevel1[]
-
-    allCategories.forEach((page) => {
-      const inner = this.pageInners.get(page)!
-      const groups = Object.values(
-        optionConfigs.categorySchema[page].level2
-      ).sort((a, b) => a.order - b.order)
-
-      groups.forEach((group) => {
-        const section = this.createSection({
-          page,
-          id: group.id,
-          titleKey: group.nameKey,
-          iconId: group.icon,
-          persisted: true,
-          stickyEligible: true,
-          type: 'title',
-        })
-        inner.append(section.root)
-        this.canonicalContainers.set(
-          this.makeCanonicalKey(page, group.id),
-          section.content
-        )
-      })
-    })
-  }
-
-  private buildHelpPage() {
-    const help = this.pageInners.get('help')!
-    new SettingsPanelHelp(help)
-  }
-
-  private buildSearchPage() {
     this.searchPanel = new SettingsPanelSearch({
-      root: this.pageInners.get('search')!,
+      root: layout.searchRoot,
       input: this.centerPanel.querySelector(
         '#settingsPanelSearchInput'
       ) as HTMLInputElement,
@@ -323,123 +105,22 @@ class SettingsPanel {
     })
   }
 
-  private createSection({
-    page,
-    id,
-    titleKey,
-    iconId,
-    persisted,
-    stickyEligible,
-    type,
-  }: {
-    page: PageId
-    id: string
-    titleKey: LangTextKey
-    iconId?: string
-    persisted: boolean
-    stickyEligible: boolean
-    type: 'title' | 'panel'
-  }) {
-    const root = document.createElement('div')
-    root.className =
-      type === 'panel'
-        ? 'settingsPanel_panelSection'
-        : 'settingsPanel_titleSection'
-
-    const header = document.createElement('button')
-    header.type = 'button'
-    header.className = 'settingsPanel_sectionHeader'
-    root.append(header)
-
-    const headerMain = document.createElement('span')
-    headerMain.className = 'settingsPanel_sectionHeadMain'
-    header.append(headerMain)
-
-    let iconUse: SVGUseElement | undefined
-    if (iconId) {
-      const iconWrap = document.createElement('span')
-      iconWrap.className = 'settingsPanel_sectionIconWrap'
-      iconWrap.innerHTML = `
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#${iconId}"></use>
-      </svg>
-      `
-      headerMain.append(iconWrap)
-      iconUse = iconWrap.querySelector('use') as SVGUseElement
-    }
-
-    const title = document.createElement('span')
-    title.className = 'settingsPanel_sectionTitle'
-    title.dataset.xztext = titleKey
-    headerMain.append(title)
-
-    const arrow = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'svg'
-    ) as SVGSVGElement
-    arrow.setAttribute('class', 'icon settingsPanel_sectionArrow')
-    arrow.setAttribute('aria-hidden', 'true')
-    const arrowUse = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'use'
-    )
-    arrowUse.setAttributeNS(
-      'http://www.w3.org/1999/xlink',
-      'xlink:href',
-      '#arrow-down-2'
-    )
-    arrow.append(arrowUse)
-    header.append(arrow)
-
-    const contentShell = document.createElement('div')
-    contentShell.className =
-      type === 'panel'
-        ? 'settingsPanel_sectionContentShell settingsPanel_panelContentShell'
-        : 'settingsPanel_sectionContentShell settingsPanel_titleContentShell'
-    root.append(contentShell)
-
-    const contentWrap = document.createElement('div')
-    contentWrap.className = 'settingsPanel_sectionContentWrap'
-    contentShell.append(contentWrap)
-
-    const content = document.createElement('div')
-    content.className =
-      type === 'panel'
-        ? 'settingsPanel_panelContent'
-        : 'settingsPanel_titleContent'
-    contentWrap.append(content)
-
-    const section: FoldableSection = {
-      page,
-      id,
-      persisted,
-      stickyEligible,
-      root,
-      header,
-      contentShell,
-      contentWrap,
-      content,
-      title,
-      iconUse,
-    }
-    const key = this.makeSectionKey(page, id)
-    this.foldableSections.set(key, section)
-    header.dataset.sectionKey = key
-
-    this.applyExpandedState(section, this.getExpandedState(section))
-
-    header.addEventListener('click', () => this.toggleSection(section))
-    header.addEventListener('keydown', (event) => {
-      if (event.code === 'Enter' || event.code === 'Space') {
-        event.preventDefault()
-        this.toggleSection(section)
-      }
+  private bindEvents() {
+    this.stickyEls.forEach((sticky) => {
+      sticky.addEventListener('click', () => {
+        const key = sticky.dataset.sectionKey
+        if (!key) {
+          return
+        }
+        const section = this.foldableSections.get(key)
+        if (section) {
+          this.toggleSection(section)
+          return
+        }
+        this.searchPanel.toggleSectionByKey(key)
+      })
     })
 
-    return section
-  }
-
-  private bindEvents() {
     this.navEls.forEach((button, page) => {
       button.addEventListener('click', () => {
         this.playNavRipple(button)
@@ -757,14 +438,6 @@ class SettingsPanel {
     window.setTimeout(() => {
       button.classList.remove('ripple-active')
     }, 650)
-  }
-
-  private findSlot(name: string) {
-    return this.form.querySelector(`slot[data-name="${name}"]`) as HTMLElement
-  }
-
-  private findSlotBlock(name: string) {
-    return this.findSlot(name).parentElement as HTMLDivElement
   }
 
   private getCanonicalContainer(level1: OptionCategoryLevel1, level2: string) {

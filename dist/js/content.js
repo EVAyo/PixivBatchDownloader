@@ -48038,15 +48038,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
-/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
-/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
-/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
-/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
-/* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
-/* harmony import */ var _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./SettingsPanelHelp */ "./src/ts/setting/SettingsPanelHelp.ts");
-/* harmony import */ var _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./SettingsPanelShell */ "./src/ts/setting/SettingsPanelShell.ts");
-/* harmony import */ var _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./SettingsPanelSearch */ "./src/ts/setting/SettingsPanelSearch.ts");
-/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
+/* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
+/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
+/* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
+/* harmony import */ var _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SettingsPanelLayout */ "./src/ts/setting/SettingsPanelLayout.ts");
+/* harmony import */ var _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./SettingsPanelShell */ "./src/ts/setting/SettingsPanelShell.ts");
+/* harmony import */ var _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./SettingsPanelSearch */ "./src/ts/setting/SettingsPanelSearch.ts");
+/* harmony import */ var _OpenSettingsPanel__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../OpenSettingsPanel */ "./src/ts/OpenSettingsPanel.ts");
 
 
 
@@ -48057,22 +48056,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-const pageIds = [
-    'home',
-    'crawl',
-    'naming',
-    'download',
-    'enhance',
-    'general',
-    'help',
-    'search',
-];
 class SettingsPanel {
     constructor(form) {
-        _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_8__.SettingsPanelShell.init();
+        _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__.SettingsPanelShell.init();
         this.form = form;
-        this.centerPanel = _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_8__.SettingsPanelShell.get();
+        this.centerPanel = _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__.SettingsPanelShell.get();
         this.main = this.centerPanel.querySelector('.settingsPanel_main');
         if (!this.centerPanel || !this.main) {
             throw new Error('SettingsPanel shell not found');
@@ -48083,9 +48071,8 @@ class SettingsPanel {
                 this.optionElements.set(no, option);
             }
         }
-        this.cacheShellElements();
         this.buildLayout();
-        this.downloadSummary = new _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_6__.SettingsPanelDownloadSummary(this.centerPanel.querySelector('#settingsPanelDownloadSummary'), this.form);
+        this.downloadSummary = new _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_5__.SettingsPanelDownloadSummary(this.centerPanel.querySelector('#settingsPanelDownloadSummary'), this.form);
         this.bindEvents();
         this.switchPage('home');
         this.updateSearchResult();
@@ -48095,63 +48082,48 @@ class SettingsPanel {
     main;
     activePage = 'home';
     optionElements = new Map();
-    canonicalContainers = new Map();
-    pageEls = new Map();
-    pageInners = new Map();
-    stickyEls = new Map();
-    navEls = new Map();
-    foldableSections = new Map();
+    canonicalContainers;
+    pageEls;
+    stickyEls;
+    navEls;
+    foldableSections;
     expandAllBtn;
     homePinnedContent;
-    otherBtnsVisibilityObserver;
     downloadSummary;
     searchPanel;
-    cacheShellElements() {
+    buildLayout() {
+        const layout = new _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_6__.SettingsPanelLayout({
+            form: this.form,
+            centerPanel: this.centerPanel,
+            optionElements: this.optionElements,
+            getExpandedState: (section) => this.getExpandedState(section),
+            applyExpandedState: (section, expanded) => this.applyExpandedState(section, expanded),
+            toggleSection: (section) => this.toggleSection(section),
+            makeSectionKey: (page, id) => this.makeSectionKey(page, id),
+            makeCanonicalKey: (level1, level2) => this.makeCanonicalKey(level1, level2),
+        }).build();
+        this.pageEls = layout.pageEls;
+        this.stickyEls = layout.stickyEls;
+        this.navEls = layout.navEls;
+        this.foldableSections = layout.foldableSections;
+        this.canonicalContainers = layout.canonicalContainers;
+        this.homePinnedContent = layout.homePinnedContent;
         this.expandAllBtn = this.centerPanel.querySelector('#settingsPanelToggleExpand');
-        const navButtons = this.centerPanel.querySelectorAll('.settingsPanel_navItem');
-        navButtons.forEach((button) => {
-            this.navEls.set(button.dataset.page, button);
+        this.searchPanel = new _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_8__.SettingsPanelSearch({
+            root: layout.searchRoot,
+            input: this.centerPanel.querySelector('#settingsPanelSearchInput'),
+            clearButton: this.centerPanel.querySelector('#settingsPanelClearSearch'),
+            navButton: this.centerPanel.querySelector('.settingsPanel_navItem[data-page="search"]'),
+            optionElements: this.optionElements,
+            getCanonicalContainer: (level1, level2) => this.getCanonicalContainer(level1, level2),
+            onSectionStateChange: () => {
+                this.updateExpandAllButton();
+                this.refreshStickyHeader();
+            },
         });
     }
-    buildLayout() {
-        const crawlBtnsBlock = this.findSlotBlock('stopCrawl');
-        const otherBtnsBlock = this.findSlotBlock('otherBtns');
-        const downloadBtnsBlock = this.findSlotBlock('exportResult');
-        const downloadArea = this.findSlot('downloadArea');
-        const progressBar = this.findSlot('progressBar');
-        const pagesWrap = document.createElement('div');
-        pagesWrap.className = 'settingsPanel_pages';
-        this.form.classList.add('settingsPanel_form');
-        this.form.replaceChildren(pagesWrap);
-        pageIds.forEach((page) => {
-            const pageEl = document.createElement('div');
-            pageEl.className = 'settingsPanel_page';
-            pageEl.dataset.page = page;
-            const sticky = document.createElement('button');
-            sticky.type = 'button';
-            sticky.className = 'settingsPanel_stickyHeader';
-            sticky.hidden = true;
-            sticky.innerHTML = `
-      <span class="settingsPanel_sectionHeadMain">
-        <span class="settingsPanel_sectionIconWrap hidden">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href=""></use>
-          </svg>
-        </span>
-        <span class="settingsPanel_sectionTitle"></span>
-      </span>
-      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
-        <use xlink:href="#arrow-down-2"></use>
-      </svg>
-      `;
-            pageEl.append(sticky);
-            const inner = document.createElement('div');
-            inner.className = 'settingsPanel_pageInner';
-            pageEl.append(inner);
-            pagesWrap.append(pageEl);
-            this.pageEls.set(page, pageEl);
-            this.pageInners.set(page, inner);
-            this.stickyEls.set(page, sticky);
+    bindEvents() {
+        this.stickyEls.forEach((sticky) => {
             sticky.addEventListener('click', () => {
                 const key = sticky.dataset.sectionKey;
                 if (!key) {
@@ -48165,213 +48137,6 @@ class SettingsPanel {
                 this.searchPanel.toggleSectionByKey(key);
             });
         });
-        this.buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar);
-        this.buildCategoryPages();
-        this.buildHelpPage();
-        this.buildSearchPage();
-        for (const option of this.optionElements.values()) {
-            option.classList.add('settingsPanel_optionCard');
-        }
-        _Language__WEBPACK_IMPORTED_MODULE_2__.lang.register(pagesWrap);
-    }
-    buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar) {
-        const home = this.pageInners.get('home');
-        const homeTipsWrap = document.createElement('div');
-        homeTipsWrap.className = 'settingsPanel_helpTips settingsPanel_homeTips';
-        homeTipsWrap.innerHTML = `
-    <div class="settingsPanel_tipCard" id="tipCloseAskFileSaveLocation">
-      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
-      <div class="settingsPanel_tipText">
-        <span class="settingsPanel_tipTextContent">
-          <span data-xztext="_建议您关闭询问文件保存位置"></span>
-          <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
-            <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
-          </button>
-        </span>
-      </div>
-    </div>
-    `;
-        home.append(homeTipsWrap);
-        const pinnedSection = this.createSection({
-            page: 'home',
-            id: 'pinnedOptions',
-            titleKey: '_置顶的设置',
-            iconId: 'pin-line',
-            persisted: true,
-            stickyEligible: true,
-            type: 'title',
-        });
-        home.append(pinnedSection.root);
-        this.homePinnedContent = pinnedSection.content;
-        const crawlBlock = this.createSection({
-            page: 'home',
-            id: 'crawlBtns',
-            titleKey: '_开始抓取',
-            iconId: 'rocket',
-            persisted: true,
-            stickyEligible: false,
-            type: 'panel',
-        });
-        crawlBlock.content.append(crawlBtnsBlock);
-        home.append(crawlBlock.root);
-        const otherBlock = this.createSection({
-            page: 'home',
-            id: 'otherBtns',
-            titleKey: '_附加功能',
-            iconId: 'features',
-            persisted: true,
-            stickyEligible: false,
-            type: 'panel',
-        });
-        otherBlock.content.append(otherBtnsBlock);
-        home.append(otherBlock.root);
-        this.bindHomeOtherBtnsVisibility(otherBlock, otherBtnsBlock);
-        const downloadBlock = this.createSection({
-            page: 'home',
-            id: 'downloadArea',
-            titleKey: '_下载区域',
-            iconId: 'download',
-            persisted: true,
-            stickyEligible: false,
-            type: 'panel',
-        });
-        const downloadContentWrap = document.createElement('div');
-        downloadContentWrap.className = 'settingsPanel_downloadContentWrap';
-        downloadContentWrap.append(downloadBtnsBlock, downloadArea, progressBar);
-        downloadBlock.content.append(downloadContentWrap);
-        home.append(downloadBlock.root);
-    }
-    bindHomeOtherBtnsVisibility(otherBlock, otherBtnsBlock) {
-        const toggleOtherBlock = () => {
-            const hasButtons = otherBtnsBlock.querySelector('button') !== null;
-            otherBlock.root.style.display = hasButtons ? '' : 'none';
-        };
-        toggleOtherBlock();
-        this.otherBtnsVisibilityObserver?.disconnect();
-        this.otherBtnsVisibilityObserver = new MutationObserver(() => {
-            toggleOtherBlock();
-        });
-        this.otherBtnsVisibilityObserver.observe(otherBtnsBlock, {
-            childList: true,
-            subtree: true,
-        });
-    }
-    buildCategoryPages() {
-        const allCategories = Object.keys(_OptionConfigs__WEBPACK_IMPORTED_MODULE_4__.optionConfigs.categorySchema);
-        allCategories.forEach((page) => {
-            const inner = this.pageInners.get(page);
-            const groups = Object.values(_OptionConfigs__WEBPACK_IMPORTED_MODULE_4__.optionConfigs.categorySchema[page].level2).sort((a, b) => a.order - b.order);
-            groups.forEach((group) => {
-                const section = this.createSection({
-                    page,
-                    id: group.id,
-                    titleKey: group.nameKey,
-                    iconId: group.icon,
-                    persisted: true,
-                    stickyEligible: true,
-                    type: 'title',
-                });
-                inner.append(section.root);
-                this.canonicalContainers.set(this.makeCanonicalKey(page, group.id), section.content);
-            });
-        });
-    }
-    buildHelpPage() {
-        const help = this.pageInners.get('help');
-        new _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_7__.SettingsPanelHelp(help);
-    }
-    buildSearchPage() {
-        this.searchPanel = new _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_9__.SettingsPanelSearch({
-            root: this.pageInners.get('search'),
-            input: this.centerPanel.querySelector('#settingsPanelSearchInput'),
-            clearButton: this.centerPanel.querySelector('#settingsPanelClearSearch'),
-            navButton: this.centerPanel.querySelector('.settingsPanel_navItem[data-page="search"]'),
-            optionElements: this.optionElements,
-            getCanonicalContainer: (level1, level2) => this.getCanonicalContainer(level1, level2),
-            onSectionStateChange: () => {
-                this.updateExpandAllButton();
-                this.refreshStickyHeader();
-            },
-        });
-    }
-    createSection({ page, id, titleKey, iconId, persisted, stickyEligible, type, }) {
-        const root = document.createElement('div');
-        root.className =
-            type === 'panel'
-                ? 'settingsPanel_panelSection'
-                : 'settingsPanel_titleSection';
-        const header = document.createElement('button');
-        header.type = 'button';
-        header.className = 'settingsPanel_sectionHeader';
-        root.append(header);
-        const headerMain = document.createElement('span');
-        headerMain.className = 'settingsPanel_sectionHeadMain';
-        header.append(headerMain);
-        let iconUse;
-        if (iconId) {
-            const iconWrap = document.createElement('span');
-            iconWrap.className = 'settingsPanel_sectionIconWrap';
-            iconWrap.innerHTML = `
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#${iconId}"></use>
-      </svg>
-      `;
-            headerMain.append(iconWrap);
-            iconUse = iconWrap.querySelector('use');
-        }
-        const title = document.createElement('span');
-        title.className = 'settingsPanel_sectionTitle';
-        title.dataset.xztext = titleKey;
-        headerMain.append(title);
-        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        arrow.setAttribute('class', 'icon settingsPanel_sectionArrow');
-        arrow.setAttribute('aria-hidden', 'true');
-        const arrowUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-        arrowUse.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#arrow-down-2');
-        arrow.append(arrowUse);
-        header.append(arrow);
-        const contentShell = document.createElement('div');
-        contentShell.className =
-            type === 'panel'
-                ? 'settingsPanel_sectionContentShell settingsPanel_panelContentShell'
-                : 'settingsPanel_sectionContentShell settingsPanel_titleContentShell';
-        root.append(contentShell);
-        const contentWrap = document.createElement('div');
-        contentWrap.className = 'settingsPanel_sectionContentWrap';
-        contentShell.append(contentWrap);
-        const content = document.createElement('div');
-        content.className =
-            type === 'panel'
-                ? 'settingsPanel_panelContent'
-                : 'settingsPanel_titleContent';
-        contentWrap.append(content);
-        const section = {
-            page,
-            id,
-            persisted,
-            stickyEligible,
-            root,
-            header,
-            contentShell,
-            contentWrap,
-            content,
-            title,
-            iconUse,
-        };
-        const key = this.makeSectionKey(page, id);
-        this.foldableSections.set(key, section);
-        header.dataset.sectionKey = key;
-        this.applyExpandedState(section, this.getExpandedState(section));
-        header.addEventListener('click', () => this.toggleSection(section));
-        header.addEventListener('keydown', (event) => {
-            if (event.code === 'Enter' || event.code === 'Space') {
-                event.preventDefault();
-                this.toggleSection(section);
-            }
-        });
-        return section;
-    }
-    bindEvents() {
         this.navEls.forEach((button, page) => {
             button.addEventListener('click', () => {
                 this.playNavRipple(button);
@@ -48387,7 +48152,7 @@ class SettingsPanel {
             });
             if (!_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
                 button.addEventListener('mouseenter', () => {
-                    if (_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.switchTabBar !== 'click') {
+                    if (_Settings__WEBPACK_IMPORTED_MODULE_4__.settings.switchTabBar !== 'click') {
                         this.handleNavRequest(page);
                     }
                 });
@@ -48457,12 +48222,12 @@ class SettingsPanel {
         this.switchPage('search');
     }
     placeOptionsToDefaultContainers(showPinnedOnHome) {
-        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_4__.optionConfigs.options) {
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_3__.optionConfigs.options) {
             const element = this.optionElements.get(option.no);
             if (!element) {
                 continue;
             }
-            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.includes(option.no)
+            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_4__.settings.pinnedOptions.includes(option.no)
                 ? this.homePinnedContent
                 : this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2);
             target.append(element);
@@ -48480,12 +48245,12 @@ class SettingsPanel {
         return !!pageState?.[section.id];
     }
     setExpandedState(section, expanded) {
-        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_3__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.expandedCards);
+        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_2__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_4__.settings.expandedCards);
         const pageState = this.getPersistedPageState(section.page, nextExpandedCards);
         if (pageState) {
             pageState[section.id] = expanded;
         }
-        (0,_Settings__WEBPACK_IMPORTED_MODULE_5__.setSetting)('expandedCards', nextExpandedCards);
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_4__.setSetting)('expandedCards', nextExpandedCards);
         this.applyExpandedState(section, expanded);
     }
     applyExpandedState(section, expanded) {
@@ -48504,7 +48269,7 @@ class SettingsPanel {
     }
     toggleAllSections() {
         const shouldExpand = !this.areAllSectionsExpanded();
-        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_3__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.expandedCards);
+        const nextExpandedCards = _utils_Utils__WEBPACK_IMPORTED_MODULE_2__.Utils.deepCopy(_Settings__WEBPACK_IMPORTED_MODULE_4__.settings.expandedCards);
         this.foldableSections.forEach((section) => {
             const pageState = this.getPersistedPageState(section.page, nextExpandedCards);
             if (pageState) {
@@ -48513,7 +48278,7 @@ class SettingsPanel {
             this.applyExpandedState(section, shouldExpand);
         });
         this.searchPanel.setAllExpanded(shouldExpand);
-        (0,_Settings__WEBPACK_IMPORTED_MODULE_5__.setSetting)('expandedCards', nextExpandedCards);
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_4__.setSetting)('expandedCards', nextExpandedCards);
         this.updateExpandAllButton();
         this.refreshStickyHeader();
     }
@@ -48598,7 +48363,7 @@ class SettingsPanel {
             return;
         }
         pinnedSection.root.style.display =
-            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
+            _Settings__WEBPACK_IMPORTED_MODULE_4__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
     }
     playNavRipple(button) {
         this.playRipple(button);
@@ -48614,12 +48379,6 @@ class SettingsPanel {
             button.classList.remove('ripple-active');
         }, 650);
     }
-    findSlot(name) {
-        return this.form.querySelector(`slot[data-name="${name}"]`);
-    }
-    findSlotBlock(name) {
-        return this.findSlot(name).parentElement;
-    }
     getCanonicalContainer(level1, level2) {
         return this.canonicalContainers.get(this.makeCanonicalKey(level1, level2));
     }
@@ -48629,11 +48388,11 @@ class SettingsPanel {
     makeSectionKey(page, id) {
         return `${page}__${id}`;
     }
-    getPersistedPageState(page, expandedCards = _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.expandedCards) {
+    getPersistedPageState(page, expandedCards = _Settings__WEBPACK_IMPORTED_MODULE_4__.settings.expandedCards) {
         return expandedCards[page];
     }
 }
-_SettingsPanelShell__WEBPACK_IMPORTED_MODULE_8__.SettingsPanelShell.init();
+_SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__.SettingsPanelShell.init();
 
 
 
@@ -48989,6 +48748,311 @@ class SettingsPanelHelp {
         window.setTimeout(() => {
             button.classList.remove('ripple-active');
         }, 650);
+    }
+}
+
+
+
+/***/ }),
+
+/***/ "./src/ts/setting/SettingsPanelLayout.ts":
+/*!***********************************************!*\
+  !*** ./src/ts/setting/SettingsPanelLayout.ts ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SettingsPanelLayout: () => (/* binding */ SettingsPanelLayout)
+/* harmony export */ });
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+/* harmony import */ var _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SettingsPanelHelp */ "./src/ts/setting/SettingsPanelHelp.ts");
+/* harmony import */ var _SettingsPanelTypes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SettingsPanelTypes */ "./src/ts/setting/SettingsPanelTypes.ts");
+
+
+
+
+class SettingsPanelLayout {
+    constructor({ form, centerPanel, optionElements, getExpandedState, applyExpandedState, toggleSection, makeSectionKey, makeCanonicalKey, }) {
+        this.form = form;
+        this.centerPanel = centerPanel;
+        this.optionElements = optionElements;
+        this.getExpandedState = getExpandedState;
+        this.applyExpandedState = applyExpandedState;
+        this.toggleSection = toggleSection;
+        this.makeSectionKey = makeSectionKey;
+        this.makeCanonicalKey = makeCanonicalKey;
+    }
+    form;
+    centerPanel;
+    optionElements;
+    getExpandedState;
+    applyExpandedState;
+    toggleSection;
+    makeSectionKey;
+    makeCanonicalKey;
+    pageEls = new Map();
+    pageInners = new Map();
+    stickyEls = new Map();
+    navEls = new Map();
+    foldableSections = new Map();
+    canonicalContainers = new Map();
+    homePinnedContent;
+    otherBtnsVisibilityObserver;
+    build() {
+        const crawlBtnsBlock = this.findSlotBlock('stopCrawl');
+        const otherBtnsBlock = this.findSlotBlock('otherBtns');
+        const downloadBtnsBlock = this.findSlotBlock('exportResult');
+        const downloadArea = this.findSlot('downloadArea');
+        const progressBar = this.findSlot('progressBar');
+        const pagesWrap = document.createElement('div');
+        pagesWrap.className = 'settingsPanel_pages';
+        this.form.classList.add('settingsPanel_form');
+        this.form.replaceChildren(pagesWrap);
+        this.cacheNavElements();
+        _SettingsPanelTypes__WEBPACK_IMPORTED_MODULE_3__.pageIds.forEach((page) => {
+            const pageEl = document.createElement('div');
+            pageEl.className = 'settingsPanel_page';
+            pageEl.dataset.page = page;
+            const sticky = document.createElement('button');
+            sticky.type = 'button';
+            sticky.className = 'settingsPanel_stickyHeader';
+            sticky.hidden = true;
+            sticky.innerHTML = `
+      <span class="settingsPanel_sectionHeadMain">
+        <span class="settingsPanel_sectionIconWrap hidden">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href=""></use>
+          </svg>
+        </span>
+        <span class="settingsPanel_sectionTitle"></span>
+      </span>
+      <svg class="icon settingsPanel_sectionArrow" aria-hidden="true">
+        <use xlink:href="#arrow-down-2"></use>
+      </svg>
+      `;
+            pageEl.append(sticky);
+            const inner = document.createElement('div');
+            inner.className = 'settingsPanel_pageInner';
+            pageEl.append(inner);
+            pagesWrap.append(pageEl);
+            this.pageEls.set(page, pageEl);
+            this.pageInners.set(page, inner);
+            this.stickyEls.set(page, sticky);
+        });
+        this.buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar);
+        this.buildCategoryPages();
+        this.buildHelpPage();
+        for (const option of this.optionElements.values()) {
+            option.classList.add('settingsPanel_optionCard');
+        }
+        _Language__WEBPACK_IMPORTED_MODULE_0__.lang.register(pagesWrap);
+        return {
+            pageEls: this.pageEls,
+            stickyEls: this.stickyEls,
+            navEls: this.navEls,
+            foldableSections: this.foldableSections,
+            canonicalContainers: this.canonicalContainers,
+            homePinnedContent: this.homePinnedContent,
+            searchRoot: this.pageInners.get('search'),
+        };
+    }
+    cacheNavElements() {
+        const navButtons = this.centerPanel.querySelectorAll('.settingsPanel_navItem');
+        navButtons.forEach((button) => {
+            this.navEls.set(button.dataset.page, button);
+        });
+    }
+    buildHomePage(crawlBtnsBlock, otherBtnsBlock, downloadBtnsBlock, downloadArea, progressBar) {
+        const home = this.pageInners.get('home');
+        const homeTipsWrap = document.createElement('div');
+        homeTipsWrap.className = 'settingsPanel_helpTips settingsPanel_homeTips';
+        homeTipsWrap.innerHTML = `
+    <div class="settingsPanel_tipCard" id="tipCloseAskFileSaveLocation">
+      <svg class="icon settingsPanel_tipIcon" aria-hidden="true"><use xlink:href="#light-line"></use></svg>
+      <div class="settingsPanel_tipText">
+        <span class="settingsPanel_tipTextContent">
+          <span data-xztext="_建议您关闭询问文件保存位置"></span>
+          <button class="settingsPanel_tipConfirm" type="button" data-xztitle="_已确认">
+            <svg class="icon" aria-hidden="true"><use xlink:href="#yes"></use></svg>
+          </button>
+        </span>
+      </div>
+    </div>
+    `;
+        home.append(homeTipsWrap);
+        const pinnedSection = this.createSection({
+            page: 'home',
+            id: 'pinnedOptions',
+            titleKey: '_置顶的设置',
+            iconId: 'pin-line',
+            persisted: true,
+            stickyEligible: true,
+            type: 'title',
+        });
+        home.append(pinnedSection.root);
+        this.homePinnedContent = pinnedSection.content;
+        const crawlBlock = this.createSection({
+            page: 'home',
+            id: 'crawlBtns',
+            titleKey: '_开始抓取',
+            iconId: 'rocket',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        crawlBlock.content.append(crawlBtnsBlock);
+        home.append(crawlBlock.root);
+        const otherBlock = this.createSection({
+            page: 'home',
+            id: 'otherBtns',
+            titleKey: '_附加功能',
+            iconId: 'features',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        otherBlock.content.append(otherBtnsBlock);
+        home.append(otherBlock.root);
+        this.bindHomeOtherBtnsVisibility(otherBlock, otherBtnsBlock);
+        const downloadBlock = this.createSection({
+            page: 'home',
+            id: 'downloadArea',
+            titleKey: '_下载区域',
+            iconId: 'download',
+            persisted: true,
+            stickyEligible: false,
+            type: 'panel',
+        });
+        const downloadContentWrap = document.createElement('div');
+        downloadContentWrap.className = 'settingsPanel_downloadContentWrap';
+        downloadContentWrap.append(downloadBtnsBlock, downloadArea, progressBar);
+        downloadBlock.content.append(downloadContentWrap);
+        home.append(downloadBlock.root);
+    }
+    bindHomeOtherBtnsVisibility(otherBlock, otherBtnsBlock) {
+        const toggleOtherBlock = () => {
+            const hasButtons = otherBtnsBlock.querySelector('button') !== null;
+            otherBlock.root.style.display = hasButtons ? '' : 'none';
+        };
+        toggleOtherBlock();
+        this.otherBtnsVisibilityObserver?.disconnect();
+        this.otherBtnsVisibilityObserver = new MutationObserver(() => {
+            toggleOtherBlock();
+        });
+        this.otherBtnsVisibilityObserver.observe(otherBtnsBlock, {
+            childList: true,
+            subtree: true,
+        });
+    }
+    buildCategoryPages() {
+        const allCategories = Object.keys(_OptionConfigs__WEBPACK_IMPORTED_MODULE_1__.optionConfigs.categorySchema);
+        allCategories.forEach((page) => {
+            const inner = this.pageInners.get(page);
+            const groups = Object.values(_OptionConfigs__WEBPACK_IMPORTED_MODULE_1__.optionConfigs.categorySchema[page].level2).sort((a, b) => a.order - b.order);
+            groups.forEach((group) => {
+                const section = this.createSection({
+                    page,
+                    id: group.id,
+                    titleKey: group.nameKey,
+                    iconId: group.icon,
+                    persisted: true,
+                    stickyEligible: true,
+                    type: 'title',
+                });
+                inner.append(section.root);
+                this.canonicalContainers.set(this.makeCanonicalKey(page, group.id), section.content);
+            });
+        });
+    }
+    buildHelpPage() {
+        const help = this.pageInners.get('help');
+        new _SettingsPanelHelp__WEBPACK_IMPORTED_MODULE_2__.SettingsPanelHelp(help);
+    }
+    createSection({ page, id, titleKey, iconId, persisted, stickyEligible, type, }) {
+        const root = document.createElement('div');
+        root.className =
+            type === 'panel'
+                ? 'settingsPanel_panelSection'
+                : 'settingsPanel_titleSection';
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'settingsPanel_sectionHeader';
+        root.append(header);
+        const headerMain = document.createElement('span');
+        headerMain.className = 'settingsPanel_sectionHeadMain';
+        header.append(headerMain);
+        let iconUse;
+        if (iconId) {
+            const iconWrap = document.createElement('span');
+            iconWrap.className = 'settingsPanel_sectionIconWrap';
+            iconWrap.innerHTML = `
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#${iconId}"></use>
+      </svg>
+      `;
+            headerMain.append(iconWrap);
+            iconUse = iconWrap.querySelector('use');
+        }
+        const title = document.createElement('span');
+        title.className = 'settingsPanel_sectionTitle';
+        title.dataset.xztext = titleKey;
+        headerMain.append(title);
+        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        arrow.setAttribute('class', 'icon settingsPanel_sectionArrow');
+        arrow.setAttribute('aria-hidden', 'true');
+        const arrowUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        arrowUse.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#arrow-down-2');
+        arrow.append(arrowUse);
+        header.append(arrow);
+        const contentShell = document.createElement('div');
+        contentShell.className =
+            type === 'panel'
+                ? 'settingsPanel_sectionContentShell settingsPanel_panelContentShell'
+                : 'settingsPanel_sectionContentShell settingsPanel_titleContentShell';
+        root.append(contentShell);
+        const contentWrap = document.createElement('div');
+        contentWrap.className = 'settingsPanel_sectionContentWrap';
+        contentShell.append(contentWrap);
+        const content = document.createElement('div');
+        content.className =
+            type === 'panel'
+                ? 'settingsPanel_panelContent'
+                : 'settingsPanel_titleContent';
+        contentWrap.append(content);
+        const section = {
+            page,
+            id,
+            persisted,
+            stickyEligible,
+            root,
+            header,
+            contentShell,
+            contentWrap,
+            content,
+            title,
+            iconUse,
+        };
+        const key = this.makeSectionKey(page, id);
+        this.foldableSections.set(key, section);
+        header.dataset.sectionKey = key;
+        this.applyExpandedState(section, this.getExpandedState(section));
+        header.addEventListener('click', () => this.toggleSection(section));
+        header.addEventListener('keydown', (event) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault();
+                this.toggleSection(section);
+            }
+        });
+        return section;
+    }
+    findSlot(name) {
+        return this.form.querySelector(`slot[data-name="${name}"]`);
+    }
+    findSlotBlock(name) {
+        return this.findSlot(name).parentElement;
     }
 }
 
@@ -49383,6 +49447,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/** 设置面板的外壳 */
+// - 负责 shell HTML 渲染
+// - 顶部/侧边导航外壳结构
+// - 语言 class 切换
+// - Alt+X、点击图标开关面板
+// - shell 级别的打开/关闭事件
+// - sponsor 按钮、点击空白关闭等全局事件
 class SettingsPanelShell {
     static shell;
     static allLangFlag = [];
@@ -49604,6 +49675,32 @@ class SettingsPanelShell {
         }
     }
 }
+
+
+
+/***/ }),
+
+/***/ "./src/ts/setting/SettingsPanelTypes.ts":
+/*!**********************************************!*\
+  !*** ./src/ts/setting/SettingsPanelTypes.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   pageIds: () => (/* binding */ pageIds)
+/* harmony export */ });
+const pageIds = [
+    'home',
+    'crawl',
+    'naming',
+    'download',
+    'enhance',
+    'general',
+    'help',
+    'search',
+];
 
 
 
