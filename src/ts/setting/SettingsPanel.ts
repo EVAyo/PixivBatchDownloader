@@ -1,4 +1,3 @@
-import { Config } from '../Config'
 import { EVT } from '../EVT'
 import { optionConfigs } from './OptionConfigs'
 import { OptionCategoryLevel1, settings } from './Settings'
@@ -8,9 +7,10 @@ import {
   SettingsPanelLayout,
   SettingsPanelLayoutResult,
 } from './SettingsPanelLayout'
+import { SettingsPanelNavigation } from './SettingsPanelNavigation'
 import { SettingsPanelSections } from './SettingsPanelSections'
 import { SettingsPanelShell } from './SettingsPanelShell'
-import { SearchRestorePage, SettingsPanelSearch } from './SettingsPanelSearch'
+import { SettingsPanelSearch } from './SettingsPanelSearch'
 import { FoldableSection, PageId } from './SettingsPanelTypes'
 import '../OpenSettingsPanel'
 
@@ -30,6 +30,7 @@ class SettingsPanel {
   private homePinnedContent!: HTMLDivElement
   private downloadSummary!: SettingsPanelDownloadSummary
   private searchPanel!: SettingsPanelSearch
+  private navigationController!: SettingsPanelNavigation
   private sectionController!: SettingsPanelSections
 
   constructor(form: SettingsForm) {
@@ -68,8 +69,8 @@ class SettingsPanel {
       this.form
     )
     this.bindEvents()
-    this.switchPage('home')
-    this.updateSearchResult()
+    this.navigationController.switchPage('home')
+    this.navigationController.updateSearchResult()
   }
 
   private buildLayout() {
@@ -119,6 +120,24 @@ class SettingsPanel {
         this.sectionController.refreshStickyHeader()
       },
     })
+    this.navigationController = new SettingsPanelNavigation({
+      pageEls: this.pageEls,
+      navEls: this.navEls,
+      searchPanel: this.searchPanel,
+      getActivePage: () => this.activePage,
+      setActivePage: (page) => {
+        this.activePage = page
+      },
+      renderSearchPage: () => this.searchPanel.renderPage(),
+      renderDefaultPage: (showPinnedOnHome) =>
+        this.placeOptionsToDefaultContainers(showPinnedOnHome),
+      afterRender: () => {
+        this.updatePinnedSectionVisibility()
+        this.sectionController.updateExpandAllButton()
+        window.setTimeout(() => this.sectionController.refreshStickyHeader(), 0)
+      },
+      playNavRipple: (button) => this.playNavRipple(button),
+    })
   }
 
   private bindEvents() {
@@ -135,32 +154,7 @@ class SettingsPanel {
       })
     })
 
-    this.navEls.forEach((button, page) => {
-      button.addEventListener('click', () => {
-        this.playNavRipple(button)
-        this.handleNavRequest(page)
-      })
-      button.addEventListener('keydown', (event) => {
-        if (
-          (event.code === 'Enter' || event.code === 'Space') &&
-          event.target === button
-        ) {
-          event.preventDefault()
-          this.playNavRipple(button)
-          this.handleNavRequest(page)
-        }
-      })
-
-      if (!Config.mobile) {
-        button.addEventListener('mouseenter', () => {
-          if (settings.switchTabBar !== 'click') {
-            this.handleNavRequest(page)
-          }
-        })
-      }
-    })
-
-    this.searchPanel.bindEvents(() => this.updateSearchResult())
+    this.navigationController.bindEvents()
 
     this.expandAllBtn.addEventListener('click', () =>
       this.sectionController.toggleAllSections()
@@ -173,7 +167,7 @@ class SettingsPanel {
     window.addEventListener(EVT.list.settingChange, (ev: CustomEventInit) => {
       const data = ev.detail.data as any
       if (data.name === 'pinnedOptions') {
-        this.renderCurrentPage()
+        this.navigationController.renderCurrentPage()
       }
 
       if (data.name === 'expandedCards') {
@@ -183,63 +177,9 @@ class SettingsPanel {
 
     window.addEventListener(EVT.list.langChange, () => {
       window.setTimeout(() => {
-        this.renderCurrentPage()
+        this.navigationController.renderCurrentPage()
       }, 0)
     })
-  }
-
-  private handleNavRequest(page: PageId) {
-    if (page === 'search' && !this.searchPanel.hasKeyword()) {
-      return
-    }
-
-    if (this.searchPanel.hasKeyword() && page !== 'search') {
-      this.searchPanel.setLastNonSearchPage(page as SearchRestorePage)
-      if (this.activePage === 'search') {
-        this.searchPanel.clear()
-        this.updateSearchResult()
-      }
-      return
-    }
-
-    this.switchPage(page)
-  }
-
-  private switchPage(page: PageId) {
-    this.activePage = page
-    if (page !== 'search') {
-      this.searchPanel.setLastNonSearchPage(page as SearchRestorePage)
-    }
-
-    this.pageEls.forEach((pageEl, key) => {
-      pageEl.classList.toggle('active', key === page)
-    })
-    this.navEls.forEach((button, key) => {
-      button.classList.toggle('active', key === page)
-    })
-
-    this.renderCurrentPage()
-  }
-
-  private renderCurrentPage() {
-    if (this.activePage === 'search') {
-      this.searchPanel.renderPage()
-    } else {
-      this.placeOptionsToDefaultContainers(this.activePage === 'home')
-    }
-
-    this.updatePinnedSectionVisibility()
-    this.sectionController.updateExpandAllButton()
-    window.setTimeout(() => this.sectionController.refreshStickyHeader(), 0)
-  }
-
-  private updateSearchResult() {
-    if (!this.searchPanel.updateResult()) {
-      this.switchPage(this.searchPanel.getLastNonSearchPage())
-      return
-    }
-
-    this.switchPage('search')
   }
 
   private placeOptionsToDefaultContainers(showPinnedOnHome: boolean) {

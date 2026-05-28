@@ -48036,12 +48036,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SettingsPanel: () => (/* binding */ SettingsPanel)
 /* harmony export */ });
-/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
-/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
-/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
-/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
-/* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
-/* harmony import */ var _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SettingsPanelLayout */ "./src/ts/setting/SettingsPanelLayout.ts");
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+/* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
+/* harmony import */ var _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./SettingsPanelDownloadSummary */ "./src/ts/setting/SettingsPanelDownloadSummary.ts");
+/* harmony import */ var _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SettingsPanelLayout */ "./src/ts/setting/SettingsPanelLayout.ts");
+/* harmony import */ var _SettingsPanelNavigation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SettingsPanelNavigation */ "./src/ts/setting/SettingsPanelNavigation.ts");
 /* harmony import */ var _SettingsPanelSections__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SettingsPanelSections */ "./src/ts/setting/SettingsPanelSections.ts");
 /* harmony import */ var _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./SettingsPanelShell */ "./src/ts/setting/SettingsPanelShell.ts");
 /* harmony import */ var _SettingsPanelSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./SettingsPanelSearch */ "./src/ts/setting/SettingsPanelSearch.ts");
@@ -48071,6 +48071,7 @@ class SettingsPanel {
     homePinnedContent;
     downloadSummary;
     searchPanel;
+    navigationController;
     sectionController;
     constructor(form) {
         _SettingsPanelShell__WEBPACK_IMPORTED_MODULE_7__.SettingsPanelShell.init();
@@ -48094,13 +48095,13 @@ class SettingsPanel {
             }
         }
         this.buildLayout();
-        this.downloadSummary = new _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_4__.SettingsPanelDownloadSummary(this.centerPanel.querySelector('#settingsPanelDownloadSummary'), this.form);
+        this.downloadSummary = new _SettingsPanelDownloadSummary__WEBPACK_IMPORTED_MODULE_3__.SettingsPanelDownloadSummary(this.centerPanel.querySelector('#settingsPanelDownloadSummary'), this.form);
         this.bindEvents();
-        this.switchPage('home');
-        this.updateSearchResult();
+        this.navigationController.switchPage('home');
+        this.navigationController.updateSearchResult();
     }
     buildLayout() {
-        const layout = new _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_5__.SettingsPanelLayout({
+        const layout = new _SettingsPanelLayout__WEBPACK_IMPORTED_MODULE_4__.SettingsPanelLayout({
             form: this.form,
             centerPanel: this.centerPanel,
             optionElements: this.optionElements,
@@ -48134,6 +48135,23 @@ class SettingsPanel {
                 this.sectionController.refreshStickyHeader();
             },
         });
+        this.navigationController = new _SettingsPanelNavigation__WEBPACK_IMPORTED_MODULE_5__.SettingsPanelNavigation({
+            pageEls: this.pageEls,
+            navEls: this.navEls,
+            searchPanel: this.searchPanel,
+            getActivePage: () => this.activePage,
+            setActivePage: (page) => {
+                this.activePage = page;
+            },
+            renderSearchPage: () => this.searchPanel.renderPage(),
+            renderDefaultPage: (showPinnedOnHome) => this.placeOptionsToDefaultContainers(showPinnedOnHome),
+            afterRender: () => {
+                this.updatePinnedSectionVisibility();
+                this.sectionController.updateExpandAllButton();
+                window.setTimeout(() => this.sectionController.refreshStickyHeader(), 0);
+            },
+            playNavRipple: (button) => this.playNavRipple(button),
+        });
     }
     bindEvents() {
         this.stickyEls.forEach((sticky) => {
@@ -48148,97 +48166,31 @@ class SettingsPanel {
                 this.searchPanel.toggleSectionByKey(key);
             });
         });
-        this.navEls.forEach((button, page) => {
-            button.addEventListener('click', () => {
-                this.playNavRipple(button);
-                this.handleNavRequest(page);
-            });
-            button.addEventListener('keydown', (event) => {
-                if ((event.code === 'Enter' || event.code === 'Space') &&
-                    event.target === button) {
-                    event.preventDefault();
-                    this.playNavRipple(button);
-                    this.handleNavRequest(page);
-                }
-            });
-            if (!_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
-                button.addEventListener('mouseenter', () => {
-                    if (_Settings__WEBPACK_IMPORTED_MODULE_3__.settings.switchTabBar !== 'click') {
-                        this.handleNavRequest(page);
-                    }
-                });
-            }
-        });
-        this.searchPanel.bindEvents(() => this.updateSearchResult());
+        this.navigationController.bindEvents();
         this.expandAllBtn.addEventListener('click', () => this.sectionController.toggleAllSections());
         this.main.addEventListener('scroll', () => this.sectionController.refreshStickyHeader());
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.settingChange, (ev) => {
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingChange, (ev) => {
             const data = ev.detail.data;
             if (data.name === 'pinnedOptions') {
-                this.renderCurrentPage();
+                this.navigationController.renderCurrentPage();
             }
             if (data.name === 'expandedCards') {
                 this.sectionController.refreshPersistedSectionStates();
             }
         });
-        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.list.langChange, () => {
+        window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.langChange, () => {
             window.setTimeout(() => {
-                this.renderCurrentPage();
+                this.navigationController.renderCurrentPage();
             }, 0);
         });
     }
-    handleNavRequest(page) {
-        if (page === 'search' && !this.searchPanel.hasKeyword()) {
-            return;
-        }
-        if (this.searchPanel.hasKeyword() && page !== 'search') {
-            this.searchPanel.setLastNonSearchPage(page);
-            if (this.activePage === 'search') {
-                this.searchPanel.clear();
-                this.updateSearchResult();
-            }
-            return;
-        }
-        this.switchPage(page);
-    }
-    switchPage(page) {
-        this.activePage = page;
-        if (page !== 'search') {
-            this.searchPanel.setLastNonSearchPage(page);
-        }
-        this.pageEls.forEach((pageEl, key) => {
-            pageEl.classList.toggle('active', key === page);
-        });
-        this.navEls.forEach((button, key) => {
-            button.classList.toggle('active', key === page);
-        });
-        this.renderCurrentPage();
-    }
-    renderCurrentPage() {
-        if (this.activePage === 'search') {
-            this.searchPanel.renderPage();
-        }
-        else {
-            this.placeOptionsToDefaultContainers(this.activePage === 'home');
-        }
-        this.updatePinnedSectionVisibility();
-        this.sectionController.updateExpandAllButton();
-        window.setTimeout(() => this.sectionController.refreshStickyHeader(), 0);
-    }
-    updateSearchResult() {
-        if (!this.searchPanel.updateResult()) {
-            this.switchPage(this.searchPanel.getLastNonSearchPage());
-            return;
-        }
-        this.switchPage('search');
-    }
     placeOptionsToDefaultContainers(showPinnedOnHome) {
-        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_2__.optionConfigs.options) {
+        for (const option of _OptionConfigs__WEBPACK_IMPORTED_MODULE_1__.optionConfigs.options) {
             const element = this.optionElements.get(option.no);
             if (!element) {
                 continue;
             }
-            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.pinnedOptions.includes(option.no)
+            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_2__.settings.pinnedOptions.includes(option.no)
                 ? this.homePinnedContent
                 : this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2);
             target.append(element);
@@ -48251,7 +48203,7 @@ class SettingsPanel {
             return;
         }
         pinnedSection.root.style.display =
-            _Settings__WEBPACK_IMPORTED_MODULE_3__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
+            _Settings__WEBPACK_IMPORTED_MODULE_2__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
     }
     playNavRipple(button) {
         this.playRipple(button);
@@ -48947,6 +48899,115 @@ class SettingsPanelLayout {
 
 /***/ }),
 
+/***/ "./src/ts/setting/SettingsPanelNavigation.ts":
+/*!***************************************************!*\
+  !*** ./src/ts/setting/SettingsPanelNavigation.ts ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SettingsPanelNavigation: () => (/* binding */ SettingsPanelNavigation)
+/* harmony export */ });
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
+/* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
+
+
+class SettingsPanelNavigation {
+    constructor({ pageEls, navEls, searchPanel, getActivePage, setActivePage, renderSearchPage, renderDefaultPage, afterRender, playNavRipple, }) {
+        this.pageEls = pageEls;
+        this.navEls = navEls;
+        this.searchPanel = searchPanel;
+        this.getActivePage = getActivePage;
+        this.setActivePage = setActivePage;
+        this.renderSearchPage = renderSearchPage;
+        this.renderDefaultPage = renderDefaultPage;
+        this.afterRender = afterRender;
+        this.playNavRipple = playNavRipple;
+    }
+    pageEls;
+    navEls;
+    searchPanel;
+    getActivePage;
+    setActivePage;
+    renderSearchPage;
+    renderDefaultPage;
+    afterRender;
+    playNavRipple;
+    bindEvents() {
+        this.navEls.forEach((button, page) => {
+            button.addEventListener('click', () => {
+                this.playNavRipple(button);
+                this.handleNavRequest(page);
+            });
+            button.addEventListener('keydown', (event) => {
+                if ((event.code === 'Enter' || event.code === 'Space') &&
+                    event.target === button) {
+                    event.preventDefault();
+                    this.playNavRipple(button);
+                    this.handleNavRequest(page);
+                }
+            });
+            if (!_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
+                button.addEventListener('mouseenter', () => {
+                    if (_Settings__WEBPACK_IMPORTED_MODULE_1__.settings.switchTabBar !== 'click') {
+                        this.handleNavRequest(page);
+                    }
+                });
+            }
+        });
+        this.searchPanel.bindEvents(() => this.updateSearchResult());
+    }
+    switchPage(page) {
+        this.setActivePage(page);
+        if (page !== 'search') {
+            this.searchPanel.setLastNonSearchPage(page);
+        }
+        this.pageEls.forEach((pageEl, key) => {
+            pageEl.classList.toggle('active', key === page);
+        });
+        this.navEls.forEach((button, key) => {
+            button.classList.toggle('active', key === page);
+        });
+        this.renderCurrentPage();
+    }
+    renderCurrentPage() {
+        if (this.getActivePage() === 'search') {
+            this.renderSearchPage();
+        }
+        else {
+            this.renderDefaultPage(this.getActivePage() === 'home');
+        }
+        this.afterRender();
+    }
+    updateSearchResult() {
+        if (!this.searchPanel.updateResult()) {
+            this.switchPage(this.searchPanel.getLastNonSearchPage());
+            return;
+        }
+        this.switchPage('search');
+    }
+    handleNavRequest(page) {
+        if (page === 'search' && !this.searchPanel.hasKeyword()) {
+            return;
+        }
+        if (this.searchPanel.hasKeyword() && page !== 'search') {
+            this.searchPanel.setLastNonSearchPage(page);
+            if (this.getActivePage() === 'search') {
+                this.searchPanel.clear();
+                this.updateSearchResult();
+            }
+            return;
+        }
+        this.switchPage(page);
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./src/ts/setting/SettingsPanelSearch.ts":
 /*!***********************************************!*\
   !*** ./src/ts/setting/SettingsPanelSearch.ts ***!
@@ -49315,6 +49376,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
 
 
+// - 管理持久化 section 的展开/折叠状态
+// - 管理“展开/折叠全部”
+// - 管理 sticky header 的显示、标题和图标同步
+// - 协调搜索页 section 的展开统计和 sticky section
 class SettingsPanelSections {
     constructor({ main, getActivePage, getSearchExpandStats, setSearchAllExpanded, getSearchStickySections, }) {
         this.main = main;
