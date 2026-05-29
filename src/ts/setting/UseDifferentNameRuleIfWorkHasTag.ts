@@ -63,12 +63,12 @@ class UseDifferentNameRuleIfWorkHasTag {
       <div class="settingItem addInputWrap" >
         <div class="inputItem tags">
           <span class="label uidLabel">Tags</span>
-          <input type="text" class="setinput_style1 blue addTagsInput" data-xzplaceholder="_tag用逗号分割" />
+          <input type="text" class="setinput_style blue addTagsInput" data-xzplaceholder="_tag用逗号分割" />
         </div>
 
         <div class="inputItem rule">
           <span class="label nameLabel" data-xztext="_命名规则"></span>
-          <input type="text" class="setinput_style1 blue addRuleInput" />
+          <input type="text" class="setinput_style blue addRuleInput" />
         </div>
 
         <div class="btns">
@@ -176,11 +176,11 @@ class UseDifferentNameRuleIfWorkHasTag {
       </div>
 
       <div class="inputItem tags">
-        <input type="text" class="setinput_style1 blue" data-tagsInput="${id}" value="${tags}" />
+        <input type="text" class="setinput_style blue" data-tagsInput="${id}" value="${tags}" />
       </div>
 
       <div class="inputItem rule">
-        <input type="text" class="has_tip setinput_style1 blue" data-ruleInput="${id}" value="${rule}" />
+        <input type="text" class="has_tip setinput_style blue" data-ruleInput="${id}" value="${rule}" />
       </div>
 
       <div class="btns">

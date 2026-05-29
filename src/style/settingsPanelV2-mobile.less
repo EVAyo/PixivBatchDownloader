@@ -1,4 +1,17 @@
 .centerWrap.mobile {
+  width: calc(100vw - 32px);
+  left: 50%;
+  top: 8px;
+  max-height: calc(80vh);
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-family: var(--mobile-font-family);
+  overflow: auto;
+
+  p {
+    line-height: 32px;
+  }
+
   .centerWrap_head {
     padding: 12px;
     flex-direction: column;
@@ -35,62 +48,138 @@
   }
 
   .centerWrap_con {
+    padding: 0;
     flex-direction: column;
     max-height: calc(100vh - 120px);
-  }
 
-  .settingsPanel_sidebar {
-    width: 100%;
-    padding: 12px;
-    overflow: visible;
-  }
+    .settingsPanel_sidebar {
+      width: 100%;
+      overflow: visible;
+      padding: 0 1vw;
 
-  .settingsPanel_nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+      .settingsPanel_nav {
+        gap: 6px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
 
-  .settingsPanel_navItem {
-    min-width: 25%;
-    flex: 1 1 25%;
-    min-height: 42px;
-    padding: 8px 12px;
-    justify-content: center;
-  }
+      .settingsPanel_navItem {
+        flex: 0 1 auto;
+        width: auto;
+        max-width: 100%;
+        min-height: 42px;
+        padding: 8px 12px;
+        justify-content: center;
+        gap: 6px;
+      }
 
-  .settingsPanel_navText {
-    font-size: 16px;
-  }
+      .settingsPanel_navText {
+        flex: none;
+        min-width: 0;
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-  &.lang_zh-cn .settingsPanel_navText,
-  &.lang_zh-tw .settingsPanel_navText {
-    letter-spacing: 2px;
-    text-indent: 2px;
-  }
+      &.lang_zh-cn .settingsPanel_navText,
+      &.lang_zh-tw .settingsPanel_navText {
+        letter-spacing: 2px;
+        text-indent: 2px;
+      }
+    }
 
-  .settingsPanel_downloadSummary {
-    margin-top: 12px;
-    padding: 12px 15px;
-    border-top: none;
-    background: var(--settings-panel-surface-bg);
-    border-radius: 12px;
-    box-shadow: var(--settings-panel-surface-shadow);
-  }
+    .settingsPanel_main {
+      width: 100%;
+      padding: 0 1vw;
+    }
 
-  .settingsPanel_downloadSummaryStatus,
-  .settingsPanel_downloadSummaryActions {
-    gap: 16px;
-  }
+    .settingForm {
+      .settingsPanel_panelContent {
+        padding: 10px 12px;
+      }
 
-  .settingsPanel_downloadSummaryStatus {
-    margin-bottom: 10px;
-  }
+      .centerWrap_btns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
 
-  .settingsPanel_main {
-    padding: 12px;
-  }
+      .setinput_style {
+        font-size: 16px !important;
+      }
 
-  .settingsPanel_helpActions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+      .centerWrap_btns button {
+        font-size: 16px;
+        line-height: 24px;
+        padding: 12px 16px;
+      }
+
+      // 在移动端里，“必须包含标签”的 input 输入框独占一行，否则其宽度太小了
+      input[name='needTag'] {
+        flex-basis: 100% !important;
+      }
+
+      // 其他一些 flex 布局的元素也进行调整，避免太多元素挤在一行
+      .fileNameRuleLine1,
+      .fileNameRuleBtnsArea {
+        flex-wrap: wrap !important;
+      }
+
+      .option[data-no='91'] .rowWrap {
+        flex-wrap: wrap !important;
+      }
+
+      .namingRuleList {
+        left: 20px;
+        max-width: 80% !important;
+
+        li {
+          min-width: unset !important;
+          max-width: 80% !important;
+
+          .rule {
+            padding-left: 10px;
+          }
+
+          .delete {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    .settingsPanel_downloadSummary {
+      margin-top: 12px;
+      padding: 12px 15px;
+      border-top: none;
+      background: var(--settings-panel-surface-bg);
+      border-radius: 12px;
+      box-shadow: var(--settings-panel-surface-shadow);
+    }
+
+    .settingsPanel_downloadSummaryStatus,
+    .settingsPanel_downloadSummaryActions {
+      gap: 16px;
+    }
+
+    .settingsPanel_downloadSummaryStatus {
+      margin-bottom: 10px;
+    }
+
+    .settingsPanel_helpActions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 414px) {
+  .centerWrap.mobile .centerWrap_con .settingForm .centerWrap_btns button {
+    padding: 10px 6px;
+  }
+}
+
+@media (max-width: 388px) {
+  .centerWrap.mobile .centerWrap_con .settingForm .centerWrap_btns button {
+    padding: 12px 6px;
   }
 }

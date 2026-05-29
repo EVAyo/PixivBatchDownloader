@@ -1,3 +1,6 @@
+@import 'settingsPanelV2-theme.less';
+@import 'settingsPanelV2-mobile.less';
+
 .centerWrap {
   --settings-panel-bg: #fff;
   --settings-panel-text: #444;
@@ -560,7 +563,7 @@
           flex-grow: 1;
         }
 
-        .setinput_style1 {
+        .setinput_style {
           width: 50px;
           min-width: 50px;
           height: 20px;
@@ -1168,9 +1171,9 @@
         }
       }
 
-      .setinput_style1,
-      .setinput_style1:focus,
-      .setinput_style1:hover {
+      .setinput_style,
+      .setinput_style:focus,
+      .setinput_style:hover {
         background: transparent !important;
       }
     }
@@ -1760,60 +1763,6 @@
   }
 }
 
-.centerWrap.mobile {
-  width: calc(100vw - 32px);
-  left: 50%;
-  top: 8px;
-  max-height: calc(80vh);
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-family: var(--mobile-font-family);
-  overflow: auto;
-
-  .centerWrap_head {
-    .centerWrap_title {
-      line-height: 40px;
-      font-size: 18px;
-    }
-
-    .btns {
-      .centerWrap_top_btn {
-        font-size: 26px;
-        width: 30px;
-        height: 40px;
-        line-height: 40px;
-      }
-
-      .github_icon,
-      .wiki_url {
-        display: none;
-      }
-    }
-  }
-
-  .centerWrap_con {
-    padding: 0 5vw;
-  }
-
-  p {
-    line-height: 32px;
-  }
-
-  .centerWrap_con .settingForm .setinput_style1 {
-    font-size: 16px !important;
-  }
-
-  .centerWrap_tabs .title {
-    font-weight: inherit;
-  }
-
-  .centerWrap_con .settingForm .centerWrap_btns button {
-    font-size: 16px;
-    line-height: 24px;
-    padding: 12px 16px;
-  }
-}
-
 .centerWrap.theme-dark {
   background: #1f2530;
   border-color: rgba(94, 172, 230, 0.45);
@@ -1900,6 +1849,7 @@
       box-shadow: none !important;
     }
   }
+
   .settingCategoryName {
     span {
       color: var(--beautify-blue) !important;
@@ -1910,7 +1860,6 @@
 
 // 当设置了背景图片时，不管是什么主题，都把中间面板的样式修改为 Dark 主题的样式，并且添加文字阴影，使文字更容易阅读
 .centerWrap.xzBG {
-  // text-shadow: 0px 0px 5px #015d88;
   text-shadow: #003247 0px 0px 2px;
 
   box-shadow: var(--dark-box-shadow) 0px 0px 15px;
@@ -2098,21 +2047,6 @@
     font-family: var(--pixiv-font-family);
   }
 }
-
-@media (max-width: 414px) {
-  .centerWrap.mobile .centerWrap_con .settingForm .centerWrap_btns button {
-    padding: 10px 6px;
-  }
-}
-
-@media (max-width: 388px) {
-  .centerWrap.mobile .centerWrap_con .settingForm .centerWrap_btns button {
-    padding: 12px 6px;
-  }
-}
-
-@import 'settingsPanelV2-theme.less';
-@import 'settingsPanelV2-mobile.less';
 
 @keyframes settingsPanelSummarySpin {
   from {

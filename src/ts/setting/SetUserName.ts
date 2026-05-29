@@ -62,12 +62,12 @@ class SetUserName {
       <div class="settingItem addInputWrap" >
         <div class="inputItem uid">
           <span class="label uidLabel" data-xztext="_用户id"></span>
-          <input type="text" class="setinput_style1 blue addUidInput" data-xzplaceholder="_必须是数字" />
+          <input type="text" class="setinput_style blue addUidInput" data-xzplaceholder="_必须是数字" />
         </div>
 
         <div class="inputItem name">
           <span class="label nameLabel" data-xztext="_命名标记user"></span>
-          <input type="text" class="setinput_style1 blue addNameInput" />
+          <input type="text" class="setinput_style blue addNameInput" />
         </div>
 
         <div class="btns">
@@ -165,11 +165,11 @@ class SetUserName {
   private createOneList(uid: string, name: string) {
     const html = `
       <div class="inputItem uid">
-        <input type="text" class="setinput_style1 blue" data-uidInput="${uid}" value="${uid}" />
+        <input type="text" class="setinput_style blue" data-uidInput="${uid}" value="${uid}" />
       </div>
 
       <div class="inputItem name">
-        <input type="text" class="setinput_style1 blue" data-nameInput="${uid}" value="${name}" />
+        <input type="text" class="setinput_style blue" data-nameInput="${uid}" value="${name}" />
       </div>
 
       <div class="btns">

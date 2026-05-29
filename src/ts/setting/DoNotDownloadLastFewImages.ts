@@ -64,12 +64,12 @@ class DoNotDownloadLastFewImages {
       <div class="settingItem addInputWrap" >
         <div class="inputItem uid">
           <span class="label uidLabel" data-xztext="_用户id"></span>
-          <input type="text" class="setinput_style1 blue addUidInput" data-xzplaceholder="_必须是数字" />
+          <input type="text" class="setinput_style blue addUidInput" data-xzplaceholder="_必须是数字" />
         </div>
 
         <div class="inputItem value">
           <span class="label nameLabel" data-xztext="_不下载最后几张图片"></span>
-          <input type="text" class="has_tip setinput_style1 blue addValueInput" data-xztip="_提示0表示不生效" />
+          <input type="text" class="has_tip setinput_style blue addValueInput" data-xztip="_提示0表示不生效" />
         </div>
 
         <div class="btns">
@@ -177,11 +177,11 @@ class DoNotDownloadLastFewImages {
       </div>
 
       <div class="inputItem uid">
-        <input type="text" class="setinput_style1 blue" data-uidInput="${uid}" value="${uid}" />
+        <input type="text" class="setinput_style blue" data-uidInput="${uid}" value="${uid}" />
       </div>
 
       <div class="inputItem value">
-        <input type="text" class="has_tip setinput_style1 blue" data-valueInput="${uid}" value="${value}" data-xztip="_提示0表示不生效" />
+        <input type="text" class="has_tip setinput_style blue" data-valueInput="${uid}" value="${value}" data-xztip="_提示0表示不生效" />
       </div>
 
       <div class="btns">

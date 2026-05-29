@@ -66,12 +66,12 @@ class BlockTagsForSpecificUser {
       <div class="settingItem addInputWrap" >
         <div class="inputItem uid">
           <span class="label uidLabel" data-xztext="_用户id"></span>
-          <input type="text" class="setinput_style1 blue addUidInput" data-xzplaceholder="_必须是数字" />
+          <input type="text" class="setinput_style blue addUidInput" data-xzplaceholder="_必须是数字" />
         </div>
 
         <div class="inputItem tags">
           <span class="label tagsLabel">Tags</span>
-          <input type="text" class="setinput_style1 blue addTagsInput" data-xzplaceholder="_tag用逗号分割" />
+          <input type="text" class="setinput_style blue addTagsInput" data-xzplaceholder="_tag用逗号分割" />
         </div>
 
         <div class="btns">
@@ -193,12 +193,12 @@ class BlockTagsForSpecificUser {
     <div class="settingItem" data-key="${uid}">
       <div class="inputItem uid">
         <span class="label uidLabel" data-xztext="_用户id"></span>
-        <input type="text" class="setinput_style1 blue" data-uidInput="${uid}" value="${uid}" />
+        <input type="text" class="setinput_style blue" data-uidInput="${uid}" value="${uid}" />
       </div>
 
       <div class="inputItem tags">
         <span class="label tagsLabel">Tags</span>
-        <input type="text" class="setinput_style1 blue" data-tagsInput="${uid}" value="${tags.toString()}" />
+        <input type="text" class="setinput_style blue" data-tagsInput="${uid}" value="${tags.toString()}" />
       </div>
 
       <div class="btns">
