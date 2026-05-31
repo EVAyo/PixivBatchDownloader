@@ -11017,8 +11017,7 @@ class Theme {
                 this.setTheme(this.getThemeFromHtml());
                 // 监听 body 的 class 变化
                 const ob = new MutationObserver(() => {
-                    const flag = this.getThemeFromHtml();
-                    this.setTheme(flag);
+                    this.setTheme(this.getThemeFromHtml());
                 });
                 ob.observe(el, {
                     attributes: true,
@@ -11035,8 +11034,7 @@ class Theme {
                 const ob = new MutationObserver((mutationsList) => {
                     for (const item of mutationsList) {
                         if (item.type === 'characterData') {
-                            const flag = this.getThemeFromHtml();
-                            this.setTheme(flag);
+                            this.setTheme(this.getThemeFromHtml());
                             break;
                         }
                     }
@@ -11048,7 +11046,51 @@ class Theme {
             }
         }
     }
+    /** 检查 body 的 background，用“感知亮度”判断页面现在整体更接近亮色还是暗色。 */
+    // 这是为了检测 Dark Reader 等暗色模式的扩展。当用户使用这种扩展来设置暗色模式时，pixiv 自身的主题模式可能依然是亮色的。此时下载器需要检测 body 的实际背景颜色来判断应该使用哪个主题。
+    getThemeFromBackgroundColor() {
+        const color = getComputedStyle(document.body)['backgroundColor'];
+        const rgba = this.parseBackgroundColor(color);
+        if (!rgba) {
+            return null;
+        }
+        if (rgba.alpha === 0) {
+            return null;
+        }
+        // 使用感知亮度而不是 RGB 平均值。因为人眼对绿色最敏感，对蓝色最不敏感，
+        // 所以 0.299 / 0.587 / 0.114 这组权重更符合“看起来亮还是暗”的直觉。
+        const brightness = 0.299 * rgba.red + 0.587 * rgba.green + 0.114 * rgba.blue;
+        // 接近纯白时判定为亮色；接近 #222 或更暗时判定为暗色；中间区域返回 null，交给正常流程继续判断。
+        if (brightness >= 245) {
+            return 'white';
+        }
+        if (brightness <= 34) {
+            return 'dark';
+        }
+        return null;
+    }
+    parseBackgroundColor(color) {
+        const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)/);
+        if (!match) {
+            return null;
+        }
+        return {
+            red: Number(match[1]),
+            green: Number(match[2]),
+            blue: Number(match[3]),
+            alpha: match[4] === undefined ? 1 : Number(match[4]),
+        };
+    }
+    /** 从网页元素上获取主题 */
+    // 该方法会触发 'getPageTheme' 事件，传递的值是从网页端获取到的主题，而不是下载器面板里设置的主题
+    // 也就是说，如果网页的主题是暗色的，那么即使下载器设置里设置了下载器主题为亮色，传递给 'getPageTheme' 事件的也会是暗色
+    // 这样是为了让接收方在修改网页上一些元素的样式时可以适配网页主题，而不受下载器主题设置的影响
     getThemeFromHtml() {
+        const theme = this.getThemeFromBackgroundColor();
+        if (theme) {
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('getPageTheme', theme);
+            return theme;
+        }
         if (_Config__WEBPACK_IMPORTED_MODULE_0__.Config.mobile) {
             // 移动端需要使用不同的方法来获取主题
             const dark = document.body.classList.contains('dark');
@@ -11064,19 +11106,6 @@ class Theme {
                 const pageTheme = this.htmlFlagMap.get(el.textContent) || 'white';
                 _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('getPageTheme', pageTheme);
                 return pageTheme || this.defaultTheme;
-            }
-            // 根据 html 元素的背景颜色判断
-            // 此方法不适用于移动端，因为移动端的 html 背景色总是 'rgba(0, 0, 0, 0)'
-            // "rgb(245, 245, 245)"
-            // "rgb(0, 0, 0)"
-            const htmlBG = getComputedStyle(document.documentElement)['backgroundColor'];
-            if (htmlBG) {
-                if (htmlBG.includes('rgb(2')) {
-                    return 'white';
-                }
-                else if (htmlBG.includes('rgb(0')) {
-                    return 'dark';
-                }
             }
             return this.defaultTheme;
         }

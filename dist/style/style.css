@@ -2523,9 +2523,6 @@ body.mobile #quickCrawlBtn {
   width: 30px;
   height: 30px;
 }
-.centerWrap .centerWrap_con .settingsPanel_downloadContentWrap .download_area {
-  display: block;
-}
 .centerWrap .centerWrap_con .settingsPanel_downloadContentWrap .progressBarWrap {
   margin-top: 8px;
 }
