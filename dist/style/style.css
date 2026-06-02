@@ -1459,8 +1459,6 @@ body.mobile #quickCrawlBtn {
   flex-wrap: wrap;
   align-items: flex-start;
   column-gap: 4px;
-  margin: 2px 0;
-  border-radius: 6px;
 }
 .centerWrap .centerWrap_con .settingForm .option:hover {
   outline: 2px solid #f5c519;
@@ -1519,6 +1517,19 @@ body.mobile #quickCrawlBtn {
 }
 .centerWrap .centerWrap_con .settingForm .option .subOptionWrap.noGrow {
   flex-grow: 0;
+}
+.centerWrap .centerWrap_con .settingForm .option .optionLine {
+  position: relative;
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: flex-start;
+  column-gap: 4px;
+  line-height: var(--line-height);
+}
+.centerWrap .centerWrap_con .settingForm .option .optionLine * {
+  line-height: var(--line-height);
 }
 .centerWrap .centerWrap_con .settingForm .option .setUserNameWrap,
 .centerWrap .centerWrap_con .settingForm .option .DoNotDownloadLastFewImagesWarp {
@@ -3212,13 +3223,14 @@ body.mobile #quickCrawlBtn {
   width: 86vw;
   top: 6vh;
   max-height: 90vh;
-  font-size: 16px;
+  font-size: 15px;
   font-family: var(--mobile-font-family);
-  padding: 4vh 2vw;
+  padding: 2vh 4vw;
   margin: 3vh 0;
 }
 .xz_msg_box.mobile .content {
   max-height: 60vh;
+  margin: 10px 0 16px;
 }
 #header-banner.ad,
 ._2vNejsc,
@@ -4079,6 +4091,15 @@ iframe[name='expandedFooter'] {
 }
 .flexBasis100 {
   flex-basis: 100%;
+}
+.nowrap {
+  flex-wrap: nowrap;
+}
+.shrink0 {
+  flex-shrink: 0;
+}
+.shrink1 {
+  flex-shrink: 1;
 }
 .icon {
   width: 1em;

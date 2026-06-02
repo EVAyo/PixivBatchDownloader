@@ -1,4 +1,4 @@
-<!-- 设置项编号从 0 开始，现在最大是 108。有些编号空缺，之后可以优先使用空缺的编号。71 号空缺，下一个设置可以使用它，这样编号就没有空缺了。
+<!-- 设置项编号从 0 开始，现在最大是 108。有些编号空缺，之后可以优先使用空缺的编号：57 58 59 60 61 65 71 号空缺，下一个设置可以使用它，这样编号就没有空缺了。
 帮助按钮上的文字有两种：
 - 如果帮助文字使用 MsgBox 显示，则使用“_帮助”
 - 如果帮助文字直接在设置面板里显示，则使用“_提示” -->
@@ -3079,6 +3079,22 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
   </span>
 </div>
 
+<div class="option" data-no="51">
+  <a
+    href=""
+    target="_blank"
+    class="settingNameStyle"
+    data-xztext="_在缩略图上显示复制按钮"
+  ></a>
+  <input
+    type="checkbox"
+    name="showCopyBtnOnThumb"
+    class="need_beautify checkbox_switch"
+    checked
+  />
+  <span class="beautify_switch" tabindex="0"></span>
+</div>
+
 <div class="option" data-no="56">
   <a
     href=""
@@ -3093,113 +3109,6 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     checked
   />
   <span class="beautify_switch" tabindex="0"></span>
-</div>
-
-<div class="option" data-no="14">
-  <a
-    href=""
-    target="_blank"
-    class="has_tip settingNameStyle"
-    data-xztip="_显示复制按钮的提示"
-  >
-    <span data-xztext="_复制按钮"></span>
-    <span class="gray1"> ? </span>
-  </a>
-  <label for="showCopyBtnOnThumb" data-xztext="_在缩略图上显示"></label>
-  <input
-    type="checkbox"
-    name="showCopyBtnOnThumb"
-    id="showCopyBtnOnThumb"
-    class="need_beautify checkbox_switch"
-    checked
-  />
-  <span class="beautify_switch" tabindex="0"></span>
-  <span class="verticalSplit"></span>
-
-  <span data-xztext="_复制内容"></span>:&nbsp;
-  <input
-    type="checkbox"
-    name="copyFormatImage"
-    id="setCopyFormatImage"
-    class="need_beautify checkbox_common"
-  />
-  <span class="beautify_checkbox" tabindex="0"></span>
-  <label for="setCopyFormatImage">image/png</label>
-  <input
-    type="checkbox"
-    name="copyFormatText"
-    id="setCopyFormatText"
-    class="need_beautify checkbox_common"
-    checked
-  />
-  <span class="beautify_checkbox" tabindex="0"></span>
-  <label for="setCopyFormatText">text/plain</label>
-  <input
-    type="checkbox"
-    name="copyFormatHtml"
-    id="setCopyFormatHtml"
-    class="need_beautify checkbox_common"
-    checked
-  />
-  <span class="beautify_checkbox" tabindex="0"></span>
-  <label for="setCopyFormatHtml">text/html</label>
-  <button
-    type="button"
-    class="gray1 textButton showMsgBtn"
-    data-title="_复制内容"
-    data-msg="_对复制的内容的说明"
-    data-xztext="_帮助"
-  ></button>
-  <span class="verticalSplit"></span>
-
-  <span class="settingNameStyle" data-xztext="_图片尺寸2"></span>
-  <input
-    type="radio"
-    name="copyImageSize"
-    id="copyImageSize1"
-    class="need_beautify radio"
-    value="original"
-  />
-  <span class="beautify_radio" tabindex="0"></span>
-  <label for="copyImageSize1" data-xztext="_原图"></label>
-  <input
-    type="radio"
-    name="copyImageSize"
-    id="copyImageSize2"
-    class="need_beautify radio"
-    value="regular"
-    checked
-  />
-  <span class="beautify_radio" tabindex="0"></span>
-  <label for="copyImageSize2" data-xztext="_普通"></label>
-  <span class="verticalSplit"></span>
-
-  <span data-xztext="_文本格式"></span>:&nbsp;
-  <input
-    type="text"
-    name="copyWorkInfoFormat"
-    class="setinput_style blue"
-    style="width: 100%; max-width: 350px"
-    value="id: {id}{n}title: {title}{n}tags: {tags}{n}url: {url}{n}user: {user}"
-  />
-  <button
-    type="button"
-    class="gray1 textButton toggleArea"
-    data-toggle-Target="#copyWorkInfoFormatTip"
-    data-for-no="14"
-    data-xztext="_提示"
-  ></button>
-
-  <p class="tip namingTipArea" id="copyWorkInfoFormatTip">
-    <span data-xztext="_复制内容的格式的提示"></span>
-    <br />
-    <span class="blue name">{url}</span>
-    <span data-xztext="_url标记的说明"></span>
-    <br />
-    <span class="blue name">{n}</span>
-    <span data-xztext="_换行标记的说明"></span>
-    <br />
-  </p>
 </div>
 
 <div class="option" data-no="84">
@@ -3270,6 +3179,106 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
   />
   <span class="beautify_radio" tabindex="0"></span>
   <label for="restrict2" data-xztext="_不公开"></label>
+</div>
+
+<div class="option" data-no="14">
+  <a
+    href=""
+    target="_blank"
+    class="has_tip settingNameStyle"
+    data-xztip="_显示复制按钮的提示"
+  >
+    <span data-xztext="_复制按钮"></span>
+    <span class="gray1"> ? </span>
+  </a>
+
+  <div class="optionLine nowrap">
+    <span data-xztext="_复制内容" class="mr4"></span>
+    <input
+      type="checkbox"
+      name="copyFormatImage"
+      id="setCopyFormatImage"
+      class="need_beautify checkbox_common"
+    />
+    <span class="beautify_checkbox" tabindex="0"></span>
+    <label for="setCopyFormatImage">image/png</label>
+    <input
+      type="checkbox"
+      name="copyFormatText"
+      id="setCopyFormatText"
+      class="need_beautify checkbox_common"
+      checked
+    />
+    <span class="beautify_checkbox" tabindex="0"></span>
+    <label for="setCopyFormatText">text/plain</label>
+    <input
+      type="checkbox"
+      name="copyFormatHtml"
+      id="setCopyFormatHtml"
+      class="need_beautify checkbox_common"
+      checked
+    />
+    <span class="beautify_checkbox" tabindex="0"></span>
+    <label for="setCopyFormatHtml">text/html</label>
+    <button
+      type="button"
+      class="gray1 textButton showMsgBtn"
+      data-title="_复制内容"
+      data-msg="_对复制的内容的说明"
+      data-xztext="_帮助"
+    ></button>
+  </div>
+
+  <div class="optionLine nowrap">
+    <span class="mr4" data-xztext="_图片尺寸2"></span>
+    <input
+      type="radio"
+      name="copyImageSize"
+      id="copyImageSize1"
+      class="need_beautify radio"
+      value="original"
+    />
+    <span class="beautify_radio" tabindex="0"></span>
+    <label for="copyImageSize1" data-xztext="_原图"></label>
+    <input
+      type="radio"
+      name="copyImageSize"
+      id="copyImageSize2"
+      class="need_beautify radio"
+      value="regular"
+      checked
+    />
+    <span class="beautify_radio" tabindex="0"></span>
+    <label for="copyImageSize2" data-xztext="_普通"></label>
+  </div>
+
+  <div class="optionLine nowrap">
+    <span data-xztext="_文本格式" class="mr4"></span>
+    <button
+      type="button"
+      class="gray1 textButton toggleArea"
+      data-toggle-Target="#copyWorkInfoFormatTip"
+      data-for-no="14"
+      data-xztext="_提示"
+    ></button>
+    <textarea
+      class="centerPanelTextArea beautify_scrollbar"
+      name="copyWorkInfoFormat"
+      rows="1"
+      placeholder="id: {id}{n}title: {title}{n}tags: {tags}{n}url: {url}{n}user: {user}"
+    ></textarea>
+  </div>
+
+  <p class="tip namingTipArea" id="copyWorkInfoFormatTip">
+    <span data-xztext="_复制内容的格式的提示"></span>
+    <br />
+    <span class="blue name">{url}</span>
+    <span data-xztext="_url标记的说明"></span>
+    <br />
+    <span class="blue name">{n}</span>
+    <span data-xztext="_换行标记的说明"></span>
+    <br />
+  </p>
 </div>
 
 <div class="option" data-no="48">

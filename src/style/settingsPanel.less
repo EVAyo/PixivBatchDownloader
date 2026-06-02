@@ -513,8 +513,6 @@
         flex-wrap: wrap;
         align-items: flex-start;
         column-gap: 4px;
-        margin: 2px 0;
-        border-radius: 6px;
 
         &:hover {
           outline: 2px solid #f5c519;
@@ -587,6 +585,23 @@
 
           &.noGrow {
             flex-grow: 0;
+          }
+        }
+
+        // 在选项卡内部独立占据一行的子区域。当选项卡里的子选项非常多时，可以把它们分成多个子区域，每个子区域占据一行，这样容易区分和使用。
+        // 默认不换行，内部的元素不会缩小尺寸
+        .optionLine {
+          position: relative;
+          display: flex;
+          flex-basis: 100%;
+          flex-wrap: wrap;
+          flex-shrink: 0;
+          align-items: flex-start;
+          column-gap: 4px;
+          line-height: var(--line-height);
+
+          * {
+            line-height: var(--line-height);
           }
         }
 

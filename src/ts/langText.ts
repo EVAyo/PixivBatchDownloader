@@ -7016,12 +7016,12 @@ P.S. Работы заблокированных пользователей не
     '🦊Загрузчик уже доступен для использования в Firefox! 🥳<br>Установить из ADD-ONS:<br><a href="https://addons.mozilla.org/firefox/addon/powerfulpixivdownloader/" target="_blank">Powerful Pixiv Downloader</a>',
   ],
   _提示查看wiki页面: [
-    `现在你可以更方便的查看每个功能的 Wiki 页面了，只需要点击设置项的名字，或者在纯色按钮上长按，下载器就会打开对应的 Wiki 页面。`,
-    `現在你可以更方便的查看每個功能的 Wiki 頁面了，只需要點擊設定項的名稱，或者在純色按鈕上長按，下載器就會打開對應的 Wiki 頁面。`,
-    `Now you can view the Wiki page for each feature more conveniently, just click on the setting item's name, or long-press on the solid color button, and the downloader will open the corresponding Wiki page.`,
-    `今、各機能のWikiページをより便利に閲覧できます。設定項目の名前をクリックするか、単色ボタンを長押しするだけで、ダウンロードツールが対応するWikiページを開きます。`,
-    ` 이제 각 기능의 Wiki 페이지를 더 편리하게 볼 수 있습니다. 설정 항목의 이름을 클릭하거나 단색 버튼을 길게 누르면 다운로더가 해당 Wiki 페이지를 엽니다.`,
-    `Теперь вы можете просматривать страницу Wiki для каждой функции более удобно: просто кликните на название элемента настройки или долго нажмите на кнопку сплошного цвета, и загрузчик откроет соответствующую страницу Wiki。`,
+    '点击设置名称，或者长按首页的按钮，就可以打开对应的 Wiki 链接。',
+    '點擊設定名稱，或者長按首頁的按鈕，就可以打開對應的 Wiki 鏈接。',
+    'Click the setting name, or long press the button on the homepage, to open the corresponding Wiki link.',
+    '設定名をクリックするか、ホームページのボタンを長押しすると、対応するWikiリンクを開くことができます。',
+    '설정 이름을 클릭하거나 홈페이지의 버튼을 길게 눌러 해당 Wiki 링크를 열 수 있습니다.',
+    'Нажмите на имя настройки или долго нажмите кнопку на главной странице, чтобы открыть соответствующую ссылку Wiki.',
   ],
   _提示使用小号下载: [
     `💡本次任务需要抓取的作品数量比较多，您可以考虑使用小号进行抓取和下载，以减少大号被封禁的风险。<br>您可以在 Wiki 查看相关说明：<a href="https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E4%BD%BF%E7%94%A8%E5%B0%8F%E5%8F%B7%E4%B8%8B%E8%BD%BD" target="_blank">使用小号下载</a>`,
@@ -7039,13 +7039,13 @@ P.S. Работы заблокированных пользователей не
     `<span class="key">복사</span> 버튼`,
     `<span class="key">Копировать</span> кнопку`,
   ],
-  _在缩略图上显示: [
-    `在缩略图上显示`,
-    `在縮略圖上顯示`,
-    `Display on thumbnail`,
-    `サムネイルに表示`,
-    `썸네일에 표시`,
-    `Отображать на миниатюре`,
+  _在缩略图上显示复制按钮: [
+    `在作品缩略图上显示<span class="key">复制</span>按钮`,
+    `在作品縮略圖上顯示<span class="key">複製</span>按鈕`,
+    `Display <span class="key">copy</span> button on thumbnail`,
+    `作品のサムネイルに<span class="key">コピー</span>ボタンを表示`,
+    `작품 썸네일에 <span class="key">복사</span> 버튼 표시`,
+    `Отображать кнопку <span class="key">копирования</span> на миниатюре работы`,
   ],
   _显示复制按钮的提示: [
     `下载器会在作品缩略图上和作品页面内显示一个复制按钮，点击它就可以复制作品的图片和一些数据。

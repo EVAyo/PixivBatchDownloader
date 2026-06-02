@@ -193,7 +193,6 @@ class FormSettings {
       'slowCrawlDealy',
       'downloadInterval',
       'downloadIntervalOnWorksNumber',
-      'copyWorkInfoFormat',
       'crawlLatestFewWorksNumber',
       'fullNameLengthLimit',
       'borderColor',
@@ -242,6 +241,7 @@ class FormSettings {
       'seriesNovelNameRule',
       'titleIncludeList',
       'titleExcludeList',
+      'copyWorkInfoFormat',
     ],
     datetime: ['postDateStart', 'postDateEnd'],
   }
