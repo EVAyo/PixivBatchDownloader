@@ -168,7 +168,8 @@ interface XzSetting {
   BMKNumAverageSwitch: boolean
   BMKNumAverage: number
   setWHSwitch: boolean
-  widthHeightLimit: '>=' | '=' | '<='
+  widthComparison: '>=' | '=' | '<='
+  heightComparison: '>=' | '=' | '<='
   setWidthAndOr: '&' | '|'
   setWidth: number
   setHeight: number
@@ -687,7 +688,8 @@ class Settings {
     BMKNumAverageSwitch: false,
     BMKNumAverage: 600,
     setWHSwitch: false,
-    widthHeightLimit: '>=',
+    widthComparison: '>=',
+    heightComparison: '>=',
     setWidthAndOr: '&',
     setWidth: 0,
     setHeight: 0,

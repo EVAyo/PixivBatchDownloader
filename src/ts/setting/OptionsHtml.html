@@ -387,59 +387,104 @@
     class="need_beautify checkbox_switch"
   />
   <span class="beautify_switch" tabindex="0"></span>
-  <span class="subOptionWrap" data-show="setWHSwitch">
-    <input
-      type="radio"
-      name="widthHeightLimit"
-      id="widthHeightLimit1"
-      class="need_beautify radio"
-      value=">="
-      checked
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="widthHeightLimit1">&gt;=</label>
-    <input
-      type="radio"
-      name="widthHeightLimit"
-      id="widthHeightLimit2"
-      class="need_beautify radio"
-      value="="
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="widthHeightLimit2">=</label>
-    <input
-      type="radio"
-      name="widthHeightLimit"
-      id="widthHeightLimit3"
-      class="need_beautify radio"
-      value="<="
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="widthHeightLimit3">&lt;=</label>
-    <span class="verticalSplit"></span>
-    <span data-xztext="_宽度"></span>
-    <input type="text" name="setWidth" class="setinput_style blue" value="0" />
-    <input
-      type="radio"
-      name="setWidthAndOr"
-      id="setWidth_AndOr1"
-      class="need_beautify radio"
-      value="&"
-      checked
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="setWidth_AndOr1" data-xztext="_并且"></label>
-    <input
-      type="radio"
-      name="setWidthAndOr"
-      id="setWidth_AndOr2"
-      class="need_beautify radio"
-      value="|"
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="setWidth_AndOr2" data-xztext="_或者"></label>
-    <span data-xztext="_高度"></span>
-    <input type="text" name="setHeight" class="setinput_style blue" value="0" />
+
+  <span class="subOptionWrap flexBasis100" data-show="setWHSwitch">
+    <div class="optionLine">
+      <span data-xztext="_宽度"></span>
+      <input
+        type="radio"
+        name="widthComparison"
+        id="widthComparison1"
+        class="need_beautify radio"
+        value=">="
+        checked
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="widthComparison1">&gt;=</label>
+      <input
+        type="radio"
+        name="widthComparison"
+        id="widthComparison2"
+        class="need_beautify radio"
+        value="="
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="widthComparison2">=</label>
+      <input
+        type="radio"
+        name="widthComparison"
+        id="widthComparison3"
+        class="need_beautify radio"
+        value="<="
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="widthComparison3">&lt;=</label>
+
+      <input
+        type="text"
+        name="setWidth"
+        class="setinput_style blue"
+        value="0"
+      />
+    </div>
+
+    <div class="optionLine">
+      <input
+        type="radio"
+        name="setWidthAndOr"
+        id="setWidth_AndOr1"
+        class="need_beautify radio"
+        value="&"
+        checked
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="setWidth_AndOr1" data-xztext="_并且"></label>
+      <input
+        type="radio"
+        name="setWidthAndOr"
+        id="setWidth_AndOr2"
+        class="need_beautify radio"
+        value="|"
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="setWidth_AndOr2" data-xztext="_或者"></label>
+
+      <span data-xztext="_高度"></span>
+      <input
+        type="radio"
+        name="heightComparison"
+        id="heightComparison1"
+        class="need_beautify radio"
+        value=">="
+        checked
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="heightComparison1">&gt;=</label>
+      <input
+        type="radio"
+        name="heightComparison"
+        id="heightComparison2"
+        class="need_beautify radio"
+        value="="
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="heightComparison2">=</label>
+      <input
+        type="radio"
+        name="heightComparison"
+        id="heightComparison3"
+        class="need_beautify radio"
+        value="<="
+      />
+      <span class="beautify_radio" tabindex="0"></span>
+      <label for="heightComparison3">&lt;=</label>
+      <input
+        type="text"
+        name="setHeight"
+        class="setinput_style blue"
+        value="0"
+      />
+    </div>
   </span>
 </div>
 
@@ -732,7 +777,7 @@
     class="need_beautify checkbox_switch"
   />
   <span class="beautify_switch" tabindex="0"></span>
-  <span class="subOptionWrap" data-show="needTagSwitch">
+  <span class="subOptionWrap flexBasis100" data-show="needTagSwitch">
     <input
       type="radio"
       name="needTagMode"
@@ -752,12 +797,12 @@
     />
     <span class="beautify_radio" tabindex="0"></span>
     <label for="needTagMode2" data-xztext="_任一"></label>
-    <input
-      type="text"
+    <textarea
+      class="centerPanelTextArea beautify_scrollbar"
       name="needTag"
-      class="setinput_style blue setinput_tag"
+      rows="1"
       placeholder="tag1,tag2,tag3"
-    />
+    ></textarea>
   </span>
 </div>
 
@@ -826,7 +871,7 @@
   />
   <span class="beautify_switch" tabindex="0"></span>
 
-  <span class="subOptionWrap" data-show="titleIncludeSwitch">
+  <span class="subOptionWrap flexBasis100" data-show="titleIncludeSwitch">
     <textarea
       class="centerPanelTextArea beautify_scrollbar"
       name="titleIncludeList"
@@ -1358,12 +1403,12 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     class="need_beautify checkbox_switch"
   />
   <span class="beautify_switch" tabindex="0"></span>
-  <span
+  <div
     class="subOptionWrap flexBasis100"
     data-show="UseDifferentNameRuleIfWorkHasTagSwitch"
   >
     <slot data-name="UseDifferentNameRuleIfWorkHasTagSlot"></slot>
-  </span>
+  </div>
 </div>
 
 <div class="option" data-no="91">
@@ -1717,7 +1762,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     data-msg="_使用第一个匹配的标签建立文件夹的说明"
     data-xztext="_帮助"
   ></button>
-  <span
+  <div
     class="subOptionWrap namingTipArea flexBasis100"
     data-show="createFolderByTag"
   >
@@ -1735,7 +1780,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
       rows="1"
       placeholder="tag1,tag2,tag3"
     ></textarea>
-  </span>
+  </div>
 </div>
 
 <div class="option" data-no="98">

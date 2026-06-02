@@ -1648,7 +1648,8 @@ body.mobile #quickCrawlBtn {
   color: var(--beautify-blue);
   font-size: 15px;
   background: var(--settings-panel-input-bg);
-  padding: 8px 10px;
+  margin: 4px 0;
+  padding: 4px 8px;
   flex-basis: 100%;
   flex-grow: 1;
   min-height: var(--line-height);

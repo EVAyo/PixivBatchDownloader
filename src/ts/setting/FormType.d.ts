@@ -208,4 +208,6 @@ export interface FormType extends HTMLFormElement {
   useTagAliasForTagsNamingRule: HTMLInputElement
   imageToGray: HTMLInputElement
   clickOptionCardToToggleSwitch: HTMLInputElement
+  widthComparison: RadioNodeList
+  heightComparison: RadioNodeList
 }

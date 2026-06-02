@@ -172,7 +172,6 @@ class FormSettings {
       'idRangeValueForImageWorks',
       'idRangeValueForNovelWorks',
       'idRangeValueForNovelSeries',
-      'needTag',
       'r18FolderName',
       'sizeMin',
       'sizeMax',
@@ -204,7 +203,8 @@ class FormSettings {
     ],
     radio: [
       'novelSaveAs',
-      'widthHeightLimit',
+      'widthComparison',
+      'heightComparison',
       'userRatioLimit',
       'setWidthAndOr',
       'ratio',
@@ -242,6 +242,7 @@ class FormSettings {
       'titleIncludeList',
       'titleExcludeList',
       'copyWorkInfoFormat',
+      'needTag',
     ],
     datetime: ['postDateStart', 'postDateEnd'],
   }
