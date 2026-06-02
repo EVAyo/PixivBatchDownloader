@@ -61,8 +61,10 @@ type OptionMeta = {
 type OptionsByCategory = {
   /** 一级分类的 ID */
   [key in OptionCategoryLevel1]: {
-    /** 二级分类的 ID */
-    [key: string]: OptionMeta[]
+    /** 二级分类的 ID，值是该分类里的所有设置项的编号列表 */
+    [key: string]: {
+      ids: number[]
+    }
   }
 }
 
@@ -1444,11 +1446,13 @@ class OptionConfigs {
     for (const option of this.options) {
       // 添加二级分类数组
       if (!optionsByCategory[option.categoryLevel1][option.categoryLevel2]) {
-        optionsByCategory[option.categoryLevel1][option.categoryLevel2] = []
+        optionsByCategory[option.categoryLevel1][option.categoryLevel2] = {
+          ids: [],
+        }
       }
-      // 添加二级分类里的设置项
-      optionsByCategory[option.categoryLevel1][option.categoryLevel2].push(
-        option
+      // 添加二级分类里的设置项编号
+      optionsByCategory[option.categoryLevel1][option.categoryLevel2].ids.push(
+        option.no
       )
     }
     return optionsByCategory
