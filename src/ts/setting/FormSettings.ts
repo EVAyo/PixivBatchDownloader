@@ -158,6 +158,7 @@ class FormSettings {
       'saveThumbnailForUgoira',
       'imageToGray',
       'clickOptionCardToToggleSwitch',
+      'downloadUgoiraFirst',
     ],
     text: [
       'onlyCrawlFirstFewImagesCount',

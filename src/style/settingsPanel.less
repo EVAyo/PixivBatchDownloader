@@ -216,11 +216,6 @@
     color: var(--beautify-blue) !important;
   }
 
-  .has_tip:hover,
-  label:hover {
-    color: var(--beautify-blue) !important;
-  }
-
   .fwb {
     font-weight: 700;
   }
@@ -483,6 +478,9 @@
       height: var(--line-height);
     }
 
+    a.settingNameStyle:hover,
+    .has_tip:hover,
+    label:hover,
     .showFileNameTip:hover,
     .showFileNameTip:focus,
     .textButton:hover,
@@ -833,12 +831,6 @@
       }
 
       /*--------美化作为开关的复选框------------*/
-
-      label.active {
-        // 之前把被选中的控件的 label 文字也变成蓝色，但是太多的蓝色文字导致很难区分设置项的名称与 label 文字了（因为两者都是蓝色的），所以现在取消这个设计了
-        // color: var(--beautify-blue);
-      }
-
       .beautify_switch {
         display: inline-flex;
         align-items: center;
@@ -2108,13 +2100,11 @@
   }
 
   .blue,
+  a.settingNameStyle:hover,
   .has_tip:hover,
   label:hover,
   .title.active,
-  .title:hover {
-    color: var(--beautify-blue) !important;
-  }
-
+  .title:hover,
   .showFileNameTip:hover,
   .showFileNameTip:focus,
   .textButton:hover,
@@ -2186,6 +2176,7 @@
   }
 
   .blue,
+  a.settingNameStyle:hover,
   .has_tip:hover,
   label,
   label:hover,
@@ -2193,7 +2184,6 @@
   .title:hover,
   .centerPanelTextArea,
   .download_status_text_wrap > span:not(.down_status) {
-    // color: var(--beautify-blue) !important;
     color: #fff !important;
   }
 

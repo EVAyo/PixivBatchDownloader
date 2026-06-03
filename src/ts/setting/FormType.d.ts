@@ -210,4 +210,5 @@ export interface FormType extends HTMLFormElement {
   clickOptionCardToToggleSwitch: HTMLInputElement
   widthComparison: RadioNodeList
   heightComparison: RadioNodeList
+  downloadUgoiraFirst: HTMLInputElement
 }

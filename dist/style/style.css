@@ -1214,10 +1214,6 @@ body.mobile #quickCrawlBtn {
 .centerWrap .blue {
   color: var(--beautify-blue) !important;
 }
-.centerWrap .has_tip:hover,
-.centerWrap label:hover {
-  color: var(--beautify-blue) !important;
-}
 .centerWrap .fwb {
   font-weight: 700;
 }
@@ -1430,6 +1426,9 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con .showFileNameTip {
   height: var(--line-height);
 }
+.centerWrap .centerWrap_con a.settingNameStyle:hover,
+.centerWrap .centerWrap_con .has_tip:hover,
+.centerWrap .centerWrap_con label:hover,
 .centerWrap .centerWrap_con .showFileNameTip:hover,
 .centerWrap .centerWrap_con .showFileNameTip:focus,
 .centerWrap .centerWrap_con .textButton:hover,
@@ -2729,12 +2728,11 @@ body.mobile #quickCrawlBtn {
   color: #bbb;
 }
 .centerWrap.theme-dark .blue,
+.centerWrap.theme-dark a.settingNameStyle:hover,
 .centerWrap.theme-dark .has_tip:hover,
 .centerWrap.theme-dark label:hover,
 .centerWrap.theme-dark .title.active,
-.centerWrap.theme-dark .title:hover {
-  color: var(--beautify-blue) !important;
-}
+.centerWrap.theme-dark .title:hover,
 .centerWrap.theme-dark .showFileNameTip:hover,
 .centerWrap.theme-dark .showFileNameTip:focus,
 .centerWrap.theme-dark .textButton:hover,
@@ -2791,6 +2789,7 @@ body.mobile #quickCrawlBtn {
   color: #eee !important;
 }
 .centerWrap.xzBG .blue,
+.centerWrap.xzBG a.settingNameStyle:hover,
 .centerWrap.xzBG .has_tip:hover,
 .centerWrap.xzBG label,
 .centerWrap.xzBG label:hover,
