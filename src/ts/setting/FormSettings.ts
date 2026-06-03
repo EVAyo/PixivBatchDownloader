@@ -159,6 +159,7 @@ class FormSettings {
       'imageToGray',
       'clickOptionCardToToggleSwitch',
       'downloadUgoiraFirst',
+      'clickSettingNameOpenWiki',
     ],
     text: [
       'onlyCrawlFirstFewImagesCount',

@@ -211,4 +211,5 @@ export interface FormType extends HTMLFormElement {
   widthComparison: RadioNodeList
   heightComparison: RadioNodeList
   downloadUgoiraFirst: HTMLInputElement
+  clickSettingNameOpenWiki: HTMLInputElement
 }

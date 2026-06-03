@@ -1420,6 +1420,17 @@ class OptionConfigs {
       addedAt: 1779990279488,
     },
     {
+      no: 58,
+      nameKey: '_点击设置名字时打开wiki链接',
+      name: '',
+      categoryLevel1: 'general',
+      categoryLevel2: 'operation',
+      pinned: false,
+      hideOnPixivision: true,
+      searchWordKeys: [],
+      searchWords: [],
+    },
+    {
       no: 78,
       nameKey: '_导出日志',
       name: '',

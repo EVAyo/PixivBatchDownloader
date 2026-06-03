@@ -19,7 +19,7 @@ import { FormType } from './FormType'
 import { SettingsPanel } from './SettingsPanel'
 
 /** 设置系统入口：创建 form，并装配所有依赖 form 的模块 */
-class SettingsBootstrap {
+class SettingsPanelBootstrap {
   constructor() {
     const formHtml = `<form class="settingForm">${optionsHtml}</form>`
     this.form = Tools.useSlot('form', formHtml) as FormType
@@ -197,4 +197,4 @@ class SettingsBootstrap {
   }
 }
 
-new SettingsBootstrap()
+new SettingsPanelBootstrap()

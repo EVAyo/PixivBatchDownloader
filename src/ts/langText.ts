@@ -10176,6 +10176,14 @@ If you're worried about misoperation, you can turn off this feature.`,
     `움짤 다운로드 우선`,
     `Приоритет загрузки Ugoira`,
   ],
+  _点击设置名字时打开wiki链接: [
+    `点击设置名字时打开 Wiki 链接`,
+    `點擊設定名字時打開 Wiki 連結`,
+    `Open Wiki link when clicking setting name`,
+    `設定名をクリックすると Wiki リンクを開く`,
+    `설정 이름을 클릭할 때 Wiki 링크 열기`,
+    `Открывать ссылку на Wiki при клике на имя настройки`,
+  ],
 }
 
 export type LangTextKey = keyof typeof langText

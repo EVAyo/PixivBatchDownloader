@@ -398,6 +398,7 @@ interface XzSetting {
   imageToGray: boolean
   expandedCards: ExpandedCards
   clickOptionCardToToggleSwitch: boolean
+  clickSettingNameOpenWiki: boolean
 }
 
 type SettingKeys = keyof XzSetting
@@ -1005,6 +1006,7 @@ class Settings {
         manageSettings: false,
       },
     },
+    clickSettingNameOpenWiki: true,
   }
 
   private allSettingKeys = Object.keys(this.defaultSettings)

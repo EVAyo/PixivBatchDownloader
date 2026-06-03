@@ -160,17 +160,27 @@ class Wiki {
   /** 设置每个设置项名称上的 href 属性 */
   private setOptionLink() {
     this.resetHomeConfig()
-    // 查找所有 a.settingNameStyle 元素，并把它们的 href 属性修改为对应语言的 URL
+    // 查找所有 a.settingNameStyle 元素，并把它们的 href 属性设置为对应语言的 URL
     const allLinks = document.querySelectorAll(
       '.centerWrap_con a.settingNameStyle'
-    )
-    allLinks.forEach(async (el) => {
+    ) as NodeListOf<HTMLAnchorElement>
+    allLinks.forEach(async (a) => {
       // 查找其所属的选项元素，如 <div class='option' data-no='0'>
-      const option = el.closest('.option') as HTMLDivElement
+      const option = a.closest('.option') as HTMLDivElement
       if (option && option.dataset.no) {
         const id = Number(option.dataset.no)
         const link = await this.link(id)
-        el.setAttribute('href', link)
+        a.setAttribute('href', link)
+
+        // 绑定 click 事件，默认不阻止。如果 clickSettingNameOpenWiki 为 false 则阻止默认行为
+        if (!a.dataset.bindClick) {
+          a.dataset.bindClick = 'true'
+          a.addEventListener('click', (ev) => {
+            if (!settings.clickSettingNameOpenWiki) {
+              ev.preventDefault()
+            }
+          })
+        }
       }
     })
   }
