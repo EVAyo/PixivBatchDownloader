@@ -1236,7 +1236,7 @@ class Tools {
     }
 
     // 有可能找不到指定的选项，原因：
-    // 用户可能在置顶选项 settings.pinnedOptions 里保存着一些选项 id，但我可能会在之后的更新里移除对应的设置，这样就找不到该选项对应的元素了
+    // 用户可能在置顶选项 settings.pinnedOptionsV2 里保存着一些选项 id，但我可能会在之后的更新里移除对应的设置，这样就找不到该选项对应的元素了
     return null
   }
 

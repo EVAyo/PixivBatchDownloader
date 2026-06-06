@@ -12565,7 +12565,7 @@ class Tools {
             }
         }
         // 有可能找不到指定的选项，原因：
-        // 用户可能在置顶选项 settings.pinnedOptions 里保存着一些选项 id，但我可能会在之后的更新里移除对应的设置，这样就找不到该选项对应的元素了
+        // 用户可能在置顶选项 settings.pinnedOptionsV2 里保存着一些选项 id，但我可能会在之后的更新里移除对应的设置，这样就找不到该选项对应的元素了
         return null;
     }
     /**根据文本长度，动态设置 textarea 的高度 */
@@ -17475,6 +17475,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _setting_Settings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../setting/Settings */ "./src/ts/setting/Settings.ts");
 /* harmony import */ var _PageType__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../PageType */ "./src/ts/PageType.ts");
 // 初始化 关注的用户的新作品页面 和 好P友的新作品页面
+// Premium 会员可以看到第 84 页
 
 
 
@@ -17708,10 +17709,11 @@ class InitBookmarkPage extends _crawl_InitPageBase__WEBPACK_IMPORTED_MODULE_0__.
         super();
         this.init();
     }
-    idList = []; // 储存从列表页获取到的 id
+    /** 储存从列表页获取到的作品 id */
+    idList = [];
     /** 保存一些作品的收藏数据，供某些功能使用。
      *
-     * 注意：这不是抓取结果。 */
+     * 注意：它的作用与 idList 不同。 */
     bookmarkDataList = [];
     exportList = [];
     /** 当前页面显示的是图片还是小说 */
@@ -18065,12 +18067,14 @@ One possible reason: You have been banned from Pixiv.`);
                     // 判断是否要把这个作品的数据保存到 bookmarkDataList 里
                     let pushData = false;
                     // 需要操作本页所有作品的情况，需要添加这个作品的数据
-                    if (this.crawlMode === 'unBookmark' || this.crawlMode === 'removeTags') {
+                    if (this.crawlMode === 'unBookmark' ||
+                        this.crawlMode === 'removeTags') {
                         pushData = true;
                     }
                     // 如果这个作品已经不存在（userId 为 0），并且当前的抓取模式是查找已被删除的作品或者取消收藏已被删除的作品，那么也需要添加这个作品的数据
                     if (Number.parseInt(workData.userId) == 0) {
-                        if (this.crawlMode === 'findBookmark404' || this.crawlMode === 'unBookmark404') {
+                        if (this.crawlMode === 'findBookmark404' ||
+                            this.crawlMode === 'unBookmark404') {
                             pushData = true;
                         }
                     }
@@ -31555,6 +31559,106 @@ Note: Even if you disable this setting, some quick download methods will always 
     _下载: ['下载', '下載', 'Download', 'ダウンロード', '다운로드', 'Скачивание'],
     _其他: ['其他', '其他', 'Others', 'その他', '그 외', 'Другие настройки'],
     _更多: ['更多', '更多', 'More', 'その他', '더보기', 'Больше'],
+    _首页: ['首页', '首頁', 'HomePage', 'ホーム', '홈', 'Главная'],
+    _作品页面: [
+        '作品页面',
+        '作品頁面',
+        'WorkPage',
+        '作品ページ',
+        '작품 페이지',
+        'Страница работы',
+    ],
+    _系列小说页面: [
+        '系列小说页面',
+        '系列小說頁面',
+        'Novel series page',
+        'シリーズ小説ページ',
+        '시리즈 소설 페이지',
+        'Страница серии романов',
+    ],
+    _搜索页面: [
+        '搜索页面',
+        '搜尋頁面',
+        'SearchPage',
+        '検索ページ',
+        '검색 페이지',
+        'Страница поиска',
+    ],
+    _排行榜: ['排行榜', '排行榜', 'Ranking', 'ランキング', '랭킹', 'Рейтинг'],
+    _发现: ['发现', '發現', 'Discover', '発見', '발견', 'Обнаружить'],
+    _关注页面: [
+        '关注页面',
+        '關注頁面',
+        'Following page',
+        'フォロー中ページ',
+        '팔로잉 페이지',
+        'Страница подписок',
+    ],
+    _比赛页面: [
+        '比赛页面',
+        '比賽頁面',
+        'Contest page',
+        'コンテストページ',
+        '콘테스트 페이지',
+        'Страница конкурса',
+    ],
+    _仪表盘: [
+        '仪表盘',
+        '儀表板',
+        'Dashboard',
+        'ダッシュボード',
+        '대시보드',
+        'Панель управления',
+    ],
+    _书签详情: [
+        '书签详情',
+        '書籤詳細',
+        'Bookmark details',
+        'ブックマークの詳細',
+        '북마크 세부 정보',
+        'Подробности закладки',
+    ],
+    _pixivision: [
+        'pixivision',
+        'pixivision',
+        'pixivision',
+        'pixivision',
+        'pixivision',
+        'pixivision',
+    ],
+    _抓取结果: [
+        '抓取结果',
+        '擷取結果',
+        'Crawl results',
+        'クロール結果',
+        '크롤링 결과',
+        'Результаты сканирования',
+    ],
+    _下载控制: [
+        '下载控制',
+        '下載控制',
+        'Download control',
+        'ダウンロードコントロール',
+        '다운로드 제어',
+        'Управление загрузкой',
+    ],
+    _设置: ['设置', '設定', 'Settings', '設定', '설정', 'Настройки'],
+    _用户页面: [
+        '用户页面',
+        '使用者頁面',
+        'User page',
+        'ユーザーページ',
+        '사용자 페이지',
+        'Страница пользователя',
+    ],
+    _书签页面: [
+        '书签页面',
+        '書籤頁面',
+        'Bookmark page',
+        'ブックマークページ',
+        '북마크 페이지',
+        'Страница закладок',
+    ],
     _第一张图不带序号: [
         '第一张图不带<span class="key">序号</span>',
         '第一張圖片不包含<span class="key">序號</span>',
@@ -33726,14 +33830,6 @@ Note: After enabling this setting, the downloader will overwrite your current na
         'クロールが完了すると、クロール結果が自動的にエクスポートされます。 <br>簡単に読める CSV とクロール結果をインポートするための JSON の 2 つの形式が利用可能です。',
         '크롤링이 완료되면 크롤링 결과가 자동으로 내보내집니다. <br>두 가지 형식을 사용할 수 있습니다. 읽기 쉬운 CSV 형식과 크롤링 결과를 가져오는 JSON 형식입니다.',
         'После завершения сканирования результаты сканирования автоматически экспортируются. <br>Доступны два формата: CSV для удобного чтения и JSON для импорта результатов сканирования.',
-    ],
-    _抓取结果: [
-        '抓取结果',
-        '擷取結果',
-        'Crawl results',
-        'クロール結果',
-        '긁어오기 결과',
-        'Сканировать результаты',
     ],
     _文件格式: [
         '文件格式：',
@@ -38705,6 +38801,8 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
         `버튼 및 작업`,
         `Кнопки и действия`,
     ],
+    _按钮_复数: [`按钮`, `按鈕`, `Buttons`, `ボタン`, `버튼`, `Кнопки`],
+    _设置_复数: [`设置`, `設定`, `Settings`, `設定`, `설정`, `Настройки`],
     _分组_搜索页面: [
         `搜索页面`,
         `搜尋頁面`,
@@ -38785,7 +38883,7 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
         `Русский`,
         `Русский`,
     ],
-    _首页: [`首页`, `首頁`, `Home`, `ホーム`, `홈`, `Главная`],
+    _首页_Home: [`首页`, `首頁`, `Home`, `ホーム`, `홈`, `Главная`],
     _搜索: [`搜索`, `搜尋`, `Search`, `検索`, `검색`, `Поиск`],
     _搜索设置: [
         `搜索设置`,
@@ -44580,7 +44678,7 @@ class OptionConfigs {
         // 当置顶的设置发生变化时，更新每个设置项的 pinned 属性
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingChange, (ev) => {
             const data = ev.detail.data;
-            if (data.name === 'pinnedOptions') {
+            if (data.name === 'pinnedOptionsV2') {
                 this.setPinnedOptions();
             }
         });
@@ -44597,7 +44695,7 @@ class OptionConfigs {
     }
     setPinnedOptions() {
         for (const option of this.options) {
-            option.pinned = _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptions.includes(option.no);
+            option.pinned = _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptionsV2.includes(option.no);
         }
     }
     setOptionText() {
@@ -44702,7 +44800,7 @@ class PinOptions {
                 return;
             }
             const data = ev.detail.data;
-            if (data.name === 'pinnedOptions') {
+            if (data.name === 'pinnedOptionsV2') {
                 this.syncPinnedClass();
             }
         });
@@ -44720,15 +44818,15 @@ class PinOptions {
         }
     }
     togglePinOption(noNum) {
-        if (_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.includes(noNum)) {
-            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions = _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.filter((no) => no !== noNum);
+        if (_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2.includes(noNum)) {
+            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2 = _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2.filter((no) => no !== noNum);
             _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.warning(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_取消置顶'));
         }
         else {
-            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.push(noNum);
+            _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2.push(noNum);
             _Toast__WEBPACK_IMPORTED_MODULE_3__.toast.success(_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl('_已置顶'));
         }
-        (0,_Settings__WEBPACK_IMPORTED_MODULE_5__.setSetting)('pinnedOptions', _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions);
+        (0,_Settings__WEBPACK_IMPORTED_MODULE_5__.setSetting)('pinnedOptionsV2', _Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2);
     }
     syncPinnedClass() {
         for (const option of this.allOption) {
@@ -44736,7 +44834,9 @@ class PinOptions {
             if (!no) {
                 continue;
             }
-            option.classList[_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptions.includes(Number.parseInt(no)) ? 'add' : 'remove'](this.pinnedClassName);
+            option.classList[_Settings__WEBPACK_IMPORTED_MODULE_5__.settings.pinnedOptionsV2.includes(Number.parseInt(no))
+                ? 'add'
+                : 'remove'](this.pinnedClassName);
         }
     }
 }
@@ -46097,7 +46197,7 @@ class Settings {
         onlyCrawlLastFewImagesCount: 1,
         doNotCrawlFirstImagesSwitch: false,
         doNotCrawlFirstImagesCount: 1,
-        pinnedOptions: [0, 1],
+        pinnedOptionsV2: [0, 1],
         debugForWiki: false,
         singleEPUBFileSizeLimit: 200,
         imageToGray: false,
@@ -46168,7 +46268,7 @@ class Settings {
     ];
     // 值为整数的设置不必单独列出
     // 值为 number[] 的设置
-    numberArrayKeys = ['pinnedOptions'];
+    numberArrayKeys = ['pinnedOptionsV2'];
     // 值为字符串数组的设置
     stringArrayKeys = [
         'namingRuleList',
@@ -46683,7 +46783,7 @@ class SettingsPanel {
         this.main.addEventListener('scroll', () => this.sectionController.refreshStickyHeader());
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingChange, (ev) => {
             const data = ev.detail.data;
-            if (data.name === 'pinnedOptions') {
+            if (data.name === 'pinnedOptionsV2') {
                 this.navigationController.renderCurrentPage();
             }
             if (data.name === 'expandedCards') {
@@ -47760,7 +47860,7 @@ class SettingsPanelPlacement {
             if (!element) {
                 continue;
             }
-            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptions.includes(option.no)
+            const target = showPinnedOnHome && _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptionsV2.includes(option.no)
                 ? this.homePinnedContent
                 : this.getCanonicalContainer(option.categoryLevel1, option.categoryLevel2);
             target.append(element);
@@ -47773,7 +47873,7 @@ class SettingsPanelPlacement {
             return;
         }
         pinnedSection.root.style.display =
-            _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptions.length > 0 ? 'block' : 'none';
+            _Settings__WEBPACK_IMPORTED_MODULE_1__.settings.pinnedOptionsV2.length > 0 ? 'block' : 'none';
     }
     getCanonicalContainer(level1, level2) {
         return this.canonicalContainers.get(this.makeCanonicalKey(level1, level2));
@@ -48432,7 +48532,7 @@ class SettingsPanelShell {
         <div class="centerWrap_con">
           <aside class="settingsPanel_sidebar beautify_scrollbar">
             <nav class="settingsPanel_nav">
-              ${this.createNavItem('home', '_首页', 'home-line', 'home-fill')}
+              ${this.createNavItem('home', '_首页_Home', 'home-line', 'home-fill')}
               ${this.createNavItem('crawl', '_抓取', 'filter-line', 'filter-filling')}
               ${this.createNavItem('naming', '_命名', 'rename-line', 'rename-fill')}
               ${this.createNavItem('download', '_下载', 'download-line', 'download-fill')}
@@ -48992,6 +49092,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
 /* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Settings */ "./src/ts/setting/Settings.ts");
 /* harmony import */ var _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./OptionConfigs */ "./src/ts/setting/OptionConfigs.ts");
+/* harmony import */ var _langText__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../langText */ "./src/ts/langText.ts");
+
 
 
 
@@ -49001,78 +49103,185 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /** 为每个设置和按钮创建其在 Wiki 上的 URL */
+// PS：Wiki 里除了设置和按钮还有其他页面，那些页面与这里无关。
 class Wiki {
     constructor() {
         this.bindEvents();
     }
-    // 初始保存了所有按钮的配置，设置项的配置会在 settingInitialized 事件触发时从 optionConfigs 里追加进来
-    WikiConfig = {
-        'Buttons-Crawl': [
-            'startCrawling',
-            'stopCrawling',
-            'scheduleCrawling',
-            'cancelScheduledCrawling',
-            'manuallySelectWork',
-            'clearSelectedWork',
-            'crawlSelectedWork',
-            'crawlCurrentPageWork',
-            'startCrawlingFromCurrentPageNew',
-            'startCrawlingFromCurrentPageOld',
-            'crawlRelatedWork',
-            'downloadRecommendedWorks',
-            'crawlSimilarImage',
-            'crawlCurrentWork',
-            'crawlImagesOnThisPage',
-            'crawlRankingWork',
-            'crawlDebutWork',
-            'filterResults',
-            'crawlTagList',
-            'startCrawlingInFollowingPage',
-            'exportFollowingListCSV',
-            'exportFollowingListJSON',
-            'batchFollowUser',
-            'crawlById',
-            'crawlIdRange',
-            'importIDList',
-            'crawlSeriesNovel',
-            'mergeSeriesNovel',
-            'clearMultiImageWork',
-            'clearUgoiraWork',
-            'manuallyDeleteWork',
-            'exportDashboardData',
-            'crawlApplicationWork',
-            'crawlWinningWork',
-            'findDeactivatedUsers',
-        ],
-        'Buttons-Download': [
-            'importCrawlResults',
-            'exportCrawlResultsJSON',
-            'exportCrawlResultsCSV',
-            'previewFileName',
-            'startDownload',
-            'pauseDownload',
-            'stopDownload',
-            'copyURLs',
-        ],
-        'Buttons-More': [
-            'bookmarkAllWorksOnPage',
-            'addTagToUnmarkedWork',
-            'removeTagsFromAllWorksOnPage',
-            'unBookmarkAllWorksOnPage',
-            'unBookmarkAll404Works',
-            'exportBookmarkList',
-            'importBookmarkList',
-            'clearSavedCrawlResult',
-            'saveUserAvatar',
-            'saveUserAvatarAsIcon',
-            'saveUserCoverImage',
-        ],
+    /** 储存每种语言的 Wiki 首页路径 */
+    home = {
+        'zh-cn': '',
+        en: '',
     };
+    Level0Keys = {
+        option: '_设置',
+        button: '_按钮_复数',
+    };
+    /** 保存了所有按钮的配置 */
+    buttonsSchema = {
+        startCrawl: {
+            id: 'startCrawl',
+            nameKey: '_开始抓取',
+            level2: {
+                General: {
+                    id: 'General',
+                    nameKey: '_通用',
+                    ids: [
+                        'startCrawling',
+                        'stopCrawling',
+                        'scheduleCrawling',
+                        'cancelScheduledCrawling',
+                        'manuallySelectWork',
+                        'clearSelectedWork',
+                        'crawlSelectedWork',
+                    ],
+                },
+                HomePage: {
+                    id: 'HomePage',
+                    nameKey: '_首页',
+                    ids: ['crawlById', 'crawlIdRange', 'importIDList'],
+                },
+                WorkPage: {
+                    id: 'WorkPage',
+                    nameKey: '_作品页面',
+                    ids: [
+                        'startCrawlingFromCurrentPageNew',
+                        'startCrawlingFromCurrentPageOld',
+                        'crawlRelatedWork',
+                        'downloadRecommendedWorks',
+                    ],
+                },
+                NovelSeriesPage: {
+                    id: 'NovelSeriesPage',
+                    nameKey: '_系列小说页面',
+                    ids: ['crawlSeriesNovel', 'mergeSeriesNovel'],
+                },
+                SearchPage: {
+                    id: 'SearchPage',
+                    nameKey: '_搜索页面',
+                    ids: [
+                        'crawlTagList',
+                        'filterResults',
+                        'clearMultiImageWork',
+                        'clearUgoiraWork',
+                        'manuallyDeleteWork',
+                    ],
+                },
+                Ranking: {
+                    id: 'Ranking',
+                    nameKey: '_排行榜',
+                    ids: ['crawlRankingWork', 'crawlDebutWork'],
+                },
+                Discover: {
+                    id: 'Discover',
+                    nameKey: '_发现',
+                    ids: ['crawlCurrentWork'],
+                },
+                FollowingPage: {
+                    id: 'FollowingPage',
+                    nameKey: '_关注页面',
+                    ids: [
+                        'startCrawlingInFollowingPage',
+                        'exportFollowingListCSV',
+                        'exportFollowingListJSON',
+                        'batchFollowUser',
+                        'findDeactivatedUsers',
+                    ],
+                },
+                ContestPage: {
+                    id: 'ContestPage',
+                    nameKey: '_比赛页面',
+                    ids: ['crawlApplicationWork', 'crawlWinningWork'],
+                },
+                Dashboard: {
+                    id: 'Dashboard',
+                    nameKey: '_仪表盘',
+                    ids: ['exportDashboardData'],
+                },
+                BookmarkDetails: {
+                    id: 'BookmarkDetails',
+                    nameKey: '_书签详情',
+                    ids: ['crawlSimilarImage'],
+                },
+                pixivision: {
+                    id: 'pixivision',
+                    nameKey: '_pixivision',
+                    ids: ['crawlImagesOnThisPage'],
+                },
+            },
+        },
+        downloadArea: {
+            id: 'downloadArea',
+            nameKey: '_下载区域',
+            level2: {
+                CrawlResults: {
+                    id: 'CrawlResults',
+                    nameKey: '_抓取结果',
+                    ids: [
+                        'importCrawlResults',
+                        'exportCrawlResultsJSON',
+                        'exportCrawlResultsCSV',
+                        'previewFileName',
+                        'copyURLs',
+                    ],
+                },
+                DownloadControl: {
+                    id: 'DownloadControl',
+                    nameKey: '_下载控制',
+                    ids: ['startDownload', 'pauseDownload', 'stopDownload'],
+                },
+            },
+        },
+        extraFeatures: {
+            id: 'extraFeatures',
+            nameKey: '_附加功能',
+            level2: {
+                HomePage: {
+                    id: 'HomePage',
+                    nameKey: '_首页',
+                    ids: ['clearSavedCrawlResult'],
+                },
+                UserPage: {
+                    id: 'UserPage',
+                    nameKey: '_用户页面',
+                    ids: [
+                        'saveUserAvatar',
+                        'saveUserAvatarAsIcon',
+                        'saveUserCoverImage',
+                        'bookmarkAllWorksOnPage',
+                    ],
+                },
+                SearchPage: {
+                    id: 'SearchPage',
+                    nameKey: '_搜索页面',
+                    ids: ['bookmarkAllWorksOnPage'],
+                },
+                BookmarkPage: {
+                    id: 'BookmarkPage',
+                    nameKey: '_书签页面',
+                    ids: [
+                        'addTagToUnmarkedWork',
+                        'removeTagsFromAllWorksOnPage',
+                        'unBookmarkAllWorksOnPage',
+                        'findBookmark404Works',
+                        'unBookmarkAll404Works',
+                        'exportBookmarkList',
+                        'importBookmarkList',
+                    ],
+                },
+            },
+        },
+    };
+    /** 保存了所有设置项的配置。在初始化时生成 */
+    optionsSchema = {};
     bindEvents() {
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.settingInitialized, () => {
-            this.appendOptionsToConfig();
-            // console.log('WikiConfig', this.WikiConfig)
+            this.initOptionsSchema();
             this.setOptionLink();
+            // 调试用
+            // console.log('OptionsSchema initialized', this.optionsSchema)
+            // this.outputAllPages('option')
+            // this.outputAllPages('button')
         });
         // 当用户修改了语言时，重设每个设置项的链接
         window.addEventListener(_EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.list.langChange, () => {
@@ -49098,16 +49307,60 @@ class Wiki {
             this.setOptionLink();
         });
     }
-    /** 从 optionConfig 里把所有二级分类的配置追加到 WikiConfig 里*/
-    appendOptionsToConfig() {
-        for (const [categoryLevel1, subCategories] of Object.entries(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.optionsByCategory)) {
-            for (const [categoryLevel2, config] of Object.entries(subCategories)) {
-                const groupName = `${categoryLevel1}-${categoryLevel2}`;
-                if (!this.WikiConfig[groupName]) {
-                    this.WikiConfig[groupName] = config.ids;
-                }
+    /** 从 optionConfigs.categorySchema 里复制分类层级结构到 optionsSchema 里，并从 optionConfigs.optionsByCategory 里获取每个二级分类里的 ids */
+    initOptionsSchema() {
+        // 遍历每个一级分类
+        for (const [level1Key, level1Config] of Object.entries(_OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.categorySchema)) {
+            const level1Id = level1Config.id;
+            const level1NameKey = level1Config.nameKey;
+            const level2Configs = level1Config.level2;
+            // 组装二级分类的数据
+            const level2 = {};
+            for (const [level2Key, level2Config] of Object.entries(level2Configs)) {
+                const level2Id = level2Config.id;
+                const level2NameKey = level2Config.nameKey;
+                const ids = _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.optionsByCategory[level1Id][level2Id].ids;
+                level2[level2Key] = {
+                    id: level2Id,
+                    nameKey: level2NameKey,
+                    ids,
+                };
+            }
+            // 把一级分类和二级分类的数据保存到 optionsSchema 里
+            this.optionsSchema[level1Key] = {
+                id: level1Id,
+                nameKey: level1NameKey,
+                level2,
+            };
+        }
+    }
+    /** 调试用的辅助函数，用来输出所有页面的名字和里面的 id 列表 */
+    outputAllPages(type) {
+        const result = [];
+        const level0Key = this.Level0Keys[type];
+        const source = type === 'option' ? this.optionsSchema : this.buttonsSchema;
+        for (const [level1Key, level1Config] of Object.entries(source)) {
+            const level1Id = level1Config.id;
+            const level1NameKey = level1Config.nameKey;
+            const level2Configs = level1Config.level2;
+            for (const [level2Key, level2Config] of Object.entries(level2Configs)) {
+                const level2 = level2Config;
+                const level2Id = level2.id;
+                const level2NameKey = level2.nameKey;
+                const ids = level2.ids;
+                // 保存每个页面的多语言名称，以及里面的 id 列表
+                const page_zh_cn = `${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level0Key][0]}-${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level1NameKey][0]}/${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level2NameKey][0]}`;
+                const page_en = `${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level0Key][2]}-${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level1NameKey][2]}/${_langText__WEBPACK_IMPORTED_MODULE_8__.langText[level2NameKey][2]}`;
+                result.push({
+                    page: {
+                        'zh-cn': page_zh_cn.replaceAll(' ', '-'),
+                        en: page_en.replaceAll(' ', '-'),
+                    },
+                    ids,
+                });
             }
         }
+        console.log(type, result);
     }
     // 由于 Wiki 现在只有简体中文和英语，所以只返回这两种语言
     useLang() {
@@ -49116,11 +49369,6 @@ class Wiki {
         }
         return 'en';
     }
-    /** 储存每种语言的 Wiki 首页路径 */
-    home = {
-        'zh-cn': '',
-        en: '',
-    };
     resetHomeConfig() {
         let HomePrefix = 'https://xuejianxianzun.github.io/PBDWiki/';
         if (_Settings__WEBPACK_IMPORTED_MODULE_6__.settings.debugForWiki) {
@@ -49132,14 +49380,10 @@ class Wiki {
     /** 设置每个设置项名称上的 href 属性 */
     setOptionLink() {
         this.resetHomeConfig();
-        // 查找所有 a.settingNameStyle 元素，并把它们的 href 属性设置为对应语言的 URL
-        const allLinks = document.querySelectorAll('.centerWrap_con a.settingNameStyle');
-        allLinks.forEach(async (a) => {
-            // 查找其所属的选项元素，如 <div class='option' data-no='0'>
-            const option = a.closest('.option');
-            if (option && option.dataset.no) {
-                const id = Number(option.dataset.no);
-                const link = await this.link(id);
+        _OptionConfigs__WEBPACK_IMPORTED_MODULE_7__.optionConfigs.options.forEach(async (option) => {
+            const link = await this.link('option', option.no);
+            const a = document.querySelector(`.option[data-no="${option.no}"] .settingNameStyle`);
+            if (a) {
                 a.setAttribute('href', link);
                 // 绑定 click 事件，默认不阻止。如果 clickSettingNameOpenWiki 为 false 则阻止默认行为
                 if (!a.dataset.bindClick) {
@@ -49156,29 +49400,34 @@ class Wiki {
     /** 为每个功能按钮绑定事件，长按时生成 Wiki 链接并打开 */
     registerBtn(btn) {
         _utils_Utils__WEBPACK_IMPORTED_MODULE_5__.Utils.longPress(btn, async () => {
-            const link = await this.link(btn.id);
+            const link = await this.link('button', btn.id);
             window.open(link, '_blank');
         });
     }
     /**传入设置项或按钮的 ID，查找它在 Wiki 上处于哪个页面里，并构造出 URL */
+    // 每个页面都是 3 级结构。1 级 和 2 级组合成目录名，3 级作为文件名，例如：设置-抓取/抓取范围
     // 返回的 URL 只定位到分类页面，不会定位到具体的条目，但是会传递该设置的 flag，例如：
-    // https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/设置-抓取?flag=0
+    // https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/设置-抓取/抓取范围?flag=0
     // 之后由 Wiki 页面上的代码定位到具体的设置项
     // 如果传入的 ID 没有找到对应的分类，则返回 Wiki 首页
-    async link(id) {
+    async link(type, id) {
         if (id === undefined) {
             console.error('link id is undefined');
             console.trace();
             return '';
         }
         await _store_States__WEBPACK_IMPORTED_MODULE_3__.states.waitSettingInitialized();
-        const lang = this.useLang();
-        for (const [groupName, ids] of Object.entries(this.WikiConfig)) {
-            if (ids.includes(id)) {
-                const home = this.home[lang];
-                const path = groupName + '-' + lang;
-                // 每个 id 的 path 是其分类名字 + `-` + 语言，例如 `Buttons-Crawl-zh-cn`
-                return `${home}${path}?flag=${id}`;
+        const home = this.home[this.useLang()];
+        const level0Key = this.Level0Keys[type];
+        const source = type === 'option' ? this.optionsSchema : this.buttonsSchema;
+        for (const level1 of Object.values(source)) {
+            for (const level2 of Object.values(level1.level2)) {
+                const lv2 = level2;
+                if (lv2.ids.includes(id)) {
+                    // 需要把文件名里的空格替换成横线 -，因为如果有空格的话就无法解析为 markdown 里的链接。
+                    const url = `${home}${_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl(level0Key)}-${_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl(level1.nameKey)}/${_Language__WEBPACK_IMPORTED_MODULE_1__.lang.transl(lv2.nameKey)}?flag=${id}`.replaceAll(' ', '-');
+                    return url;
+                }
             }
         }
         return '';

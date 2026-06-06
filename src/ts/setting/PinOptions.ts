@@ -31,7 +31,7 @@ class PinOptions {
         return
       }
       const data = ev.detail.data as any
-      if (data.name === 'pinnedOptions') {
+      if (data.name === 'pinnedOptionsV2') {
         this.syncPinnedClass()
       }
     })
@@ -52,17 +52,17 @@ class PinOptions {
   }
 
   private togglePinOption(noNum: number) {
-    if (settings.pinnedOptions.includes(noNum)) {
-      settings.pinnedOptions = settings.pinnedOptions.filter(
+    if (settings.pinnedOptionsV2.includes(noNum)) {
+      settings.pinnedOptionsV2 = settings.pinnedOptionsV2.filter(
         (no) => no !== noNum
       )
       toast.warning(lang.transl('_取消置顶'))
     } else {
-      settings.pinnedOptions.push(noNum)
+      settings.pinnedOptionsV2.push(noNum)
       toast.success(lang.transl('_已置顶'))
     }
 
-    setSetting('pinnedOptions', settings.pinnedOptions)
+    setSetting('pinnedOptionsV2', settings.pinnedOptionsV2)
   }
 
   private syncPinnedClass() {
@@ -73,7 +73,9 @@ class PinOptions {
       }
 
       option.classList[
-        settings.pinnedOptions.includes(Number.parseInt(no)) ? 'add' : 'remove'
+        settings.pinnedOptionsV2.includes(Number.parseInt(no))
+          ? 'add'
+          : 'remove'
       ](this.pinnedClassName)
     }
   }

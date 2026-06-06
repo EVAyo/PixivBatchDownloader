@@ -44,7 +44,7 @@ class SettingsPanelPlacement {
       }
 
       const target =
-        showPinnedOnHome && settings.pinnedOptions.includes(option.no)
+        showPinnedOnHome && settings.pinnedOptionsV2.includes(option.no)
           ? this.homePinnedContent
           : this.getCanonicalContainer(
               option.categoryLevel1,
@@ -64,7 +64,7 @@ class SettingsPanelPlacement {
       return
     }
     pinnedSection.root.style.display =
-      settings.pinnedOptions.length > 0 ? 'block' : 'none'
+      settings.pinnedOptionsV2.length > 0 ? 'block' : 'none'
   }
 
   public getCanonicalContainer(level1: OptionCategoryLevel1, level2: string) {

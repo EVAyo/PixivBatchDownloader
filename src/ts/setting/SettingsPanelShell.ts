@@ -85,7 +85,7 @@ class SettingsPanelShell {
         <div class="centerWrap_con">
           <aside class="settingsPanel_sidebar beautify_scrollbar">
             <nav class="settingsPanel_nav">
-              ${this.createNavItem('home', '_首页', 'home-line', 'home-fill')}
+              ${this.createNavItem('home', '_首页_Home', 'home-line', 'home-fill')}
               ${this.createNavItem('crawl', '_抓取', 'filter-line', 'filter-filling')}
               ${this.createNavItem('naming', '_命名', 'rename-line', 'rename-fill')}
               ${this.createNavItem('download', '_下载', 'download-line', 'download-fill')}

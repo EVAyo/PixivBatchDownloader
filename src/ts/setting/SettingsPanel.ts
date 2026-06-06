@@ -180,7 +180,7 @@ class SettingsPanel {
 
     window.addEventListener(EVT.list.settingChange, (ev: CustomEventInit) => {
       const data = ev.detail.data as any
-      if (data.name === 'pinnedOptions') {
+      if (data.name === 'pinnedOptionsV2') {
         this.navigationController.renderCurrentPage()
       }
 

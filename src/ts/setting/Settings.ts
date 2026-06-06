@@ -392,7 +392,7 @@ interface XzSetting {
   onlyCrawlLastFewImagesCount: number
   doNotCrawlFirstImagesSwitch: boolean
   doNotCrawlFirstImagesCount: number
-  pinnedOptions: number[]
+  pinnedOptionsV2: number[]
   debugForWiki: boolean
   singleEPUBFileSizeLimit: number
   imageToGray: boolean
@@ -949,7 +949,7 @@ class Settings {
     onlyCrawlLastFewImagesCount: 1,
     doNotCrawlFirstImagesSwitch: false,
     doNotCrawlFirstImagesCount: 1,
-    pinnedOptions: [0, 1],
+    pinnedOptionsV2: [0, 1],
     debugForWiki: false,
     singleEPUBFileSizeLimit: 200,
     imageToGray: false,
@@ -1024,7 +1024,7 @@ class Settings {
   // 值为整数的设置不必单独列出
 
   // 值为 number[] 的设置
-  private numberArrayKeys = ['pinnedOptions']
+  private numberArrayKeys = ['pinnedOptionsV2']
 
   // 值为字符串数组的设置
   private stringArrayKeys = [

@@ -1487,7 +1487,7 @@ class OptionConfigs {
     // 当置顶的设置发生变化时，更新每个设置项的 pinned 属性
     window.addEventListener(EVT.list.settingChange, (ev: CustomEventInit) => {
       const data = ev.detail.data as any
-      if (data.name === 'pinnedOptions') {
+      if (data.name === 'pinnedOptionsV2') {
         this.setPinnedOptions()
       }
     })
@@ -1506,7 +1506,7 @@ class OptionConfigs {
 
   private setPinnedOptions() {
     for (const option of this.options) {
-      option.pinned = settings.pinnedOptions.includes(option.no)
+      option.pinned = settings.pinnedOptionsV2.includes(option.no)
     }
   }
 
