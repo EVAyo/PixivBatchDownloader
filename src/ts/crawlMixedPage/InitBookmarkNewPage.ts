@@ -1,4 +1,5 @@
 // 初始化 关注的用户的新作品页面 和 好P友的新作品页面
+// Premium 会员可以看到第 84 页
 import { InitPageBase } from '../crawl/InitPageBase'
 import { lang } from '../Language'
 import { Tools } from '../Tools'
