@@ -215,7 +215,7 @@ class Wiki {
         SearchPage: {
           id: 'SearchPage',
           nameKey: '_搜索页面',
-          ids: ['bookmarkAllWorksOnPage'],
+          ids: ['bookmarkAllWorksOnSearchPage'],
         },
         BookmarkPage: {
           id: 'BookmarkPage',

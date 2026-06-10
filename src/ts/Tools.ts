@@ -402,9 +402,31 @@ class Tools {
     this.findSlot(name).innerHTML = ''
   }
 
-  // 创建下载面板上的通用按钮
-  // 注意：如果希望按钮的文本和 title 能根据下载器的语言切换，那么对应的参数需要使用 LangText 里存在的属性
-  // 也就是以下划线 _ 开头
+  /** 调试用，保存所有已添加的按钮的 HTML */
+  // 每个页面都只会添加部分按钮（addInitPageBtn），所以要获取所有按钮的话，需要进入多个页面里
+  static buttonsHtml: {
+    id: string
+    nameKey: string
+    name: string
+    html: string
+  }[] = []
+
+  static saveButtonsHtml(id: string, nameKey: string, btn: HTMLButtonElement) {
+    const exsiting = this.buttonsHtml.find((item) => item.id === id)
+    if (exsiting) {
+      exsiting.html = btn.outerHTML
+    } else {
+      this.buttonsHtml.push({ id, nameKey, name: '', html: btn.outerHTML })
+    }
+    this.outputButtonsHtml()
+  }
+
+  static outputButtonsHtml = Utils.debounce(() => {
+    console.log('Buttons HTML:', this.buttonsHtml)
+  }, 200)
+
+  /** 创建下载面板上的通用按钮 */
+  // 注意：如果希望按钮的文本和 title 能根据下载器的语言切换，那么对应的参数需要使用 LangText 里存在的属性，也就是以下划线 _ 开头，类型为 LangTextKey
   static addBtn(
     slot: string,
     text: string,
@@ -454,6 +476,9 @@ class Tools {
     this.useSlot(slot, btn)
     lang.register(btn)
     wiki.registerBtn(btn)
+
+    // 调试用，保存按钮的 HTML 以便在 wiki 里使用
+    // this.saveButtonsHtml(id, text, btn)
 
     return btn
   }

@@ -942,6 +942,7 @@ class OptionConfigs {
       hideOnPixivision: true,
       searchWordKeys: [],
       searchWords: [],
+      addedAt: 1780444800000,
     },
     {
       no: 59,
@@ -1390,6 +1391,7 @@ class OptionConfigs {
       hideOnPixivision: true,
       searchWordKeys: [],
       searchWords: [],
+      addedAt: 1780444800000,
     },
     {
       no: 98,

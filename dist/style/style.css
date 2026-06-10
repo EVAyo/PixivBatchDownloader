@@ -861,6 +861,13 @@ body.mobile #quickCrawlBtn {
 .centerWrap.mobile p {
   line-height: 32px;
 }
+.centerWrap.mobile .centerPanelTextArea {
+  min-width: unset !important;
+}
+.centerWrap.mobile input[name="dateFormat"] {
+  min-width: unset !important;
+  flex-basis: 100%;
+}
 .centerWrap.mobile .centerWrap_head {
   padding: 12px;
   flex-direction: column;
@@ -1469,22 +1476,6 @@ body.mobile #quickCrawlBtn {
   outline: 2px solid #f5c519;
   outline-offset: -2px;
 }
-.centerWrap .centerWrap_con .settingForm .option .pinButton {
-  position: absolute;
-  z-index: 1;
-  left: -26px;
-  top: 0;
-  cursor: pointer;
-  display: none;
-  opacity: 0.6;
-}
-.centerWrap .centerWrap_con .settingForm .option.pinned .pinButton,
-.centerWrap .centerWrap_con .settingForm .option:hover .pinButton {
-  display: block;
-}
-.centerWrap .centerWrap_con .settingForm .option.pinned .pinButton {
-  opacity: 1;
-}
 .centerWrap .centerWrap_con .settingForm .option > * {
   line-height: var(--line-height);
   flex-shrink: 0;
@@ -1788,10 +1779,13 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con .settingForm .fileNameRuleBtnsArea button {
   color: #333;
 }
+.centerWrap .centerWrap_con .settingForm input[name="dateFormat"] {
+  min-width: 250px;
+}
 .centerWrap .centerWrap_con .settingForm .fileNameRule {
   display: flex;
   flex-grow: 1;
-  min-width: 310px !important;
+  min-width: 310px;
 }
 .centerWrap .centerWrap_con .settingForm .setinput_tag {
   min-width: 300px;

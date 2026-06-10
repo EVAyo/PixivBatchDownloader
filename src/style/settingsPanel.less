@@ -525,26 +525,6 @@
           outline-offset: -2px;
         }
 
-        // 在选项左侧显示置顶按钮
-        .pinButton {
-          position: absolute;
-          z-index: 1;
-          left: -26px;
-          top: 0;
-          cursor: pointer;
-          display: none;
-          opacity: 0.6;
-        }
-
-        &.pinned .pinButton,
-        &:hover .pinButton {
-          display: block;
-        }
-
-        &.pinned .pinButton {
-          opacity: 1;
-        }
-
         // 给内部元素设置统一的行高。否则的话，span 元素没有行高的话，其高度就是字体尺寸（14px），对齐到顶部后太靠上了，与其他元素的中轴线没有对齐
         & > * {
           line-height: var(--line-height);
@@ -934,10 +914,14 @@
         }
       }
 
+      input[name='dateFormat'] {
+        min-width: 250px;
+      }
+
       .fileNameRule {
         display: flex;
         flex-grow: 1;
-        min-width: 310px !important;
+        min-width: 310px;
       }
 
       .setinput_tag {

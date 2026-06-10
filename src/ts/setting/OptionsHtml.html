@@ -852,16 +852,6 @@
     <span class="verticalSplit"></span>
     <input
       type="radio"
-      id="tagMatchMode1"
-      class="need_beautify radio"
-      name="tagMatchMode"
-      value="partial"
-      checked
-    />
-    <span class="beautify_radio" tabindex="0"></span>
-    <label for="tagMatchMode1" data-xztext="_部分一致"></label>
-    <input
-      type="radio"
       id="tagMatchMode2"
       class="need_beautify radio"
       name="tagMatchMode"
@@ -870,6 +860,15 @@
     />
     <span class="beautify_radio" tabindex="0"></span>
     <label for="tagMatchMode2" data-xztext="_完全一致"></label>
+    <input
+      type="radio"
+      id="tagMatchMode1"
+      class="need_beautify radio"
+      name="tagMatchMode"
+      value="partial"
+    />
+    <span class="beautify_radio" tabindex="0"></span>
+    <label for="tagMatchMode1" data-xztext="_部分一致"></label>
     <textarea
       class="centerPanelTextArea beautify_scrollbar"
       name="notNeedTag"
@@ -992,7 +991,7 @@
       type="text"
       name="multiImageWorkImageLimit"
       class="setinput_style blue"
-      value="1"
+      value="10"
     />
   </div>
 </div>
@@ -1197,6 +1196,7 @@
     type="checkbox"
     name="slowCrawl"
     class="need_beautify checkbox_switch"
+    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
 
@@ -1568,7 +1568,6 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="text"
     name="dateFormat"
     class="setinput_style blue"
-    style="width: 250px"
     value="YYYY-MM-DD"
   />
   <button
@@ -2023,7 +2022,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     name="downloadThread"
     class="has_tip setinput_style blue"
     data-xztip="_下载线程的说明"
-    value="24"
+    value="3"
   />
 </div>
 
@@ -2123,7 +2122,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
         type="text"
         name="downloadInterval"
         class="setinput_style blue"
-        value="0"
+        value="1"
       />
       <span data-xztext="_秒"></span>
     </div>
@@ -2259,7 +2258,6 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="rememberTheLastSaveLocation"
     class="need_beautify checkbox_switch"
-    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
   <button
@@ -3090,7 +3088,6 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="showLargerThumbnails"
     class="need_beautify checkbox_switch"
-    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
 </div>
@@ -3141,7 +3138,6 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="imageToGray"
     class="need_beautify checkbox_switch"
-    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
 </div>
@@ -3188,6 +3184,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="magnifier"
     class="need_beautify checkbox_switch"
+    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
   <div class="subOptionWrap flexBasis100" data-show="magnifier">
@@ -3545,7 +3542,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
       type="text"
       name="previewResultLimit"
       class="setinput_style blue w80"
-      value="1000"
+      value="3000"
     />
   </div>
 </div>
@@ -3679,6 +3676,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="clickSettingNameOpenWiki"
     class="need_beautify checkbox_switch"
+    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
 </div>
@@ -3798,6 +3796,7 @@ __DEFAULT_NAME_RULE_FOR_NOVEL__</textarea
     type="checkbox"
     name="boldKeywords"
     class="need_beautify checkbox_switch"
+    checked
   />
   <span class="beautify_switch" tabindex="0"></span>
 </div>

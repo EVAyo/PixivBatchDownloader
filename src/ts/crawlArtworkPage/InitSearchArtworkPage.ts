@@ -213,7 +213,7 @@ class InitSearchArtworkPage extends InitPageBase {
       'otherBtns',
       '_收藏本页面的所有作品',
       '',
-      'bookmarkAllWorksOnPage',
+      'bookmarkAllWorksOnSearchPage',
       'brand'
     )
     const bookmarkAll = new BookmarkAllWorks(bookmarkAllBtn)
