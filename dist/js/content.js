@@ -2513,7 +2513,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
 /* harmony import */ var _setting_Settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../setting/Settings */ "./src/ts/setting/Settings.ts");
-/* harmony import */ var _ToWebM__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ToWebM */ "./src/ts/ConvertUgoira/ToWebM.ts");
+/* harmony import */ var _ToWebMUseWhammy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ToWebMUseWhammy */ "./src/ts/ConvertUgoira/ToWebMUseWhammy.ts");
 /* harmony import */ var _ToWebP__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ToWebP */ "./src/ts/ConvertUgoira/ToWebP.ts");
 /* harmony import */ var _ToGIF__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ToGIF */ "./src/ts/ConvertUgoira/ToGIF.ts");
 /* harmony import */ var _ToAPNG__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ToAPNG */ "./src/ts/ConvertUgoira/ToAPNG.ts");
@@ -2604,7 +2604,7 @@ class ConvertUgoira {
                         return await _ToWebP__WEBPACK_IMPORTED_MODULE_3__.toWebP.convert(imageBitmapList, info);
                     }
                     else {
-                        return await _ToWebM__WEBPACK_IMPORTED_MODULE_2__.toWebM.convert(imageBitmapList, info);
+                        return await _ToWebMUseWhammy__WEBPACK_IMPORTED_MODULE_2__.toWebM.convert(imageBitmapList, info);
                     }
                 }
                 catch (error) {
@@ -2901,10 +2901,10 @@ const toGIF = new ToGIF();
 
 /***/ }),
 
-/***/ "./src/ts/ConvertUgoira/ToWebM.ts":
-/*!****************************************!*\
-  !*** ./src/ts/ConvertUgoira/ToWebM.ts ***!
-  \****************************************/
+/***/ "./src/ts/ConvertUgoira/ToWebMUseWhammy.ts":
+/*!*************************************************!*\
+  !*** ./src/ts/ConvertUgoira/ToWebMUseWhammy.ts ***!
+  \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2914,36 +2914,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
 
-// https://github.com/Vanilagy/mediabunny
 class ToWebM {
     async convert(ImageBitmapList, info) {
-        const output = new Mediabunny.Output({
-            format: new Mediabunny.WebMOutputFormat(),
-            target: new Mediabunny.BufferTarget(),
-        });
-        const videoSource = new Mediabunny.VideoSampleSource({
-            codec: 'vp9',
-            bitrate: new Mediabunny.Quality(200),
-            fullCodecString: 'vp09.00.40.08.03.01.01.01.01',
-        });
-        output.addVideoTrack(videoSource);
-        await output.start();
-        let timestamp = 0;
-        for (let i = 0; i < ImageBitmapList.length; i++) {
-            const bitmap = ImageBitmapList[i];
-            const duration = info.frames[i].delay / 1000;
-            const sample = new Mediabunny.VideoSample(bitmap, {
-                timestamp: timestamp, // in seconds
-                duration: duration, // in seconds
+        return new Promise(async (resolve, reject) => {
+            const width = ImageBitmapList[0].width;
+            const height = ImageBitmapList[0].height;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+            // 创建视频编码器
+            const encoder = new Whammy.Video();
+            // 添加帧数据
+            ImageBitmapList.forEach((imageBitmap, index) => {
+                ctx.drawImage(imageBitmap, 0, 0);
+                // 把图像转换为 webp 格式的 DataURL，这样 webm 编码器内部可以直接使用，不需要进行一些重复的操作
+                // https://github.com/antimatter15/whammy#basic-usage
+                const url = canvas.toDataURL('image/webp', 0.9);
+                encoder.add(url, info.frames[index].delay);
             });
-            await videoSource.add(sample);
-            sample.close();
-            timestamp += duration;
-        }
-        await output.finalize();
-        const blob = new Blob([output.target.buffer], { type: 'video/webm' });
-        _EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.fire('convertSuccess');
-        return blob;
+            // 编码视频
+            encoder.compile(false, (video) => {
+                _EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.fire('convertSuccess');
+                resolve(video);
+            });
+        });
     }
 }
 const toWebM = new ToWebM();
@@ -67869,6 +67864,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/** 使用 fetch 加载图片并返回 blob 对象 */
 async function getImg(url) {
     let blob = null;
     try {

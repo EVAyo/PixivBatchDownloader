@@ -864,7 +864,7 @@ body.mobile #quickCrawlBtn {
 .centerWrap.mobile .centerPanelTextArea {
   min-width: unset !important;
 }
-.centerWrap.mobile input[name="dateFormat"] {
+.centerWrap.mobile input[name='dateFormat'] {
   min-width: unset !important;
   flex-basis: 100%;
 }
@@ -1779,7 +1779,7 @@ body.mobile #quickCrawlBtn {
 .centerWrap .centerWrap_con .settingForm .fileNameRuleBtnsArea button {
   color: #333;
 }
-.centerWrap .centerWrap_con .settingForm input[name="dateFormat"] {
+.centerWrap .centerWrap_con .settingForm input[name='dateFormat'] {
   min-width: 250px;
 }
 .centerWrap .centerWrap_con .settingForm .fileNameRule {
