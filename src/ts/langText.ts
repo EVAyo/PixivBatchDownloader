@@ -10135,6 +10135,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   用于显示图片查看器<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  用于把动图转换为 WebM 视频<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   用于把动图转换为 WebM 视频<br>
   <br>
@@ -10158,6 +10161,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   用於顯示圖片檢視器<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  用於把動圖轉換為 WebM 影片<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   用於把動圖轉換為 WebM 影片<br>
@@ -10183,6 +10189,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   Used to display the image viewer<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Used to convert Ugoira into WebM videos<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Used to convert Ugoira into WebM videos<br>
   <br>
@@ -10206,6 +10215,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   画像ビューアーの表示に使用<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Ugoira を WebM 動画に変換するために使用<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Ugoira を WebM 動画に変換するために使用<br>
@@ -10231,6 +10243,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   이미지 뷰어를 표시하는 데 사용<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Ugoira를 WebM 비디오로 변환하는 데 사용<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Ugoira를 WebM 비디오로 변환하는 데 사용<br>
   <br>
@@ -10254,6 +10269,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   Используется для отображения просмотрщика изображений<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Используется для преобразования Ugoira в видео WebM<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Используется для преобразования Ugoira в видео WebM<br>

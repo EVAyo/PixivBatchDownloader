@@ -39,8 +39,6 @@
       "css": ["style/viewer.min.css", "style/style.css"],
       "js": [
         "lib/viewer.min.js",
-        "lib/whammy.js",
-        "lib/mediabunny.min.js",
         "lib/gif.js",
         "lib/jszip-utils.min.js",
         "lib/jszip.min.js",
@@ -94,6 +92,8 @@
     {
       "resources": [
         "lib/ppd-webp.worker.js",
+        "lib/whammy.js",
+        "lib/whammy.worker.js",
         "lib/pako.min.js",
         "lib/UPNG.js",
         "lib/apng.worker.js",

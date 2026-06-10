@@ -2912,31 +2912,99 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   toWebM: () => (/* binding */ toWebM)
 /* harmony export */ });
-/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
+/* harmony import */ var webextension_polyfill__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! webextension-polyfill */ "./node_modules/webextension-polyfill/dist/browser-polyfill.js");
+/* harmony import */ var webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(webextension_polyfill__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
 
+
+// https://github.com/antimatter15/whammy
 class ToWebM {
+    worker;
+    workerReady = null;
+    constructor() {
+        this.workerReady = this.loadWorkerJS();
+    }
+    async loadWorkerJS() {
+        const [whammyRes, workerRes] = await Promise.all([
+            fetch(webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default().runtime.getURL('lib/whammy.js')),
+            fetch(webextension_polyfill__WEBPACK_IMPORTED_MODULE_0___default().runtime.getURL('lib/whammy.worker.js')),
+        ]);
+        const [whammyText, workerText] = await Promise.all([
+            whammyRes.text(),
+            workerRes.text(),
+        ]);
+        const blob = new Blob(['var window = self;\n', whammyText, '\n', workerText], {
+            type: 'application/javascript',
+        });
+        const url = URL.createObjectURL(blob);
+        this.worker = new Worker(url);
+        URL.revokeObjectURL(url);
+        this.worker.onerror = (ev) => {
+            console.error('Whammy worker error:', ev);
+        };
+    }
     async convert(ImageBitmapList, info) {
-        return new Promise(async (resolve, reject) => {
+        if (typeof Worker === 'undefined' || typeof OffscreenCanvas === 'undefined') {
+            const video = await this.convertInMainThread(ImageBitmapList, info);
+            _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('convertSuccess');
+            return video;
+        }
+        await this.workerReady;
+        const blob = await this.encodeInWorker(ImageBitmapList, info);
+        _EVT__WEBPACK_IMPORTED_MODULE_1__.EVT.fire('convertSuccess');
+        return blob;
+    }
+    async convertInMainThread(ImageBitmapList, info) {
+        return new Promise((resolve, reject) => {
             const width = ImageBitmapList[0].width;
             const height = ImageBitmapList[0].height;
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = width;
             canvas.height = height;
-            // 创建视频编码器
             const encoder = new Whammy.Video();
-            // 添加帧数据
             ImageBitmapList.forEach((imageBitmap, index) => {
                 ctx.drawImage(imageBitmap, 0, 0);
-                // 把图像转换为 webp 格式的 DataURL，这样 webm 编码器内部可以直接使用，不需要进行一些重复的操作
-                // https://github.com/antimatter15/whammy#basic-usage
                 const url = canvas.toDataURL('image/webp', 0.9);
                 encoder.add(url, info.frames[index].delay);
             });
-            // 编码视频
             encoder.compile(false, (video) => {
-                _EVT__WEBPACK_IMPORTED_MODULE_0__.EVT.fire('convertSuccess');
                 resolve(video);
+            });
+        });
+    }
+    // 使用 worker 进行绘制和 WebM 编码，避免在主线程上执行 canvas.toDataURL 和 Whammy 编码
+    encodeInWorker(ImageBitmapList, info) {
+        return new Promise((resolve, reject) => {
+            const id = Date.now() + Math.random();
+            const timeoutId = window.setTimeout(() => {
+                this.worker.removeEventListener('message', handler);
+                reject(new Error('Whammy encoding timeout'));
+            }, 120000);
+            const handler = (ev) => {
+                if (ev.data.id !== id)
+                    return;
+                window.clearTimeout(timeoutId);
+                this.worker.removeEventListener('message', handler);
+                if (ev.data.error) {
+                    reject(new Error(ev.data.error));
+                }
+                else if (ev.data.result &&
+                    typeof ev.data.result.size === 'number') {
+                    resolve(ev.data.result);
+                }
+                else {
+                    reject(new Error('Invalid Whammy worker response'));
+                }
+            };
+            this.worker.addEventListener('message', handler);
+            this.worker.postMessage({
+                id,
+                bitmaps: ImageBitmapList,
+                delays: info.frames.map((frame) => frame.delay),
+                width: ImageBitmapList[0].width,
+                height: ImageBitmapList[0].height,
+                quality: 0.9,
             });
         });
     }
@@ -38983,6 +39051,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   用于显示图片查看器<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  用于把动图转换为 WebM 视频<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   用于把动图转换为 WebM 视频<br>
   <br>
@@ -39006,6 +39077,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   用於顯示圖片檢視器<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  用於把動圖轉換為 WebM 影片<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   用於把動圖轉換為 WebM 影片<br>
@@ -39031,6 +39105,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   Used to display the image viewer<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Used to convert Ugoira into WebM videos<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Used to convert Ugoira into WebM videos<br>
   <br>
@@ -39054,6 +39131,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   画像ビューアーの表示に使用<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Ugoira を WebM 動画に変換するために使用<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Ugoira を WebM 動画に変換するために使用<br>
@@ -39079,6 +39159,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   이미지 뷰어를 표시하는 데 사용<br>
   <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Ugoira를 WebM 비디오로 변환하는 데 사용<br>
+  <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Ugoira를 WebM 비디오로 변환하는 데 사용<br>
   <br>
@@ -39102,6 +39185,9 @@ Additionally, if you have enabled "Create folder using the first matching tag", 
   <br>
   <a href="https://github.com/fengyuanchen/viewerjs" target="_blank">Viewer.js</a><br>
   Используется для отображения просмотрщика изображений<br>
+  <br>
+  <a href="https://github.com/antimatter15/whammy" target="_blank">Whammy</a><br>
+  Используется для преобразования Ugoira в видео WebM<br>
   <br>
   <a href="https://github.com/Vanilagy/mediabunny" target="_blank">Mediabunny</a><br>
   Используется для преобразования Ugoira в видео WebM<br>
