@@ -11874,7 +11874,7 @@ class Tools {
     // 每个页面都只会添加部分按钮（addInitPageBtn），所以要获取所有按钮的话，需要进入多个页面里
     static buttonsHtml = [];
     static saveButtonsHtml(id, nameKey, btn) {
-        const exsiting = this.buttonsHtml.find(item => item.id === id);
+        const exsiting = this.buttonsHtml.find((item) => item.id === id);
         if (exsiting) {
             exsiting.html = btn.outerHTML;
         }
@@ -39243,6 +39243,22 @@ If you're worried about misoperation, you can turn off this feature.`,
         `⚠️다운로더는 현재 컬렉션 가져오기를 지원하지 않습니다.`,
         `⚠️Загрузчик в настоящее время не поддерживает получение коллекций.`,
     ],
+    _获取图片失败: [
+        '❌获取图片失败',
+        '❌獲取圖片失敗',
+        '❌Failed to fetch image',
+        '❌画像の取得に失敗',
+        '❌이미지 가져오기 실패',
+        '❌Не удалось получить изображение',
+    ],
+    _Firefox的跨域策略导致了请求失败: [
+        '最可能的原因：Firefox 浏览器严格的跨域限制导致了这个请求失败。下载器无法解决此问题。',
+        '最可能的原因：Firefox 瀏覽器嚴格的跨域限制導致了這個請求失敗。下載器無法解決此問題。',
+        'Most likely reason: The strict cross-origin restrictions of Firefox browser caused this request to fail. The downloader cannot solve this problem.',
+        '最も可能性の高い理由：Firefoxブラウザの厳格なクロスオリジン制限がこのリクエストの失敗を引き起こしました。ダウンローダーはこの問題を解決できません。',
+        '가장 가능성이 높은 이유: Firefox 브라우저의 엄격한 교차 출처 제한으로 인해 이 요청이 실패했습니다. 다운로더는 이 문제를 해결할 수 없습니다.',
+        'Наиболее вероятная причина: строгие ограничения кросс-доменных запросов в браузере Firefox привели к сбою этого запроса. Загрузчик не может решить эту проблему.',
+    ],
 };
 
 
@@ -41462,6 +41478,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_imageToIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/imageToIcon */ "./src/ts/utils/imageToIcon.ts");
 /* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
+/* harmony import */ var _utils_GetImage__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/GetImage */ "./src/ts/utils/GetImage.ts");
+
 
 
 
@@ -41486,11 +41504,17 @@ class SaveAvatarIcon {
         const userProfile = await _API__WEBPACK_IMPORTED_MODULE_1__.API.getUserProfile(userId);
         const bigImg = userProfile.body.imageBig; // imageBig 并不是头像原图，而是裁剪成 170 px 的尺寸
         const fullSizeImg = bigImg.replace('_170', ''); // 去掉 170 标记，获取头像图片的原图
+        // 加载图片
+        const imageBlob = await (0,_utils_GetImage__WEBPACK_IMPORTED_MODULE_8__.getImg)(fullSizeImg);
+        if (!imageBlob) {
+            return;
+        }
+        const imageURL = URL.createObjectURL(imageBlob);
         // 生成 ico 文件
         // 尺寸固定为 256，因为尺寸更小的图标如 128，在 windows 资源管理器里会被缩小到 48 显示
         const blob = await _utils_imageToIcon__WEBPACK_IMPORTED_MODULE_5__.img2ico.convert({
             size: [256],
-            source: fullSizeImg,
+            source: imageURL,
             shape: 'fillet',
             bleed: true,
         });
@@ -41523,6 +41547,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
 /* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
+/* harmony import */ var _utils_GetImage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/GetImage */ "./src/ts/utils/GetImage.ts");
+
 
 
 
@@ -41552,9 +41578,11 @@ class SaveAvatarImage {
         // 如果是 gif 格式，则不生成其大图 url，因为生成的大图是静态图。不知道 gif 头像是否有大图，以及其 url 是什么样的
         // 如果是其他格式，则去掉 170 标记，获取头像图片的原图
         const fullSizeImgURL = ext === 'gif' ? imageURL : imageURL.replace('_170', '');
-        // 加载文件
-        const img = await fetch(fullSizeImgURL);
-        const blob = await img.blob();
+        // 加载图片
+        const blob = await (0,_utils_GetImage__WEBPACK_IMPORTED_MODULE_7__.getImg)(fullSizeImgURL);
+        if (!blob) {
+            return;
+        }
         // 直接保存到下载文件夹
         const url = URL.createObjectURL(blob);
         const name = `${userProfile.body.name}_${userId}_avatar.${ext}`;
@@ -41584,6 +41612,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../EVT */ "./src/ts/EVT.ts");
 /* harmony import */ var _utils_Utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Utils */ "./src/ts/utils/Utils.ts");
 /* harmony import */ var _Toast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Toast */ "./src/ts/Toast.ts");
+/* harmony import */ var _utils_GetImage__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/GetImage */ "./src/ts/utils/GetImage.ts");
+
 
 
 
@@ -41613,9 +41643,11 @@ class SaveUserCover {
         if (!bgUrl) {
             return _Toast__WEBPACK_IMPORTED_MODULE_6__.toast.error(_Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_没有数据可供使用'));
         }
-        // 加载文件
-        const img = await fetch(bgUrl);
-        const blob = await img.blob();
+        // 加载图片
+        const blob = await (0,_utils_GetImage__WEBPACK_IMPORTED_MODULE_7__.getImg)(bgUrl);
+        if (!blob) {
+            return;
+        }
         // 提取后缀名
         const arr = bgUrl.split('.');
         const ext = arr[arr.length - 1];
@@ -67818,6 +67850,47 @@ class DateFormat {
 
 /***/ }),
 
+/***/ "./src/ts/utils/GetImage.ts":
+/*!**********************************!*\
+  !*** ./src/ts/utils/GetImage.ts ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getImg: () => (/* binding */ getImg)
+/* harmony export */ });
+/* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Language */ "./src/ts/Language.ts");
+/* harmony import */ var _Config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Config */ "./src/ts/Config.ts");
+/* harmony import */ var _Log__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Log */ "./src/ts/Log.ts");
+/* harmony import */ var _MsgBox__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../MsgBox */ "./src/ts/MsgBox.ts");
+
+
+
+
+async function getImg(url) {
+    let blob = null;
+    try {
+        const response = await fetch(url);
+        blob = await response.blob();
+        return blob;
+    }
+    catch (error) {
+        // 在 Firefox 浏览器里，由于图片的域名不同，会产生 CORS 错误，无法获取图片数据
+        let msg = _Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_获取图片失败');
+        if (_Config__WEBPACK_IMPORTED_MODULE_1__.Config.isFirefox) {
+            msg += '<br>' + _Language__WEBPACK_IMPORTED_MODULE_0__.lang.transl('_Firefox的跨域策略导致了请求失败');
+        }
+        _Log__WEBPACK_IMPORTED_MODULE_2__.log.error(msg);
+        _MsgBox__WEBPACK_IMPORTED_MODULE_3__.msgBox.error(msg);
+        return null;
+    }
+}
+
+
+/***/ }),
+
 /***/ "./src/ts/utils/IndexedDB.ts":
 /*!***********************************!*\
   !*** ./src/ts/utils/IndexedDB.ts ***!
@@ -68461,7 +68534,7 @@ class Utils {
         document.body.append(el);
         return el;
     }
-    // 加载一个图片，当 onload 事件发生之后返回 img 元素
+    /** 使用 img 标签加载一个图片，当 onload 事件发生之后返回 img 元素 */
     static async loadImg(url) {
         return new Promise((resolve, reject) => {
             const img = new Image();

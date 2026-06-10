@@ -262,7 +262,7 @@ class Utils {
     return el
   }
 
-  // 加载一个图片，当 onload 事件发生之后返回 img 元素
+  /** 使用 img 标签加载一个图片，当 onload 事件发生之后返回 img 元素 */
   static async loadImg(url: string) {
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image()

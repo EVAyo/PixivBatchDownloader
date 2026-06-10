@@ -10390,6 +10390,22 @@ If you're worried about misoperation, you can turn off this feature.`,
     `⚠️다운로더는 현재 컬렉션 가져오기를 지원하지 않습니다.`,
     `⚠️Загрузчик в настоящее время не поддерживает получение коллекций.`,
   ],
+  _获取图片失败: [
+    '❌获取图片失败',
+    '❌獲取圖片失敗',
+    '❌Failed to fetch image',
+    '❌画像の取得に失敗',
+    '❌이미지 가져오기 실패',
+    '❌Не удалось получить изображение',
+  ],
+  _Firefox的跨域策略导致了请求失败: [
+    '最可能的原因：Firefox 浏览器严格的跨域限制导致了这个请求失败。下载器无法解决此问题。',
+    '最可能的原因：Firefox 瀏覽器嚴格的跨域限制導致了這個請求失敗。下載器無法解決此問題。',
+    'Most likely reason: The strict cross-origin restrictions of Firefox browser caused this request to fail. The downloader cannot solve this problem.',
+    '最も可能性の高い理由：Firefoxブラウザの厳格なクロスオリジン制限がこのリクエストの失敗を引き起こしました。ダウンローダーはこの問題を解決できません。',
+    '가장 가능성이 높은 이유: Firefox 브라우저의 엄격한 교차 출처 제한으로 인해 이 요청이 실패했습니다. 다운로더는 이 문제를 해결할 수 없습니다.',
+    'Наиболее вероятная причина: строгие ограничения кросс-доменных запросов в браузере Firefox привели к сбою этого запроса. Загрузчик не может решить эту проблему.',
+  ],
 }
 
 export type LangTextKey = keyof typeof langText
