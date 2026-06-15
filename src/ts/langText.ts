@@ -10502,6 +10502,14 @@ If you're worried about misoperation, you can turn off this feature.`,
     '가장 가능성이 높은 이유: Firefox 브라우저의 엄격한 교차 출처 제한으로 인해 이 요청이 실패했습니다. 다운로더는 이 문제를 해결할 수 없습니다.',
     'Наиболее вероятная причина: строгие ограничения кросс-доменных запросов в браузере Firefox привели к сбою этого запроса. Загрузчик не может решить эту проблему.',
   ],
+  _宣传语:[
+    `Pixiv.net<br>批量下载 <br>一键搞定！`,
+    `Pixiv.net<br>批量下載 <br>一鍵搞定！`,
+    `Pixiv.net<br>Batch Download <br>One-click Solution!`,
+    `Pixiv.net<br>バッチダウンロード <br>ワンクリックで解決！`,
+    `Pixiv.net<br>배치 다운로드 <br>원클릭 솔루션!`,
+    `Pixiv.net<br>Пакетная загрузка <br>Решение в один клик!`,
+  ],
 }
 
 export type LangTextKey = keyof typeof langText

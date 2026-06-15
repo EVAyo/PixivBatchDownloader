@@ -62,10 +62,10 @@ Firefox browsers can install this extension from **[Add-Ons](https://addons.mozi
 # Offline Installation
 
 Please check the Wiki page:
-[Offline Installation](https://xuejianxianzun.github.io/PBDWiki/#/en/OfflineInstallation)
+[Offline Installation](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/OfflineInstallation)
 
 If you want to use this extension on Android, please check the Wiki page:
-[Install on Microsoft Edge Canary Browser](https://xuejianxianzun.github.io/PBDWiki/#/en/MicrosoftEdgeCanary)
+[Install on Microsoft Edge Canary Browser](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/MicrosoftEdgeCanary)
 
 # Wiki
 

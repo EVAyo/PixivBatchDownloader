@@ -62,10 +62,10 @@ Firefox 브라우저는 **[Add-Ons](https://addons.mozilla.org/firefox/addon/pow
 # 오프라인 설치
 
 Wiki 페이지를 확인하세요:
-[오프라인 설치](https://xuejianxianzun.github.io/PBDWiki/#/en/OfflineInstallation)
+[오프라인 설치](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/OfflineInstallation)
 
 Android에서 이 확장 프로그램을 사용하려면 Wiki 페이지를 확인하세요:
-[Microsoft Edge Canary 브라우저에 설치](https://xuejianxianzun.github.io/PBDWiki/#/en/MicrosoftEdgeCanary)
+[Microsoft Edge Canary 브라우저에 설치](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/MicrosoftEdgeCanary)
 
 # Wiki
 

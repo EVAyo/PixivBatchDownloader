@@ -64,10 +64,10 @@ Firefox 瀏覽器可從 **[Add-Ons](https://addons.mozilla.org/firefox/addon/pow
 # 離線安裝
 
 請查看 Wiki 頁面：
-[離線安裝](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85)
+[離線安裝](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85)
 
 如果你想在 Android 上使用這個擴展，請查看 Wiki 頁面：
-[在 Microsoft Edge Canary 瀏覽器上安裝](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/MicrosoftEdgeCanary)
+[在 Microsoft Edge Canary 瀏覽器上安裝](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/MicrosoftEdgeCanary)
 
 # Wiki
 

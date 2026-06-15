@@ -67,10 +67,10 @@ Firefox 浏览器可以从 **[Add-Ons](https://addons.mozilla.org/firefox/addon/
 # 离线安装
 
 请查看 Wiki 页面：
-[离线安装](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85)
+[离线安装](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85)
 
 如果你想在 Android 上使用这个扩展，请查看 Wiki 页面：
-[在 Microsoft Edge Canary 浏览器上安装](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/MicrosoftEdgeCanary)
+[在 Microsoft Edge Canary 浏览器上安装](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/MicrosoftEdgeCanary)
 
 # Wiki
 

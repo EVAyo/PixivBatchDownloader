@@ -61,10 +61,10 @@ Russian
 # Оффлайн-установка
 
 Пожалуйста, ознакомьтесь со страницей Wiki:
-[Оффлайн-установка](https://xuejianxianzun.github.io/PBDWiki/#/en/OfflineInstallation)
+[Оффлайн-установка](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/OfflineInstallation)
 
 Если вы хотите использовать это расширение на Android, ознакомьтесь со страницей Wiki:
-[Установка в браузере Microsoft Edge Canary](https://xuejianxianzun.github.io/PBDWiki/#/en/MicrosoftEdgeCanary)
+[Установка в браузере Microsoft Edge Canary](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/MicrosoftEdgeCanary)
 
 # Wiki
 

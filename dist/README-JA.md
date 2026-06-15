@@ -62,10 +62,10 @@ Firefoxブラウザは、**[Add-Ons](https://addons.mozilla.org/firefox/addon/po
 # オフラインインストール
 
 Wikiページをご覧ください：
-[オフラインインストール](https://xuejianxianzun.github.io/PBDWiki/#/en/OfflineInstallation)
+[オフラインインストール](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/OfflineInstallation)
 
 Androidでこの拡張機能を使用したい場合は、Wikiページをご覧ください：
-[Microsoft Edge Canaryブラウザでのインストール](https://xuejianxianzun.github.io/PBDWiki/#/en/MicrosoftEdgeCanary)
+[Microsoft Edge Canaryブラウザでのインストール](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/MicrosoftEdgeCanary)
 
 # Wiki
 
