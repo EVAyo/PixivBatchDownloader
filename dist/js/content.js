@@ -18629,18 +18629,18 @@ class InitFollowingPage extends _crawl_InitPageBase__WEBPACK_IMPORTED_MODULE_0__
         this.addInitPageBtn('crawlBtns', '_开始抓取', '_默认下载多页', 'startCrawlingInFollowingPage', 'brand').addEventListener('click', () => {
             this.readyCrawl();
         });
-        this.addInitPageBtn('crawlBtns', '_导出关注列表CSV', '', 'exportFollowingListCSV', 'brand').addEventListener('click', () => {
+        this.addInitPageBtn('otherBtns', '_导出关注列表CSV', '', 'exportFollowingListCSV', 'brand').addEventListener('click', () => {
             _pageFunciton_ExportFollowingList__WEBPACK_IMPORTED_MODULE_10__.exportFollowingList.start('csv');
         });
-        this.addInitPageBtn('crawlBtns', '_导出关注列表JSON', '', 'exportFollowingListJSON', 'brand').addEventListener('click', () => {
+        this.addInitPageBtn('otherBtns', '_导出关注列表JSON', '', 'exportFollowingListJSON', 'brand').addEventListener('click', () => {
             _pageFunciton_ExportFollowingList__WEBPACK_IMPORTED_MODULE_10__.exportFollowingList.start('json');
         });
-        this.addInitPageBtn('crawlBtns', '_批量关注用户', '', 'batchFollowUser', 'brand').addEventListener('click', async () => {
+        this.addInitPageBtn('otherBtns', '_批量关注用户', '', 'batchFollowUser', 'brand').addEventListener('click', async () => {
             _pageFunciton_BatchFollowUser__WEBPACK_IMPORTED_MODULE_11__.batchFollowUser.start();
         });
         // 在公开版本里隐藏此功能
         // Tools.addBtn(
-        //   'crawlBtns',
+        //   'otherBtns',
         //   Colors.bgWarning,
         //   '_筛选不活跃的用户',
         //   '',
@@ -18648,7 +18648,7 @@ class InitFollowingPage extends _crawl_InitPageBase__WEBPACK_IMPORTED_MODULE_0__
         // ).addEventListener('click', async () => {
         //   filterInactiveUsers.start()
         // })
-        this.addInitPageBtn('crawlBtns', '_查找已注销的用户', '', 'findDeactivatedUsers', 'brand').addEventListener('click', async () => {
+        this.addInitPageBtn('otherBtns', '_查找已注销的用户', '', 'findDeactivatedUsers', 'brand').addEventListener('click', async () => {
             _FindDeactivatedUsers__WEBPACK_IMPORTED_MODULE_12__.findDeactivatedUsers.check();
         });
     }
@@ -19709,6 +19709,8 @@ class BookmarkPageBatchActionBase {
         if (!workData.bookmarkData) {
             return null;
         }
+        // 该方法会保留已被删除的作品的数据。
+        // 被删除的作品的 id 是 number 而非 string，因为 API 返回的数据里就是这样的
         return {
             workID: Number.parseInt(workData.id),
             type: workData.illustType === undefined
@@ -19801,6 +19803,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// 导出收藏的作品列表。会包含已被删除的作品
 class ExportBookmarkListAction extends _BookmarkPageBatchActionBase__WEBPACK_IMPORTED_MODULE_8__.BookmarkPageBatchActionBase {
     exportList = [];
     constructor(btn) {
@@ -49782,10 +49785,6 @@ class Wiki {
                     nameKey: '_关注页面',
                     ids: [
                         'startCrawlingInFollowingPage',
-                        'exportFollowingListCSV',
-                        'exportFollowingListJSON',
-                        'batchFollowUser',
-                        'findDeactivatedUsers',
                     ],
                 },
                 ContestPage: {
@@ -49862,11 +49861,23 @@ class Wiki {
                     ids: [
                         'addTagToUnmarkedWork',
                         'removeTagsFromAllWorksOnPage',
-                        'unBookmarkAllWorksOnPage',
+                        'removeTagsFromAllWorks',
+                        'unBookmarkWorksOnThisPage',
+                        'unBookmarkAllWorks',
                         'findBookmark404Works',
                         'unBookmarkAll404Works',
                         'exportBookmarkList',
                         'importBookmarkList',
+                    ],
+                },
+                FollowingPage: {
+                    id: 'FollowingPage',
+                    nameKey: '_关注页面',
+                    ids: [
+                        'exportFollowingListCSV',
+                        'exportFollowingListJSON',
+                        'batchFollowUser',
+                        'findDeactivatedUsers',
                     ],
                 },
             },

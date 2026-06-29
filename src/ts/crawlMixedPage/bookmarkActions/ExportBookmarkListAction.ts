@@ -11,6 +11,7 @@ import { BookmarkPageBatchActionBase } from './BookmarkPageBatchActionBase'
 import { pageType } from '../../PageType'
 import { settings } from '../../setting/Settings'
 
+// 导出收藏的作品列表。会包含已被删除的作品
 class ExportBookmarkListAction extends BookmarkPageBatchActionBase<BookmarkResult> {
   private exportList: BookmarkResult[] = []
 

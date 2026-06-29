@@ -143,6 +143,8 @@ abstract class BookmarkPageBatchActionBase<T> {
       return null
     }
 
+    // 该方法会保留已被删除的作品的数据。
+    // 被删除的作品的 id 是 number 而非 string，因为 API 返回的数据里就是这样的
     return {
       workID: Number.parseInt(workData.id),
       type:

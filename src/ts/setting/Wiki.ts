@@ -143,10 +143,6 @@ class Wiki {
           nameKey: '_关注页面',
           ids: [
             'startCrawlingInFollowingPage',
-            'exportFollowingListCSV',
-            'exportFollowingListJSON',
-            'batchFollowUser',
-            'findDeactivatedUsers',
           ],
         },
         ContestPage: {
@@ -223,11 +219,23 @@ class Wiki {
           ids: [
             'addTagToUnmarkedWork',
             'removeTagsFromAllWorksOnPage',
-            'unBookmarkAllWorksOnPage',
+            'removeTagsFromAllWorks',
+            'unBookmarkWorksOnThisPage',
+            'unBookmarkAllWorks',
             'findBookmark404Works',
             'unBookmarkAll404Works',
             'exportBookmarkList',
             'importBookmarkList',
+          ],
+        },
+        FollowingPage: {
+          id: 'FollowingPage',
+          nameKey: '_关注页面',
+          ids: [
+            'exportFollowingListCSV',
+            'exportFollowingListJSON',
+            'batchFollowUser',
+            'findDeactivatedUsers',
           ],
         },
       },

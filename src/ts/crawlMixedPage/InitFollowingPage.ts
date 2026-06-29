@@ -63,7 +63,7 @@ class InitFollowingPage extends InitPageBase {
     })
 
     this.addInitPageBtn(
-      'crawlBtns',
+      'otherBtns',
       '_导出关注列表CSV',
       '',
       'exportFollowingListCSV',
@@ -73,7 +73,7 @@ class InitFollowingPage extends InitPageBase {
     })
 
     this.addInitPageBtn(
-      'crawlBtns',
+      'otherBtns',
       '_导出关注列表JSON',
       '',
       'exportFollowingListJSON',
@@ -83,7 +83,7 @@ class InitFollowingPage extends InitPageBase {
     })
 
     this.addInitPageBtn(
-      'crawlBtns',
+      'otherBtns',
       '_批量关注用户',
       '',
       'batchFollowUser',
@@ -94,7 +94,7 @@ class InitFollowingPage extends InitPageBase {
 
     // 在公开版本里隐藏此功能
     // Tools.addBtn(
-    //   'crawlBtns',
+    //   'otherBtns',
     //   Colors.bgWarning,
     //   '_筛选不活跃的用户',
     //   '',
@@ -104,7 +104,7 @@ class InitFollowingPage extends InitPageBase {
     // })
 
     this.addInitPageBtn(
-      'crawlBtns',
+      'otherBtns',
       '_查找已注销的用户',
       '',
       'findDeactivatedUsers',
