@@ -18,11 +18,11 @@ type BookmarkWork = BookmarkData['body']['works'][number]
 
 // 调用方只需要传入“抓取多少页、如何收集每条作品、收集完怎么处理”。
 type BookmarkActionOptions<T> = {
-  /** -1 表示抓取全部收藏；其他值表示抓取指定页数。 */
+  /** 设置要抓取多少页。-1 表示抓取全部收藏；其他值表示抓取指定页数。 */
   crawlNumber: number
-  /** 有些动作要从第一页开始，有些则要沿用当前页偏移量。 */
+  /** 有些动作要从第一页开始，有些则要沿用当前页偏移量。resetOffset 为 true 的话就是从第一页开始抓取 */
   resetOffset?: boolean
-  /** 是否启用慢速抓取，避免请求过快。 */
+  /** 是否启用慢速抓取，以避免请求频率过快。 */
   slowCrawl?: boolean
   /** 对 API 获取到的收藏数据进行处理，通常会进行过滤，并提取成子类需要使用的数据格式 */
   collectWork: (

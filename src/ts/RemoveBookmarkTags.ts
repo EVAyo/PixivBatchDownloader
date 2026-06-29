@@ -68,4 +68,4 @@ class RemoveBookmarkTags {
 }
 
 const removeBookmarkTags = new RemoveBookmarkTags()
-export { removeBookmarkTags}
+export { removeBookmarkTags }

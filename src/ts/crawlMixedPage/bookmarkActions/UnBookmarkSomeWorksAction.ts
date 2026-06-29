@@ -5,19 +5,28 @@ import { toast } from '../../Toast'
 import { unBookmarkWorks } from '../../UnBookmarkWorks'
 import { WorkBookmarkData } from '../../Bookmark'
 import { BookmarkPageBatchActionBase } from './BookmarkPageBatchActionBase'
+import { LangTextKey } from '../../langText'
 
-class UnBookmarkAllWorksAction extends BookmarkPageBatchActionBase<WorkBookmarkData> {
-  constructor(btn: HTMLButtonElement) {
+type CrawlRangeOptions = {
+  title: LangTextKey
+  crawlNumber: number
+  resetOffset?: boolean
+}
+
+class UnBookmarkSomeWorksAction extends BookmarkPageBatchActionBase<WorkBookmarkData> {
+  constructor(btn: HTMLButtonElement, option: CrawlRangeOptions) {
     super()
 
     btn.addEventListener('click', () => {
-      const title = lang.transl('_取消收藏本页面的所有作品')
+      const title = lang.transl(option.title)
       log.warning(title)
       toast.warning(title)
       EVT.fire('closeCenterPanel')
 
       void this.run({
-        crawlNumber: 1,
+        crawlNumber: option.crawlNumber,
+        resetOffset: option.resetOffset,
+        slowCrawl: true,
         collectWork: (workData, bookmarkTags) =>
           this.createBookmarkData(workData, bookmarkTags),
         onCollected: async (bookmarkDataList) => {
@@ -28,4 +37,4 @@ class UnBookmarkAllWorksAction extends BookmarkPageBatchActionBase<WorkBookmarkD
   }
 }
 
-export { UnBookmarkAllWorksAction }
+export { UnBookmarkSomeWorksAction }

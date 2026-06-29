@@ -1,4 +1,3 @@
-// 初始化新版收藏页面
 import { InitPageBase } from '../crawl/InitPageBase'
 import { API } from '../API'
 import { lang } from '../Language'
@@ -17,15 +16,15 @@ import { msgBox } from '../MsgBox'
 import { settings } from '../setting/Settings'
 import { pageType } from '../PageType'
 import { states } from '../store/States'
-import { toast } from '../Toast'
 import { EVT } from '../EVT'
 import { RemoveWorksTagsAction } from './bookmarkActions/RemoveWorksTagsAction'
-import { UnBookmarkAllWorksAction } from './bookmarkActions/UnBookmarkAllWorksAction'
+import { UnBookmarkSomeWorksAction } from './bookmarkActions/UnBookmarkSomeWorksAction'
 import { FindBookmark404Action } from './bookmarkActions/FindBookmark404Action'
 import { UnBookmarkAll404WorksAction } from './bookmarkActions/UnBookmarkAll404WorksAction'
 import { ExportBookmarkListAction } from './bookmarkActions/ExportBookmarkListAction'
 import { ImportBookmarkListAction } from './bookmarkActions/ImportBookmarkListAction'
 
+// 初始化新版收藏页面
 class InitBookmarkPage extends InitPageBase {
   constructor() {
     super()
@@ -141,14 +140,34 @@ class InitBookmarkPage extends InitPageBase {
         }
       )
 
-      new UnBookmarkAllWorksAction(
+      new UnBookmarkSomeWorksAction(
         this.addInitPageBtn(
           'otherBtns',
           '_取消收藏本页面的所有作品',
           '',
-          'unBookmarkAllWorksOnPage',
+          'unBookmarkWorksOnThisPage',
           'danger'
-        )
+        ),
+        {
+          title: '_取消收藏本页面的所有作品',
+          crawlNumber: 1,
+          resetOffset: false,
+        }
+      )
+
+      new UnBookmarkSomeWorksAction(
+        this.addInitPageBtn(
+          'otherBtns',
+          '_取消收藏所有作品',
+          '',
+          'unBookmarkAllWorks',
+          'danger'
+        ),
+        {
+          title: '_取消收藏所有作品',
+          crawlNumber: -1,
+          resetOffset: true,
+        }
       )
 
       new FindBookmark404Action(

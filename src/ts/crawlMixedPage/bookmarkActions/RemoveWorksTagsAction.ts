@@ -3,7 +3,7 @@ import { lang } from '../../Language'
 import { LangTextKey } from '../../langText'
 import { log } from '../../Log'
 import { toast } from '../../Toast'
-import { removeBookmarkTags } from '../../1RemoveBookmarkTags'
+import { removeBookmarkTags } from '../../RemoveBookmarkTags'
 import { WorkBookmarkData } from '../../Bookmark'
 import { BookmarkPageBatchActionBase } from './BookmarkPageBatchActionBase'
 
