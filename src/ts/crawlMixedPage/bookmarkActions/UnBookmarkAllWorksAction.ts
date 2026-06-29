@@ -13,14 +13,13 @@ class UnBookmarkAllWorksAction extends BookmarkPageBatchActionBase<WorkBookmarkD
     btn.addEventListener('click', () => {
       const title = lang.transl('_取消收藏本页面的所有作品')
       log.warning(title)
-      toast.warning(title, {
-        position: 'topCenter',
-      })
+      toast.warning(title)
       EVT.fire('closeCenterPanel')
 
       void this.run({
         crawlNumber: 1,
-        collectWork: (workData) => this.createBookmarkData(workData),
+        collectWork: (workData, bookmarkTags) =>
+          this.createBookmarkData(workData, bookmarkTags),
         onCollected: async (bookmarkDataList) => {
           await unBookmarkWorks.start(bookmarkDataList)
         },

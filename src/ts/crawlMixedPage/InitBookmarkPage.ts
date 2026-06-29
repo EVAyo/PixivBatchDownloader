@@ -102,13 +102,15 @@ class InitBookmarkPage extends InitPageBase {
     const URLUserID = Utils.getURLPathField(window.location.pathname, 'users')
     const ownPage = URLUserID && URLUserID === store.loggedUserID
     if (ownPage) {
-      new BookmarksAddTag(this.addInitPageBtn(
-        'otherBtns',
-        '_给未分类作品添加添加tag',
-        '',
-        'addTagToUnmarkedWork',
-        'brand'
-      ))
+      new BookmarksAddTag(
+        this.addInitPageBtn(
+          'otherBtns',
+          '_给未分类作品添加添加tag',
+          '',
+          'addTagToUnmarkedWork',
+          'brand'
+        )
+      )
 
       new RemoveWorksTagsAction(
         this.addInitPageBtn(
@@ -117,7 +119,26 @@ class InitBookmarkPage extends InitPageBase {
           '',
           'removeTagsFromAllWorksOnPage',
           'warning'
-        )
+        ),
+        {
+          title: '_移除本页面中所有作品的标签',
+          crawlNumber: 1,
+        }
+      )
+
+      new RemoveWorksTagsAction(
+        this.addInitPageBtn(
+          'otherBtns',
+          '_移除所有作品的标签',
+          '',
+          'removeTagsFromAllWorks',
+          'warning'
+        ),
+        {
+          title: '_移除所有作品的标签',
+          crawlNumber: -1,
+          resetOffset: true,
+        }
       )
 
       new UnBookmarkAllWorksAction(
@@ -208,10 +229,13 @@ class InitBookmarkPage extends InitPageBase {
 
     store.tag = Tools.getTagFromURL()
     this.isHide = Utils.getURLSearchField(location.href, 'rest') === 'hide'
-    this.order = (Utils.getURLSearchField(location.href, 'order') ||
-      'desc') as 'desc' | 'asc'
-    this.mode = (Utils.getURLSearchField(location.href, 'mode') ||
-      'all') as 'all' | 'safe' | 'r18'
+    this.order = (Utils.getURLSearchField(location.href, 'order') || 'desc') as
+      | 'desc'
+      | 'asc'
+    this.mode = (Utils.getURLSearchField(location.href, 'mode') || 'all') as
+      | 'all'
+      | 'safe'
+      | 'r18'
     this.work_tag = Utils.getURLSearchField(location.href, 'work_tag') || ''
     this.bm =
       Utils.getURLSearchField(location.href, 'bm').replaceAll('-', '') || ''
@@ -300,7 +324,6 @@ One possible reason: You have been banned from Pixiv.`)
                 ),
           id: workData.id,
         })
-
       }
     }
 

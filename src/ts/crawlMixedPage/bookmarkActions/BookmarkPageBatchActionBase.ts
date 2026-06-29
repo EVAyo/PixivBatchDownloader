@@ -26,9 +26,10 @@ type BookmarkActionOptions<T> = {
   slowCrawl?: boolean
   /** 对 API 获取到的收藏数据进行处理，通常会进行过滤，并提取成子类需要使用的数据格式 */
   collectWork: (
-    workData: BookmarkWork
+    workData: BookmarkWork,
+    tagList?: string[]
   ) => Promise<T | null> | T | null
-  /** 当抓取任务完成后，执行的回调函数，通常会对收集到的数据进行处理。 */
+  /** 当抓取任务完成后执行的回调函数，通常会对收集到的数据进行处理。 */
   onCollected: (bookmarkDataList: T[]) => Promise<void> | void
 }
 
@@ -89,8 +90,10 @@ abstract class BookmarkPageBatchActionBase<T> {
       const isHide = Utils.getURLSearchField(location.href, 'rest') === 'hide'
       const order = (Utils.getURLSearchField(location.href, 'order') ||
         'desc') as 'desc' | 'asc'
-      const mode = (Utils.getURLSearchField(location.href, 'mode') ||
-        'all') as 'all' | 'safe' | 'r18'
+      const mode = (Utils.getURLSearchField(location.href, 'mode') || 'all') as
+        | 'all'
+        | 'safe'
+        | 'r18'
       const work_tag = Utils.getURLSearchField(location.href, 'work_tag') || ''
       const bm =
         Utils.getURLSearchField(location.href, 'bm').replaceAll('-', '') || ''
@@ -122,6 +125,7 @@ abstract class BookmarkPageBatchActionBase<T> {
         requestNumber,
       })
 
+      console.log('bookmarkDataList', bookmarkDataList)
       await options.onCollected(bookmarkDataList)
     } finally {
       states.slowCrawlMode = false
@@ -129,23 +133,29 @@ abstract class BookmarkPageBatchActionBase<T> {
     }
   }
 
-  // 从作品详情里提取收藏信息，供取消收藏等动作使用。
-  protected createBookmarkData(workData: BookmarkWork) {
+  // 在某些子类的 collectWork 方法里调用，用于从作品详情里提取收藏信息
+  // 这是一个比较通用的处理。如果子类需要使用不同的处理逻辑，可以在 collectWork 方法里自行处理
+  protected createBookmarkData(
+    workData: BookmarkWork,
+    bookmarkTags?: string[]
+  ): null | WorkBookmarkData {
     if (!workData.bookmarkData) {
       return null
     }
 
     return {
       workID: Number.parseInt(workData.id),
-      type: (workData as ArtworkCommonData).illustType === undefined
-        ? 'novels'
-        : 'illusts',
+      type:
+        (workData as ArtworkCommonData).illustType === undefined
+          ? 'novels'
+          : 'illusts',
       bookmarkID: workData.bookmarkData.id,
       private: workData.bookmarkData.private,
-    } as WorkBookmarkData
+      bookmarkTags: bookmarkTags || [],
+    }
   }
 
-  // 逐页读取收藏列表，并把符合条件的作品转换成动作需要的数据。
+  // 加载收藏列表来获取作品数据，并把符合条件的作品转换成动作需要的数据。
   private async collectBookmarkData({
     collectWork,
     isHide,
@@ -156,7 +166,10 @@ abstract class BookmarkPageBatchActionBase<T> {
     offset,
     requestNumber,
   }: {
-    collectWork: (workData: BookmarkWork) => Promise<T | null> | T | null
+    collectWork: (
+      workData: BookmarkWork,
+      tagList?: string[]
+    ) => Promise<T | null> | T | null
     isHide: boolean
     order: 'desc' | 'asc'
     mode: 'all' | 'safe' | 'r18'
@@ -192,10 +205,16 @@ abstract class BookmarkPageBatchActionBase<T> {
         break
       }
 
+      const _bookmarkTags = data.body.bookmarkTags || {}
+
       for (const workData of works) {
         // 由子类决定是否保留当前作品。
-        const item = await collectWork(workData)
+        // 传递这个作品的收藏标签，供有需要的模块使用。注意这不是作品本身的标签，而是用户为该它添加的收藏标签
+        const bookmarkTags =
+          _bookmarkTags[workData.bookmarkData?.id || ''] || []
+        const item = await collectWork(workData, bookmarkTags)
         if (item) {
+          // 该列表里包含已被删除的作品
           bookmarkDataList.push(item)
         }
       }

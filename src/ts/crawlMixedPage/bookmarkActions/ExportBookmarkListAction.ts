@@ -30,11 +30,19 @@ class ExportBookmarkListAction extends BookmarkPageBatchActionBase<BookmarkResul
 
     this.exportList = []
     EVT.fire('closeCenterPanel')
-    log.log(lang.transl('_导出收藏列表'))
+    const msg = lang.transl('_导出收藏列表')
+    log.log(msg)
     log.log('')
+    toast.show(msg)
+
+    const crawlNumber = settings.crawlNumber[pageType.type].value
+    log.warning(
+      lang.transl('_抓取多少页面') + ': ' + crawlNumber,
+      'exportBookmarkListCrawlNumber'
+    )
 
     await this.run({
-      crawlNumber: settings.crawlNumber[pageType.type].value,
+      crawlNumber: crawlNumber,
       slowCrawl: true,
       collectWork: async (workData) => {
         const filterOpt: FilterOption = {

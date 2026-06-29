@@ -39,12 +39,12 @@ class ImportBookmarkListAction {
     toast.success(tip)
     log.success('🚀' + tip)
     log.log(lang.transl('_作品数量') + ` ${loadedJSON.length}`)
-    log.warning(lang.transl('_提示会跳过已收藏的作品'))
 
     EVT.fire('closeCenterPanel')
 
     let oldList: BookmarkResult[] = []
     if (loadedJSON.length > 200) {
+      log.warning(lang.transl('_提示会跳过已收藏的作品'))
       log.log(lang.transl('_加载收藏列表'))
       const userID = store.loggedUserID
       const loadIllust = loadedJSON.some((item) => item.type === 'illusts')

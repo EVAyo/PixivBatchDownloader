@@ -598,6 +598,15 @@ export interface BookmarkData {
   error: boolean
   message: string
   body: {
+    /** 保存了这一页里所有作品的收藏标签。key 是作品的 bookmarkData.id，value 是标签列表。
+     *
+     * 注意：这不是作品原本的标签，而是用户为该收藏所添加的标签。并且只有添加了收藏标签的作品才会存在于这个对象里。没有收藏标签的作品没有对应的记录。
+     *
+     * 例如：一页的 48 个作品里只有 30 个添加了收藏标签，那么 bookmarkTags 对象里只会有 30 个键值对。
+     *
+     * 仅当获取自己的收藏数据时有这个属性，获取别人的收藏数据时没有这个属性。
+     */
+    bookmarkTags?: Record<string, string[]>
     works: ArtworkCommonData[] | NovelCommonData[]
     total: number
     zoneConfig: {

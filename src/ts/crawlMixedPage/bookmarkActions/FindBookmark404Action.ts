@@ -16,18 +16,19 @@ class FindBookmark404Action extends Bookmark404ActionBase {
       })
       EVT.fire('closeCenterPanel')
 
+      this.reset()
+
       void this.run({
         crawlNumber: -1,
         resetOffset: true,
         slowCrawl: true,
         collectWork: (workData) => {
-          if (Number.parseInt(workData.userId) !== 0) {
-            return null
-          }
-          return this.createBookmarkData(workData)
+          this.get404IdList(workData)
+
+          return null
         },
         onCollected: async (bookmarkDataList) => {
-          this.exportBookmark404Ids(bookmarkDataList)
+          this.exportBookmark404Ids()
         },
       })
     })
