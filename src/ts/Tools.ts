@@ -1352,6 +1352,38 @@ class Tools {
 
     return result
   }
+
+  /** 根据小说的文件名，生成小说里内嵌的图片的文件名 */
+  // 之前是在文件名的末尾添加图片 id，但是当文件名很长时，图片 id 甚至更前面的字符可能会被截断，从而产生重名文件
+  // 现在改为添加到 {id} 之后，这样减少了图片 id 被截断的可能性，因为 {id} 通常位于文件名的开头，不容易被截断
+  // 如果 {id} 位于文件名的结尾部分，依然可能会被截断。但这种情况比较少
+  static createNovelImageName(
+    novelName: string,
+    imageUrl: string,
+    novelId: string,
+    imageId: string
+  ) {
+    let imageName = Utils.replaceExtension(novelName, imageUrl)
+    const array = imageName.split('/')
+    const fileName = array.at(-1)!
+    const index = fileName.indexOf(novelId)
+    // 如果最后的文件名部分里有 novelId，就在它后面添加图片 id
+    if (index !== -1) {
+      array[array.length - 1] = fileName.replaceAll(novelId, imageId)
+    } else {
+      // 如果没有找到 novelId，就在文件名末尾添加图片 id
+      const array2 = fileName.split('.')
+      array2[0] = array2[0] + '-' + imageId
+      array[array.length - 1] = array2.join('.')
+    }
+    imageName = array.join('/')
+    return imageName
+  }
+
+  /** 为设定资料里的图片生成唯一的标记，如 [glossaryImage-24974873] */
+  static createGlossaryImageFlag(imageId: string) {
+    return `[glossaryImage-${imageId}]`
+  }
 }
 
 export { Tools }

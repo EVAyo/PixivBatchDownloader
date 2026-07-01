@@ -793,9 +793,9 @@ class Utils {
     return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom
   }
 
-  /** 为传入的 URL 创建一个 A 标签的字符串 */
-  static createLinkHTML(url: string) {
-    return `<a href="${url}" target="_blank">${url}</a>`
+  /** 使用传入的 URL 和标题创建一个 A 标签字符串 */
+  static createLinkHTML(url: string, title?: string) {
+    return `<a href="${url}" target="_blank">${title || url}</a>`
   }
 
   /** 从 URL 里获取文件名（不包含扩展名） */

@@ -1678,7 +1678,7 @@ export interface muteData {
   }
 }
 
-type GlossaryCover = null | {
+export type GlossaryCover = null | {
   novelImageId: string
   sl: string
   urls: {
@@ -1690,14 +1690,17 @@ type GlossaryCover = null | {
   }
 }
 
+// 有图片和详情的设定资料示例：
+// https://www.pixiv.net/novel/series/9114820/glossary/154698
+// https://www.pixiv.net/ajax/novel/series/9114820/glossary/item/154698?lang=zh
 export interface GlossaryItem {
   id: string
   seriesId: string
   categoryId: string
   name: string
   overview: string
-  coverImage: GlossaryCover
-  /**这条设定的详细说明，如果未设置，则为空字符串 */
+  coverImage: GlossaryCover | null
+  /**这条设定资料的详情文字。如果未设置，则为空字符串 */
   detail: string | ''
 }
 
@@ -1705,24 +1708,41 @@ export interface GlossaryCategorie {
   id: string
   seriesId: string
   name: string
+  /** 所有设定资料的元数据 */
   items: {
+    /** 这条设定资料的 id */
     id: string
+    /** 所属的系列 id */
     seriesId: string
+    /** 所属的分类 id。在添加一条设定资料时，需要为其指定分类（类别），这就是这个分类的 id */
     categoryId: string
+    /** 这条设定资料的名称（标题）。对于可置换的单词，这个名称就是单词 */
+    // 例如：如果作者设置了允许用户把 "◯" 替换成自定义单词，那么就会生成一条 name 为 "◯" 的设定资料
     name: string
+    /** 这条设定资料的概述（说明） */
     overview: string
-    coverImage: GlossaryCover
-    /**这里并没有包含设定的详细说明，即始终为 null */
+    /** 这条设定资料的图片。大部分时候都没有，所以经常是 null
+     * 每条设定资料最多只有一张图片。在显示设定资料时，排版从上到下依次是 name、overview、coverImage、detail
+     */
+    coverImage: GlossaryCover | null
+    /** 这条设定资料的详情文字。注意：即使有详情，这里也始终为 null。要获取详情，必须获取这条设定资料的详细数据，在 GlossaryItem 类型里获取 */
     detail: null
   }[]
 }
 
+// 有可置换单词的系列小说：
+// https://www.pixiv.net/novel/series/15721659
+// https://www.pixiv.net/ajax/novel/series/15721659/glossary?lang=zh
 export interface NovelSeriesGlossary {
   error: boolean
   message: string
   body: {
     categories: GlossaryCategorie[]
-    replaceeItemIds: []
+    /** 这个系列小说里所有可置换的单词的 id 的列表。如果没有可置换的单词，则为空数组。
+     *
+     * 如果有可置换的单词，那么数组项是 id。每个 id 对应着 GlossaryCategorie.items 里某一项的 id
+     */
+    replaceeItemIds: string[]
     extraData: {
       meta: {
         title: string

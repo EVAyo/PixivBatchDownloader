@@ -5,9 +5,10 @@ import { lang } from '../Language'
 import { Tools } from '../Tools'
 import { downloadNovelCover } from '../download/DownloadNovelCover'
 import { downloadNovelEmbeddedImage } from './DownloadNovelEmbeddedImage'
+import { downloadNovelGlossaryImage } from './DownloadNovelGlossaryImage'
 import { log } from '../Log'
 import { API } from '../API'
-import { NovelSeriesData } from '../crawl/CrawlResult'
+import { GlossaryCover, NovelSeriesData } from '../crawl/CrawlResult'
 import { Config } from '../Config'
 import { toast } from '../Toast'
 import { getNovelGlossarys } from '../crawlNovelPage/GetNovelGlossarys'
@@ -45,12 +46,18 @@ interface NovelSummary {
   }
 }
 
+type GlossaryImageItem = GlossaryCover & {
+  glossaryId: string
+  glossaryTitle: string
+}
+
 class MergeNovel {
   private seriesId = ''
   private seriesTitle = ''
   private seriesUpdateDate = ''
   private seriesCaption = ''
-  private seriesGlossary = ''
+  private seriesGlossaryText = ''
+  private glossaryImages: GlossaryImageItem[] = []
   private seriesTags: string[] = []
   private userName = ''
   /** 合并后的小说文件的完整文件名。一开始是空字符串，在合并过程中才会填充实际的值 */
@@ -167,7 +174,22 @@ class MergeNovel {
         this.seriesId,
         this.crawlInterval
       )
-      this.seriesGlossary = getNovelGlossarys.storeGlossaryText(data)
+
+      // 获取设定资料里的图片的数据
+      for (const categorie of data.result) {
+        for (const item of categorie.items) {
+          if (item.coverImage) {
+            this.glossaryImages.push({
+              ...item.coverImage,
+              glossaryId: item.id,
+              glossaryTitle: item.name,
+            })
+          }
+        }
+      }
+
+      // 生成设定资料的文本内容
+      this.seriesGlossaryText = getNovelGlossarys.storeGlossaryText(data.result)
     }
 
     // 获取这个系列本身的详细数据
@@ -249,6 +271,19 @@ class MergeNovel {
       )
     }
 
+    // 保存设定资料里的图片
+    for (const item of this.glossaryImages) {
+      if (item) {
+        this.logDownloadGlossaryImage(item)
+        await downloadNovelGlossaryImage.download(
+          item.urls,
+          this.novelName,
+          item.novelImageId,
+          this.seriesId
+        )
+      }
+    }
+
     // 合并文本内容
     const text: string[] = []
 
@@ -283,10 +318,10 @@ class MergeNovel {
         a.push(CRLF_2)
       }
       // 设定资料
-      if (this.seriesGlossary) {
+      if (this.seriesGlossaryText) {
         a.push(lang.transl('_设定资料') + ': ')
         a.push(CRLF_2)
-        a.push(Utils.htmlToText(Utils.htmlDecode(this.seriesGlossary)))
+        a.push(Utils.htmlToText(Utils.htmlDecode(this.seriesGlossaryText)))
         // seriesGlossary 结尾有两个\n，这里再添加一个以增大空白区域，和其他部分做出区分
         a.push(this.CRLF)
       }
@@ -369,10 +404,10 @@ class MergeNovel {
         otherMeta.push(this.br2)
       }
       // 添加设定资料
-      if (this.seriesGlossary) {
+      if (this.seriesGlossaryText) {
         otherMeta.push(lang.transl('_设定资料') + ': ')
         otherMeta.push(this.br2)
-        otherMeta.push(this.handleEPUBDescription(this.seriesGlossary))
+        otherMeta.push(this.handleEPUBDescription(this.seriesGlossaryText))
         otherMeta.push(this.br2)
       }
       description = otherMeta.join('')
@@ -383,8 +418,30 @@ class MergeNovel {
 
     // 把创建 EPUB 的步骤放到一个函数里，方便在需要分割文件时多次调用
     const generateEPUB = async () => {
-      this.pushSizeLog()
+      // 判断是否需要保存设定资料里的图片
+      // 仅当保存第一个 EPUB 文件时，才添加设定资料里的图片。因为这些图片是整个系列的，而不是每篇小说的，所以只需要在第一个 EPUB 文件里添加即可
+      const needSaveGlossaryImages =
+        index === 0 &&
+        settings.saveNovelMeta &&
+        settings.downloadNovelEmbeddedImage
+      // 如果需要保存图片，就先把 description 里的图片标记为实际的图片标签。因为必须先执行 jepub.init，之后才能添加图片（jepub.image），因此需要先处理 description 的内容
+      if (needSaveGlossaryImages) {
+        for (const item of this.glossaryImages) {
+          if (item) {
+            const url = downloadNovelGlossaryImage.getUrl(item.urls)
+            if (!url) {
+              continue
+            }
+            const extension = Utils.getExtension(url)
+            const imageId = `glossaryImage-${item.novelImageId}`
+            const imageHtml = `<p><img src="assets/${imageId}.${extension}" /></p>`
+            const imageFlag = Tools.createGlossaryImageFlag(item.novelImageId)
+            description = description.replaceAll(imageFlag, imageHtml)
+          }
+        }
+      }
 
+      this.pushSizeLog()
       // 记录 description 的体积，其实文本的体积（包括简介、正文）通常都很小，记录与否都影响不大
       // 在一次测试里，700 个系列小说里只有 1 篇的正文体积超过了 10 MiB
       // 另外：使用 length 并不准确，因为 1 个 length 的实际字节数可能是 1 - 4（ASCII、变音标记、中文、emoji）
@@ -392,6 +449,7 @@ class MergeNovel {
       // 追求准确的话应该使用 TextEncoder 编码然后获取 length，但这里影响不大，就无所谓了
       this.addSize(description.length)
 
+      // 初始化 EPUB 文件
       const jepub = new jEpub()
       jepub.init({
         i18n: lang.type,
@@ -411,6 +469,27 @@ class MergeNovel {
       })
       jepub.uuid(link)
       jepub.date(date)
+
+      // 在 EPUB 文件初始化之后，下载并保存设定资料里的图片
+      if (needSaveGlossaryImages) {
+        for (const item of this.glossaryImages) {
+          if (item) {
+            this.logDownloadGlossaryImage(item)
+            const image = await downloadNovelGlossaryImage.getImage(
+              item.urls,
+              'arrayBuffer'
+            )
+            if (image) {
+              this.addSize(image.byteLength)
+              const imageId = `glossaryImage-${item.novelImageId}`
+              jepub.image(
+                Config.isFirefox ? Utils.copyArrayBuffer(image) : image,
+                imageId
+              )
+            }
+          }
+        }
+      }
 
       // 添加这个系列的封面图片到 EPUB 文件里
       const seriesCoverUrl = body.cover.urls.original
@@ -806,6 +885,15 @@ class MergeNovel {
   private logDownloadSeriesCover() {
     const link = `<a href="https://www.pixiv.net/novel/series/${this.seriesId}" target="_blank">${this.seriesTitle}</a>`
     log.log(lang.transl('_下载系列小说的封面图片', link))
+  }
+
+  /** 下载设定资料里的图片时，显示对应的日志 */
+  private logDownloadGlossaryImage(item: GlossaryImageItem) {
+    // 生成这条设定资料的 url，例如：
+    // https://www.pixiv.net/novel/series/9114820/glossary/154698
+    const glossaryUrl = `https://www.pixiv.net/novel/series/${this.seriesId}/glossary/${item.glossaryId}`
+    const link = Utils.createLinkHTML(glossaryUrl, item.glossaryTitle)
+    log.log(lang.transl('_下载设定资料x里的图片', link))
   }
 
   private reset() {
