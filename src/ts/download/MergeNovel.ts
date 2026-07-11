@@ -21,6 +21,7 @@ import { SendDownload } from './SendDownload'
 import { filter } from '../filter/Filter'
 import { states } from '../store/States'
 import { downloadRecord, DownloadRecordType } from './DownloadRecord'
+import { selectWork } from '../SelectWork'
 
 declare const jEpub: any
 
@@ -183,6 +184,12 @@ class MergeNovel {
   /** 输出合并开始时的提示日志。 */
   private logMergeStart(link: string) {
     log.log(`📚${lang.transl('_合并系列小说')} ${link}`)
+
+    log.warning(
+      lang.transl('_提示可以只合并部分小说'),
+      'tipOnlyMergeSomeNovels'
+    )
+
     log.warning(
       lang.transl('_提示合并系列小说时可以跳过已合并的小说'),
       'tipMergeNovelSkipMergedNovels'
@@ -843,7 +850,26 @@ class MergeNovel {
       'asc'
     )
 
-    const list = seriesContents.body.page.seriesContents
+    let list = seriesContents.body.page.seriesContents
+    const thisPageIdNumber = list.length
+
+    // 如果当前页面是系列页面，并且用户手动选择了部分小说，那么在合并时，只合并用户选择的小说，而不是整个系列里的所有小说
+    if (
+      pageType.type === pageType.list.NovelSeries &&
+      selectWork.idList.length > 0
+    ) {
+      const selectedNovelIds = selectWork.idList
+        .filter((item) => item.type === 'novels')
+        .map((item) => item.id)
+      if (selectedNovelIds.length > 0) {
+        log.warning(
+          lang.transl('_提示只合并选择的小说'),
+          'tipOnlyMergeSelectedNovels'
+        )
+        list = list.filter((item) => selectedNovelIds.includes(item.id))
+      }
+    }
+
     for (const item of list) {
       const check = await filter.check({
         id: item.id,
@@ -868,10 +894,10 @@ class MergeNovel {
       }
     }
 
-    this.last += list.length
+    this.last += thisPageIdNumber
 
-    // 如果这一次返回的作品数量达到了每批限制，可能这次没有请求完，继续请求后续的数据
-    if (list.length === this.limit) {
+    // 如果这一次返回的小说数量等于每批限制（默认 30 个），说明这不是最后一页（因为最后一页往往不足 30 篇小说），继续请求后续页面的数据
+    if (thisPageIdNumber === this.limit) {
       return this.getNovelIds()
     } else {
       // 获取完毕

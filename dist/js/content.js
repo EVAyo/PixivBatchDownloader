@@ -9370,6 +9370,9 @@ new RequestSponsorship();
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   selectWork: () => (/* binding */ selectWork)
+/* harmony export */ });
 /* harmony import */ var _Tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tools */ "./src/ts/Tools.ts");
 /* harmony import */ var _Language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Language */ "./src/ts/Language.ts");
 /* harmony import */ var _EVT__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EVT */ "./src/ts/EVT.ts");
@@ -9453,7 +9456,11 @@ class SelectWork {
     // 储存当前页面的作品列表容器
     worksWrapper = document.body;
     ob = undefined;
-    idList = [];
+    _idList = [];
+    /** 当前已手动选择的作品 id 列表。其他模块可读取这个列表。 */
+    get idList() {
+        return this._idList;
+    }
     sendCrawl = false; // 它用来判断抓取的是不是选择的作品。抓取选择的作品时激活此标记；当触发下一次的抓取完成事件时，表示已经抓取了选择的作品。
     crawled = false; // 是否已经抓取了选择的作品
     svg = `<svg class="icon" aria-hidden="true">
@@ -9530,7 +9537,7 @@ class SelectWork {
     clearIdList() {
         // 清空标记需要使用 id 数据，所以需要执行之后才能清空 id
         this.removeAllSelectedFlag();
-        this.idList = [];
+        this._idList.length = 0;
         this.updateCrawlBtn();
     }
     createSelectorEl() {
@@ -9803,7 +9810,8 @@ class SelectWork {
         }
     }
 }
-new SelectWork();
+const selectWork = new SelectWork();
+
 
 
 /***/ }),
@@ -24954,6 +24962,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filter_Filter__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filter/Filter */ "./src/ts/filter/Filter.ts");
 /* harmony import */ var _store_States__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../store/States */ "./src/ts/store/States.ts");
 /* harmony import */ var _DownloadRecord__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./DownloadRecord */ "./src/ts/download/DownloadRecord.ts");
+/* harmony import */ var _SelectWork__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../SelectWork */ "./src/ts/SelectWork.ts");
+
 
 
 
@@ -25072,6 +25082,7 @@ class MergeNovel {
     /** 输出合并开始时的提示日志。 */
     logMergeStart(link) {
         _Log__WEBPACK_IMPORTED_MODULE_9__.log.log(`📚${_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_合并系列小说')} ${link}`);
+        _Log__WEBPACK_IMPORTED_MODULE_9__.log.warning(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_提示可以只合并部分小说'), 'tipOnlyMergeSomeNovels');
         _Log__WEBPACK_IMPORTED_MODULE_9__.log.warning(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_提示合并系列小说时可以跳过已合并的小说'), 'tipMergeNovelSkipMergedNovels');
         // 如果用户选择的保存格式是 txt，则提示使用 EPUB 格式。这是因为很多小说阅读器都无法识别 txt 里的章节标记，所以使用 EPUB 格式是更好的选择
         if (_setting_Settings__WEBPACK_IMPORTED_MODULE_2__.settings.novelSaveAs === 'txt') {
@@ -25584,7 +25595,19 @@ class MergeNovel {
     /** 获取这个系列里所有小说的 id */
     async getNovelIds() {
         const seriesContents = await _API__WEBPACK_IMPORTED_MODULE_10__.API.getNovelSeriesContent(this.seriesId, this.limit, this.last, 'asc');
-        const list = seriesContents.body.page.seriesContents;
+        let list = seriesContents.body.page.seriesContents;
+        const thisPageIdNumber = list.length;
+        // 如果当前页面是系列页面，并且用户手动选择了部分小说，那么在合并时，只合并用户选择的小说，而不是整个系列里的所有小说
+        if (_PageType__WEBPACK_IMPORTED_MODULE_15__.pageType.type === _PageType__WEBPACK_IMPORTED_MODULE_15__.pageType.list.NovelSeries &&
+            _SelectWork__WEBPACK_IMPORTED_MODULE_22__.selectWork.idList.length > 0) {
+            const selectedNovelIds = _SelectWork__WEBPACK_IMPORTED_MODULE_22__.selectWork.idList
+                .filter((item) => item.type === 'novels')
+                .map((item) => item.id);
+            if (selectedNovelIds.length > 0) {
+                _Log__WEBPACK_IMPORTED_MODULE_9__.log.warning(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_提示只合并选择的小说'), 'tipOnlyMergeSelectedNovels');
+                list = list.filter((item) => selectedNovelIds.includes(item.id));
+            }
+        }
         for (const item of list) {
             const check = await _filter_Filter__WEBPACK_IMPORTED_MODULE_19__.filter.check({
                 id: item.id,
@@ -25609,9 +25632,9 @@ class MergeNovel {
                 _Log__WEBPACK_IMPORTED_MODULE_9__.log.warning(_Language__WEBPACK_IMPORTED_MODULE_3__.lang.transl('_排除小说') + ': ' + link);
             }
         }
-        this.last += list.length;
-        // 如果这一次返回的作品数量达到了每批限制，可能这次没有请求完，继续请求后续的数据
-        if (list.length === this.limit) {
+        this.last += thisPageIdNumber;
+        // 如果这一次返回的小说数量等于每批限制（默认 30 个），说明这不是最后一页（因为最后一页往往不足 30 篇小说），继续请求后续页面的数据
+        if (thisPageIdNumber === this.limit) {
             return this.getNovelIds();
         }
         else {
@@ -32994,6 +33017,14 @@ Note: Even if you disable this setting, some quick download methods will always 
         `시리즈 소설의 메타데이터 부분 종료`,
         `Конец раздела метаданных серии романов`,
     ],
+    _提示只合并选择的小说: [
+        `注意：由于你选择了部分小说，所以本次合并只会合并你选择的小说，而非系列里的所有小说。`,
+        `注意：由於你選擇了部分小說，所以本次合併只會合併你選擇的小說，而非系列裡的所有小說。`,
+        `Note: Since you have selected some novels, this merge will only merge the novels you have selected, not all the novels in the series.`,
+        `注意：選択した小説の一部を選択したため、今回のマージでは選択した小説のみがマージされ、シリーズ内のすべての小説がマージされるわけではありません。`,
+        `주의: 일부 소설을 선택했기 때문에 이번 병합에서는 선택한 소설만 병합되고 시리즈의 모든 소설이 병합되는 것은 아닙니다.`,
+        `Внимание: Поскольку вы выбрали некоторые романы, это слияние объединит только выбранные романы, а не все романы в серии.`,
+    ],
     _更新日期: [
         `更新日期`,
         `更新日期`,
@@ -39070,6 +39101,14 @@ If you want to solve this problem, press <span class="blue">Win</span> + <span c
         `💡ヒント: シリーズ小説をマージする際、「ダウンロード済みの作品をクロールしない」を有効にしている場合、ダウンローダーはダウンロード記録のある小説をスキップし、ダウンロード記録のない小説のみをマージします。<br>バージョン 18.7.0（2026年4月）以降、シリーズ小説をマージする際、ダウンローダーは内部の各小説に対してダウンロード記録を生成します（個別にダウンロードしたかのように）。したがって、同じシリーズを再度マージする際、「ダウンロード済みの作品をクロールしない」が有効であれば、以前にマージした小説をスキップし、新しく追加された小説のみをマージできます。`,
         `💡팁: 시리즈 소설을 병합할 때 "다운로드된 작품을 크롤링하지 않음"을 활성화한 경우, 다운로더는 다운로드 기록이 있는 소설을 건너뛰고 다운로드 기록이 없는 소설만 병합합니다.<br>18.7.0 버전(2026년 4월)부터 시리즈 소설을 병합할 때 다운로더는 내부의 모든 소설에 대해 다운로드 기록을 생성합니다(개별적으로 다운로드한 것처럼). 따라서 동일한 시리즈를 다시 병합할 때 "다운로드된 작품을 크롤링하지 않음"이 활성화되어 있으면 이전에 병합한 소설을 건너뛰고 새로 추가된 소설만 병합할 수 있습니다.`,
         `💡Подсказка: При объединении серийных новелл, если вы включили «Не краулить загруженные работы», загрузчик пропустит новеллы с записями о загрузке и объединит только новеллы без записей о загрузке.<br>Начиная с версии 18.7.0 (апрель 2026), при объединении серийных новелл загрузчик будет генерировать запись о загрузке для каждой новеллы внутри (как будто вы скачали их по отдельности). Поэтому при повторном объединении той же серии, если включено «Не краулить загруженные работы», загрузчик сможет пропустить ранее объединённые новеллы и объединить только новые добавленные новеллы.`,
+    ],
+    _提示可以只合并部分小说: [
+        `💡提示：在系列小说页面里，你可以只合并部分小说。方法是先使用“手动选择作品”功能选择部分小说，然后点击“合并系列小说”按钮。`,
+        `💡提示：在系列小說頁面裡，你可以只合併部分小說。方法是先使用「手動選擇作品」功能選擇部分小說，然後點擊「合併系列小說」按鈕。`,
+        `💡Tip: On the series novel page, you can merge only some novels, not all of them. First, use the "Manually select" feature to select some novels, then click the "Merge Series Novels" button.`,
+        `💡ヒント: シリーズ小説のページでは、すべての小説ではなく、一部の小説のみをマージすることができます。まず、「手動選択」機能を使用して一部の小説を選択し、「シリーズ小説をマージ」ボタンをクリックします。`,
+        `💡팁: 시리즈 소설 페이지에서 모든 소설이 아닌 일부 소설만 병합할 수 있습니다. 먼저 "수동 선택" 기능을 사용하여 일부 소설을 선택한 다음 "시리즈 소설 병합" 버튼을 클릭합니다.`,
+        `💡Подсказка: На странице серийных новелл вы можете выбрать для объединения только некоторые новеллы, а не все. Сначала используйте функцию "Ручной выбор", чтобы выбрать некоторые новеллы, затем нажмите кнопку "Объединить серийные новеллы".`,
     ],
     _在下载过的作品上显示边框: [
         `在下载过的作品上显示<span class="key">边框</span>`,
