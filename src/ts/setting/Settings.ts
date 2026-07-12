@@ -401,6 +401,8 @@ interface XzSetting {
   clickOptionCardToToggleSwitch: boolean
   clickSettingNameOpenWiki: boolean
   downloadIntervalSwitch: boolean
+  /** 在合并系列小说时，只要有一篇小说符合过滤条件，就保存该系列里的所有小说 */
+  saveAllSeriesNovelsIfOneMatches: boolean
 }
 
 type SettingKeys = keyof XzSetting
@@ -1011,6 +1013,7 @@ class Settings {
     },
     clickSettingNameOpenWiki: true,
     downloadIntervalSwitch: true,
+    saveAllSeriesNovelsIfOneMatches: false,
   }
 
   private allSettingKeys = Object.keys(this.defaultSettings)

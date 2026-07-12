@@ -161,6 +161,7 @@ class FormSettings {
       'downloadUgoiraFirst',
       'clickSettingNameOpenWiki',
       'downloadIntervalSwitch',
+      'saveAllSeriesNovelsIfOneMatches',
     ],
     radio: [
       'novelSaveAs',

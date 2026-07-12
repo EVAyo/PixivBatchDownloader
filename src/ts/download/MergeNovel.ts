@@ -76,6 +76,11 @@ class MergeNovel {
   private novelName = ''
 
   private seriesData: NovelSeriesData | null = null
+  /** 在获取系列中的小说 ID 列表时，保存通过了过滤器检查的小说 ID */
+  private novelIdListFiltered: string[] = []
+  /** 在获取系列中的小说 ID 列表时，保存所有小说的 ID 列表（不应用过滤器） */
+  private novelIdListUnfiltered: string[] = []
+  /** 在获取系列中的小说 ID 列表完毕之后，保存最终用于合并的小说 ID 列表 */
   private novelIdList: string[] = []
   private allNovelData: NovelSummary[] = []
   private readonly limit = 30
@@ -226,7 +231,7 @@ class MergeNovel {
       return false
     }
 
-    if (this.novelIdList.length === 0) {
+    if (this.novelIdListFiltered.length === 0) {
       log.warning(`✅${lang.transl('_跳过合并系列小说')} ${link}`)
       return false
     }
@@ -366,7 +371,7 @@ class MergeNovel {
     }
 
     for (const data of this.allNovelData) {
-      text.push(this.buildTXTNovelSection(data))
+      text.push(await this.buildTXTNovelSection(data))
     }
 
     const blob = new Blob(text, {
@@ -441,7 +446,7 @@ class MergeNovel {
     result.push(lang.transl('_本次合并包含的章节') + ': ')
     result.push(CRLF_2)
     for (const data of this.allNovelData) {
-      result.push(`${this.chapterNo(data.no)} ${data.title}`)
+      result.push(`#${data.no} ${data.title}`)
       result.push(this.CRLF)
     }
     result.push(this.CRLF)
@@ -460,7 +465,7 @@ class MergeNovel {
   }
 
   /** 生成单篇小说在 TXT 文件中的完整章节文本。 */
-  private buildTXTNovelSection(data: NovelSummary) {
+  private async buildTXTNovelSection(data: NovelSummary) {
     const text: string[] = []
 
     // 添加章节编号
@@ -493,9 +498,11 @@ class MergeNovel {
 
     // 添加正文
     // 替换换行标签，移除 html 标签
-    text.push(
-      data.content.replace(/<br \/>/g, this.CRLF).replace(/<\/?.+?>/g, '')
-    )
+    let content = data.content
+      .replace(/<br \/>/g, this.CRLF)
+      .replace(/<\/?.+?>/g, '')
+    content = await replaceNovelWords.replace(this.seriesId, content)
+    text.push(content)
     // 在正文结尾添加换行标记，使得不同章节之间区分开来
     text.push(this.CRLF.repeat(4))
     return text.join('')
@@ -612,7 +619,7 @@ class MergeNovel {
       otherMeta.push(this.br)
       otherMeta.push('<p>')
       for (const data of this.allNovelData) {
-        otherMeta.push(`${this.chapterNo(data.no)} ${data.title}`)
+        otherMeta.push(`#${data.no} ${data.title}`)
         otherMeta.push(this.br)
       }
       otherMeta.pop()
@@ -871,6 +878,10 @@ class MergeNovel {
     }
 
     for (const item of list) {
+      // 先保存小说 id（不进行过滤）
+      this.novelIdListUnfiltered.push(item.id)
+
+      // 然后保存通过了过滤器检查的小说 id
       const check = await filter.check({
         id: item.id,
         isOriginal: item.isOriginal,
@@ -886,7 +897,7 @@ class MergeNovel {
         IDTypeString: 'novels',
       })
       if (check) {
-        this.novelIdList.push(item.id)
+        this.novelIdListFiltered.push(item.id)
       } else {
         const order_title = `#${item.series.contentOrder} ${item.title}`
         const link = Tools.createWorkLink(item.id, order_title, 'novel')
@@ -901,8 +912,24 @@ class MergeNovel {
       return this.getNovelIds()
     } else {
       // 获取完毕
-      if (this.novelIdList.length === 0) {
+
+      // 如果没有任何小说通过过滤器检查，就不会合并这个系列，此时输出提示日志
+      if (this.novelIdListFiltered.length === 0) {
         log.warning(lang.transl('_这个系列里的所有小说都被排除了'))
+      } else {
+        // 根据条件决定只合并符合过滤条件的小说，还是合并所有小说
+        if (settings.saveAllSeriesNovelsIfOneMatches) {
+          this.novelIdList = this.novelIdListUnfiltered
+
+          // 如果有部分小说不符合过滤条件，但用户设置了合并所有小说，那么就会合并不符合过滤条件的小说。此时显示提示
+          if (
+            this.novelIdListFiltered.length < this.novelIdListUnfiltered.length
+          ) {
+            log.warning(lang.transl('_提示会合并所有小说'))
+          }
+        } else {
+          this.novelIdList = this.novelIdListFiltered
+        }
       }
     }
   }
@@ -997,21 +1024,24 @@ class MergeNovel {
   /** 从完整小说数据中提取合并流程需要的摘要数据。 */
   private async createNovelSummary(data: NovelData) {
     const tags = this.buildNovelTags(data)
-
-    // 应用标签过滤器
-    // 虽然这里也能检查其他过滤条件，但没有必要，因为前面已经检查过了
-    const check = await filter.check({
-      xRestrict: data.body.xRestrict,
-      tags,
-    })
     const novelId = data.body.id
     const title = data.body.title
     const order = data.body.seriesNavData!.order
-    if (!check) {
-      const order_title = `#${order} ${title}`
-      const link = Tools.createWorkLink(novelId, order_title, 'novel')
-      log.warning(lang.transl('_排除小说') + ': ' + link)
-      return null
+
+    // 如果未启用此设置，则检查一些过滤条件。如果启用了此设置就不进行检查，因为此时需要合并所有小说
+    if (settings.saveAllSeriesNovelsIfOneMatches === false) {
+      // 检查年龄限制和标签过滤器
+      // 虽然这里也能检查其他过滤条件，但没有必要，因为前面已经检查过了
+      const check = await filter.check({
+        xRestrict: data.body.xRestrict,
+        tags,
+      })
+      if (!check) {
+        const order_title = `#${order} ${title}`
+        const link = Tools.createWorkLink(novelId, order_title, 'novel')
+        log.warning(lang.transl('_排除小说') + ': ' + link)
+        return null
+      }
     }
 
     return {
@@ -1159,6 +1189,8 @@ class MergeNovel {
   private reset() {
     this.seriesData = null
     this.allNovelData = []
+    this.novelIdListFiltered = []
+    this.novelIdListUnfiltered = []
     this.novelIdList = []
     this.seriesTags = []
     this.seriesId = ''

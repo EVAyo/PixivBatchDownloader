@@ -214,4 +214,5 @@ export interface FormType extends HTMLFormElement {
   downloadUgoiraFirst: HTMLInputElement
   clickSettingNameOpenWiki: HTMLInputElement
   downloadIntervalSwitch: HTMLInputElement
+  saveAllSeriesNovelsIfOneMatches: HTMLInputElement
 }
