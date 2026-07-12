@@ -5247,8 +5247,9 @@ class ImageViewer {
     viewerUl = document.createElement('ul'); // 图片列表的 ul 元素
     show = false; // 当前查看器实例是否处于显示状态
     isOriginalSize = false; // 是否原尺寸显示图片
-    // 图片查看器初始化时，会获取作品数据，保存到这个成员
+    // 图片查看器初始化时会获取作品数据
     workData;
+    // 图片查看器的一些状态
     pageCount = 1;
     firstImageURL = ''; // 第一张图片的 url
     index = 0; // 当前查看的图片索引
@@ -5674,6 +5675,11 @@ class ImageViewer {
         li.style.fontSize = '20px';
         li.textContent = '✩';
         li.id = 'imageViewerBookmarkBtn';
+        // 显示这个作品的收藏状态
+        const bookmarked = this.workData.body.bookmarkData !== null;
+        if (bookmarked) {
+            li.classList.add('bookmarked');
+        }
         this.addBtn(li);
         li.addEventListener('click', async () => {
             // 添加收藏
@@ -5690,6 +5696,11 @@ class ImageViewer {
         const status = await _Bookmark__WEBPACK_IMPORTED_MODULE_6__.bookmark.add(this.cfg.workId, 'illusts', _Tools__WEBPACK_IMPORTED_MODULE_5__.Tools.extractTags(this.workData));
         if (status === 200) {
             _Toast__WEBPACK_IMPORTED_MODULE_4__.toast.success(_Language__WEBPACK_IMPORTED_MODULE_2__.lang.transl('_已收藏'));
+            // 收藏成功后，更新按钮的样式
+            const btn = document.querySelector('#imageViewerBookmarkBtn');
+            if (btn) {
+                btn.classList.add('bookmarked');
+            }
         }
     }
 }

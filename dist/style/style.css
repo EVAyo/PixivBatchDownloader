@@ -3322,6 +3322,9 @@ iframe[name='expandedFooter'] {
   width: 16px;
   height: 16px;
 }
+.viewer-backdrop .viewer-toolbar .bookmarked {
+  color: var(--beautify-blue);
+}
 .viewer-backdrop .viewer-toolbar #imageViewerCopyBtn,
 .viewer-backdrop .viewer-toolbar #imageViewerCopyWorkLinkBtn {
   display: inline-flex;

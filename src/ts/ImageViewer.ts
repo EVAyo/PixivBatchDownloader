@@ -54,8 +54,10 @@ class ImageViewer {
   private show = false // 当前查看器实例是否处于显示状态
   private isOriginalSize = false // 是否原尺寸显示图片
 
-  // 图片查看器初始化时，会获取作品数据，保存到这个成员
+  // 图片查看器初始化时会获取作品数据
   private workData: ArtworkData | undefined
+
+  // 图片查看器的一些状态
   private pageCount = 1
   private firstImageURL = '' // 第一张图片的 url
   private index = 0 // 当前查看的图片索引
@@ -547,6 +549,13 @@ class ImageViewer {
     li.style.fontSize = '20px'
     li.textContent = '✩'
     li.id = 'imageViewerBookmarkBtn'
+
+    // 显示这个作品的收藏状态
+    const bookmarked = this.workData!.body.bookmarkData !== null
+    if (bookmarked) {
+      li.classList.add('bookmarked')
+    }
+
     this.addBtn(li)
 
     li.addEventListener('click', async () => {
@@ -572,6 +581,11 @@ class ImageViewer {
 
     if (status === 200) {
       toast.success(lang.transl('_已收藏'))
+      // 收藏成功后，更新按钮的样式
+      const btn = document.querySelector('#imageViewerBookmarkBtn')
+      if (btn) {
+        btn.classList.add('bookmarked')
+      }
     }
   }
 }
