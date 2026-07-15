@@ -45780,6 +45780,7 @@ class OptionConfigs {
             hideOnPixivision: true,
             searchWordKeys: [],
             searchWords: [],
+            addedAt: 1784136618212,
         },
         {
             no: 72,

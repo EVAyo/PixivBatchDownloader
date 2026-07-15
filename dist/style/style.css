@@ -4155,6 +4155,8 @@ main section nav[style]::-webkit-scrollbar-thumb {
   cursor: pointer;
   text-decoration: none;
   display: block;
+  background: none;
+  border: none;
 }
 #copyBtnOnWorkPage {
   padding: 0;
@@ -4181,6 +4183,7 @@ body.mobile #copyBtnOnWorkPage {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  transform: scale(0.85);
 }
 body.mobile #copyBtnOnWorkPage:hover,
 body.mobile #copyBtnOnWorkPage:active {

@@ -13,6 +13,12 @@ https://github.com/xuejianxianzun/PixivBatchDownloader/issues/643
 
 上次修复失败了（因为当时我的配置不会出现此问题，所以也没有验证修复是否有效），这次我调整 DPI 缩放后复现了此问题，重新进行了修复。
 
+### 🐞修复问题：移动端页面里的收藏按钮（☆）带有默认样式
+
+https://github.com/xuejianxianzun/PixivBatchDownloader/issues/644
+
+由于 button 的默认样式导致这个按钮不好看，现在修复。
+
 ## 19.1.0 2026-07-13
 
 ### ✨在系列小说页面里，可以选择部分小说进行合并
