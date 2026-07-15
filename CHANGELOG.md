@@ -13,6 +13,10 @@ https://github.com/xuejianxianzun/PixivBatchDownloader/issues/643
 
 上次修复失败了（因为当时我的配置不会出现此问题，所以也没有验证修复是否有效），这次我调整 DPI 缩放后复现了此问题，重新进行了修复。
 
+### 🐞修复问题：在手动选择作品时，点击动图的播放图标是无法选择这个作品
+
+https://github.com/xuejianxianzun/PixivBatchDownloader/issues/629
+
 ### 🐞修复问题：移动端页面里的收藏按钮（☆）带有默认样式
 
 https://github.com/xuejianxianzun/PixivBatchDownloader/issues/644

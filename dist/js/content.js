@@ -9703,23 +9703,42 @@ class SelectWork {
         if (!this.canSelect()) {
             return;
         }
-        if (!el || el.nodeName !== 'A') {
+        if (!el) {
             return;
         }
-        const href = el.href;
+        // 添加已选择的标记的目标元素，通常是点击的元素的父元素
+        let addFlagTarget = el.parentElement;
+        // 查找 A 标签，获取作品 id
+        let a = null;
+        if (el.nodeName === 'A') {
+            a = el;
+        }
+        else {
+            // 处理点击在动图的播放图标上的情况
+            // 如果不针对性处理，就会导致选择无效，直接进入这个动图的作品页面
+            if (el.nodeName === 'svg' || el.nodeName === 'path' || el.nodeName === 'circle') {
+                a = el.closest('a');
+                // 此时插入目标点设置为 a 的父元素。不能插入到 svg 元素里，否则会导致已选择的标记无法显示
+                addFlagTarget = a.parentElement;
+            }
+        }
+        if (!a || !a.href) {
+            return;
+        }
+        const href = a.href;
         const artworkId = _Tools__WEBPACK_IMPORTED_MODULE_0__.Tools.getIllustId(href);
         if (artworkId) {
             ev.preventDefault();
             // 如果查找到了作品 id，必须阻止冒泡，否则会执行 clickThumbnail
             ev.stopPropagation();
-            this.addId(el.parentElement, artworkId, 'illusts');
+            this.addId(addFlagTarget, artworkId, 'illusts');
             return;
         }
         const novelId = _Tools__WEBPACK_IMPORTED_MODULE_0__.Tools.getNovelId(href);
         if (novelId) {
             ev.preventDefault();
             ev.stopPropagation();
-            this.addId(el.parentElement, novelId, 'novels');
+            this.addId(addFlagTarget, novelId, 'novels');
             return;
         }
         // 如果没有查找到小说 id，可能是系列小说，此时尝试查找系列 id
@@ -9727,7 +9746,7 @@ class SelectWork {
         if (seriesId) {
             ev.preventDefault();
             ev.stopPropagation();
-            this.addId(el.parentElement, seriesId, 'novelSeries');
+            this.addId(addFlagTarget, seriesId, 'novelSeries');
             return;
         }
     }
