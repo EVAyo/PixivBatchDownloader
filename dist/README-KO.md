@@ -71,6 +71,7 @@ Wiki 페이지를 확인하세요:
 # Android에서 설치
 
 Android 브라우저에 이 확장 프로그램을 설치하려면 Quetta 브라우저를 권장합니다. Chromium 코어 기반의 모바일 브라우저로, Chrome Web Store에서 온라인으로 확장 프로그램을 설치할 수 있어 매우 편리합니다.
+[튜토리얼 보기](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/QuettaBrowser)
 
 # 사용 방법
 

@@ -71,6 +71,7 @@ Wikiページをご覧ください：
 # Android でのインストール
 
 Android のブラウザにこの拡張機能をインストールしたい場合は、Quetta ブラウザをおすすめします。これは Chromium コアのモバイルブラウザで、Chrome Web Store からオンラインで拡張機能をインストールでき、とても便利です。
+[チュートリアルを見る](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/QuettaBrowser)
 
 # 使い方
 

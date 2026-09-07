@@ -70,6 +70,7 @@ Russian
 # Установка на Android
 
 Если вы хотите установить это расширение в браузере на Android, рекомендуем использовать браузер Quetta. Это мобильный браузер на ядре Chromium, и вы можете устанавливать расширения онлайн из Chrome Web Store — это очень удобно.
+[Смотреть руководство](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/QuettaBrowser)
 
 # Как пользоваться
 

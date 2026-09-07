@@ -71,6 +71,7 @@ Please check the Wiki page:
 # Install on Android
 
 If you want to install this extension in a browser on Android, we recommend using the Quetta browser. It is a mobile browser with the Chromium core, and you can install extensions online from the Chrome Web Store — very convenient.
+[View tutorial](https://xuejianxianzun.github.io/PBDWiki/#/en/Installation/QuettaBrowser)
 
 # How to use
 

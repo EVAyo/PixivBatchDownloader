@@ -60,8 +60,6 @@
 
 [访问官网](https://pixiv.download/)
 
-[在 YouTube 查看视频教程](https://www.youtube.com/playlist?list=PLO2Mj4AiZzWEpN6x_lAG8mzeNyJzd478d)（部分内容可能已经过时）
-
 # 在线安装
 
 Chrome、Edge 等 Chromium 内核的浏览器可以从 **[Chrome Web Store](https://chrome.google.com/webstore/detail/powerful-pixiv-downloader/dkndmhgdcmjdmkdonmbgjpijejdcilfh)** 安装本扩展。
@@ -76,6 +74,7 @@ Firefox 浏览器可以从 **[Add-Ons](https://addons.mozilla.org/firefox/addon/
 # 在 Android 上安装
 
 如果你想在 Android 上的浏览器里安装这个扩展，推荐使用 Quetta 浏览器。它是一个 Chromium 内核的移动端浏览器，可以从 Chrome Web Store 在线安装扩展程序，非常方便。
+[查看教程](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/QuettaBrowser)
 
 # 如何使用
 

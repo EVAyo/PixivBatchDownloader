@@ -73,6 +73,7 @@ Firefox 瀏覽器可從 **[Add-Ons](https://addons.mozilla.org/firefox/addon/pow
 # 在 Android 上安裝
 
 如果你想在 Android 上的瀏覽器裡安裝這個擴充功能，推薦使用 Quetta 瀏覽器。它是一個 Chromium 內核的行動端瀏覽器，可以從 Chrome Web Store 線上安裝擴充功能，非常方便。
+[查看教學](https://xuejianxianzun.github.io/PBDWiki/#/zh-cn/%E5%AE%89%E8%A3%85/QuettaBrowser)
 
 # 如何使用
 

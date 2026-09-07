@@ -7,6 +7,7 @@
 - README-KO.md
 - README-RU.md
 - README-ZH-CN.md
+- README-ZH-TW.md
 
 每个 md 文件都使用不同的语言，在文件名的后缀里有各自的语言标志。其中，没有语言标记的默认 `README.md` 是英文，它和 `README-EN.md` 的内容应当保持相同。
 
